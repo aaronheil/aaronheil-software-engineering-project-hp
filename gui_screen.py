@@ -138,7 +138,7 @@ def start_quiz(house_name=None):
             if bot_scores_frame is None:
                 bot_scores_frame = tk.Frame(quiz_window, width=330)  # Beschränkung der Breite
 
-                bg_image = Image.open(r"C:\Users\aaron\Desktop\HPQ_IU_Material\pictures\prod_pergament.png")  # Ersetzen Sie dies durch den Pfad zu Ihrem Bild
+                bg_image = Image.open(r"C:\Users\aaron\Desktop\HPQ_IU_Material\pictures\prod_pergament.png")
                 bg_photo = ImageTk.PhotoImage(bg_image)
 
                 # Erstellen eines Labels oder Canvas, um das Bild zu platzieren
@@ -194,16 +194,16 @@ def start_quiz(house_name=None):
 
     # Erstellen des Test-Frames
     if test_frame is None:
-        test_frame = tk.Frame(quiz_window, padx=10, pady=10)  # Auffällige Farbe für das Testen
+        test_frame = tk.Frame(quiz_window, padx=10, pady=10)
 
         # Laden des Bildes und Anpassen an die Größe des Frames
-        bg_image = Image.open(r"C:\Users\aaron\Desktop\HPQ_IU_Material\pictures\prod_perg_1.png")  # Ersetzen Sie dies durch den Pfad zu Ihrem Bild
+        bg_image = Image.open(r"C:\Users\aaron\Desktop\HPQ_IU_Material\pictures\prod_perg_1.png")
         bg_photo = ImageTk.PhotoImage(bg_image)
 
         # Erstellen eines Labels oder Canvas, um das Bild zu platzieren
         background_label = tk.Label(test_frame, image=bg_photo)
         background_label.place(x=0, y=0, relwidth=1, relheight=1)
-        background_label.image = bg_photo  # Verhindert, dass das Bild vom Garbage Collector gelöscht wird
+        background_label.image = bg_photo
 
         test_label = tk.Label(test_frame, text="Test", font=("Arial", 16), bg='red')
         test_button = tk.Button(test_frame, text="Button", command=lambda: print("Button gedrückt"))
@@ -220,12 +220,11 @@ def start_quiz(house_name=None):
 
     if quiz_background_image is None:
         # Laden des Hintergrundbildes
-        quiz_background_image = tk.PhotoImage(file=r"C:\Users\aaron\Desktop\HPQ_IU_Material\pictures\prod_perg_1.png")  # Ändern Sie den Pfad zum Bild
+        quiz_background_image = tk.PhotoImage(file=r"C:\Users\aaron\Desktop\HPQ_IU_Material\pictures\prod_perg_1.png")
         # Nachdem alle anderen Widgets hinzugefügt wurden
         quiz_background_label = tk.Label(quiz_window, image=quiz_background_image)
         quiz_background_label.place(x=0, y=0, relwidth=1, relheight=1)
-        quiz_background_label.lower()  # Setzt das Hintergrundbild hinter alle anderen Widgets
-        # Lade das Bild und skaliere es auf die Größe des Fensters
+        quiz_background_label.lower()  # setzt das Hintergrundbild hinter alle anderen Widgets
 
 
 
