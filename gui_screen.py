@@ -68,7 +68,7 @@ def open_house_window():
     image_hufflepuff = tk.PhotoImage(file=r"C:\Users\aaron\Desktop\HPQ_IU_Material\pictures\hufflepuff.png")
     image_ravenclaw = tk.PhotoImage(file=r"C:\Users\aaron\Desktop\HPQ_IU_Material\pictures\ravenclaw.png")
 
-    # Konfigurieren Sie die Buttons für jedes Haus, um sie im Raster anzuordnen
+    # Konfiguration von Buttons
     btn_gryffindor = tk.Button(house_window, image=image_gryffindor, command=lambda: on_house_select('Gryffindor'))
     btn_gryffindor.grid(row=1, column=0, sticky="nsew")
 
@@ -81,7 +81,7 @@ def open_house_window():
     btn_ravenclaw = tk.Button(house_window, image=image_ravenclaw, command=lambda: on_house_select('Ravenclaw'))
     btn_ravenclaw.grid(row=1, column=3, sticky="nsew")
 
-    # Konfigurieren Sie das Gewicht der Spalten und Zeilen, um die Größe anzupassen
+    # Konfiguration von dem Gewicht der Spalten und Zeilen
     for i in range(4):
         house_window.grid_columnconfigure(i, weight=1)
 
@@ -147,7 +147,7 @@ def start_quiz(house_name=None):
                 background_label.image = bg_photo
 
 
-                # Erstellen eines Labels für die Überschrift innerhalb des bot_scores_frame
+                # Erstellung einer Überschrift
                 header_label = tk.Label(bot_scores_frame, text="Haeuser-Scores", bg="#f5deb3",
                                         font=("Harry P", 40))
                 header_label.pack()  # Packen der Überschrift im bot_scores_frame
