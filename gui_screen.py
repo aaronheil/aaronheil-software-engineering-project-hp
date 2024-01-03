@@ -2,11 +2,13 @@ import tkinter as tk
 from tkinter import messagebox
 from tkinter import Canvas
 from tkinter import PhotoImage
+import utils
 from main import choose_quiz
 from utils import set_house_background
 from main import choose_quiz
 import datetime
 from PIL import Image, ImageTk
+from utils import set_frame_background
 from utils import set_background
 from bots import bots, update_bot_scores
 from bots import HogwartsBot, update_bot_scores
@@ -134,19 +136,29 @@ def start_quiz(house_name=None):
 
             # Erstellen des Frames für Bot-Scores, ohne vertikale Ausdehnung
             if bot_scores_frame is None:
-                bot_scores_frame = tk.Frame(quiz_window, bg='light grey', width=330)  # Beschränkung der Breite
+                bot_scores_frame = tk.Frame(quiz_window, width=330)  # Beschränkung der Breite
+
+                bg_image = Image.open(r"C:\Users\aaron\Desktop\HPQ_IU_Material\pictures\prod_pergament.png")  # Ersetzen Sie dies durch den Pfad zu Ihrem Bild
+                bg_photo = ImageTk.PhotoImage(bg_image)
+
+                # Erstellen eines Labels oder Canvas, um das Bild zu platzieren
+                background_label = tk.Label(bot_scores_frame, image=bg_photo)
+                background_label.place(x=0, y=0, relwidth=1, relheight=1)
+                background_label.image = bg_photo
+
 
                 # Erstellen eines Labels für die Überschrift innerhalb des bot_scores_frame
-                header_label = tk.Label(bot_scores_frame, text="Haeuser-Scores", bg='light grey',
+                header_label = tk.Label(bot_scores_frame, text="Haeuser-Scores", bg="#f5deb3",
                                         font=("Harry P", 40))
                 header_label.pack()  # Packen der Überschrift im bot_scores_frame
 
                 # Packen des bot_scores_frame mit Überschrift
                 bot_scores_frame.pack(side='left', anchor='n')
 
+
             # hogwarts bots
             for name in bots.keys():
-                bot_score_labels[name] = tk.Label(bot_scores_frame, text=f"{name}: 0", bg='light grey', font=("Arial", 19))
+                bot_score_labels[name] = tk.Label(bot_scores_frame, text=f"{name}: 0", bg="#f5deb3", font=("Arial", 19))
                 bot_score_labels[name].pack()  # Labels werden jetzt untereinander angeordnet
 
     for widget in quiz_window.winfo_children():
@@ -161,19 +173,38 @@ def start_quiz(house_name=None):
 
     # Erstellen des Frames für Quiz-Widgets
     if quiz_widget_frame is None:
-        quiz_widget_frame = tk.Frame(quiz_window, bg='light grey', width=330) # Beschränkung der Breite
+        quiz_widget_frame = tk.Frame(quiz_window, width=330) # Beschränkung der Breite
+
+        bg_image = Image.open(r"C:\Users\aaron\Desktop\HPQ_IU_Material\pictures\prod_perg_1.png")
+        bg_photo = ImageTk.PhotoImage(bg_image)
+
+        # Erstellen eines Labels oder Canvas, um das Bild zu platzieren
+        background_label = tk.Label(quiz_widget_frame, image=bg_photo)
+        background_label.place(x=0, y=0, relwidth=1, relheight=1)
+        background_label.image = bg_photo
 
         # Erstellen eines Labels für die Überschrift innerhalb des quiz_widget_frame
-        quiz_widget_label = tk.Label(quiz_widget_frame, text="Quiz", bg='light grey',
+        quiz_widget_label = tk.Label(quiz_widget_frame, text="Quiz", bg="#f5deb3",
                                              font=("Harry P", 40))
         quiz_widget_label.pack()  # Packen der Überschrift im quiz_widget_frame
 
         # Packen des quiz_widget_frame mit Überschrift
         quiz_widget_frame.pack(side='left', anchor='n')
 
+
     # Erstellen des Test-Frames
     if test_frame is None:
-        test_frame = tk.Frame(quiz_window, bg='red', padx=10, pady=10)  # Auffällige Farbe für das Testen
+        test_frame = tk.Frame(quiz_window, padx=10, pady=10)  # Auffällige Farbe für das Testen
+
+        # Laden des Bildes und Anpassen an die Größe des Frames
+        bg_image = Image.open(r"C:\Users\aaron\Desktop\HPQ_IU_Material\pictures\prod_perg_1.png")  # Ersetzen Sie dies durch den Pfad zu Ihrem Bild
+        bg_photo = ImageTk.PhotoImage(bg_image)
+
+        # Erstellen eines Labels oder Canvas, um das Bild zu platzieren
+        background_label = tk.Label(test_frame, image=bg_photo)
+        background_label.place(x=0, y=0, relwidth=1, relheight=1)
+        background_label.image = bg_photo  # Verhindert, dass das Bild vom Garbage Collector gelöscht wird
+
         test_label = tk.Label(test_frame, text="Test", font=("Arial", 16), bg='red')
         test_button = tk.Button(test_frame, text="Button", command=lambda: print("Button gedrückt"))
 
@@ -201,7 +232,7 @@ def start_quiz(house_name=None):
     # Lade die nächste Frage und zeige sie an
     if question_count < NUM_QUESTIONS:
         question, options, correct_answer = choose_quiz()
-        question_label = tk.Label(quiz_widget_frame, text=question, bg='light grey', font=("Arial", 14, "bold"))
+        question_label = tk.Label(quiz_widget_frame, text=question, bg='white', font=("Arial", 14, "bold"))
         question_label.pack()
 
         for i, option in enumerate(options, 1):
@@ -215,9 +246,9 @@ def start_quiz(house_name=None):
         if result_label is not None:
             result_label.destroy()
 
-        score_label = tk.Label(bot_scores_frame, text=f"{user_house} (You): {score}", bg='light grey', font=("Arial", 19))
+        score_label = tk.Label(bot_scores_frame, text=f"{user_house} (You): {score}", bg="#f5deb3", font=("Arial", 19))
         score_label.pack()
-        result_label = tk.Label(bot_scores_frame, text="", bg='light grey', font=("Arial", 19))
+        result_label = tk.Label(bot_scores_frame, text="", bg="#f5deb3", font=("Arial", 19))
         result_label.pack()
     else:
         end_quiz()

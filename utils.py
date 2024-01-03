@@ -3,6 +3,7 @@ from tkinter import Canvas
 from tkinter import PhotoImage
 import sys
 print(sys.executable)
+import tkinter as tk
 from PIL import Image, ImageTk
 
 
@@ -57,3 +58,19 @@ def set_house_background(window, image_path):
     canvas.lower(window)  # Verschiebe das Canvas-Widget hinter das Hauptfenster
 
     return window.bg_image
+
+def set_frame_background(frame, image_path):
+    # Bild laden und an Frame-Größe anpassen
+    bg_image = Image.open(image_path)
+    bg_image = bg_image.resize((frame.winfo_width(), frame.winfo_height()), Image.Resampling.LANCZOS)
+    bg_photo = ImageTk.PhotoImage(bg_image)
+
+    # Canvas erstellen und im Frame anordnen
+    canvas = tk.Canvas(frame, width=frame.winfo_width(), height=frame.winfo_height())
+    canvas.pack(fill="both", expand=True)
+
+    # Hintergrundbild auf dem Canvas anordnen
+    canvas.create_image(0, 0, image=bg_photo, anchor="nw")
+
+    # Speichern Sie das Bild im Canvas-Widget, um Garbage Collection zu vermeiden
+    canvas.image = bg_photo
