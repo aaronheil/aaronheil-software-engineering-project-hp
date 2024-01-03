@@ -1,7 +1,6 @@
 # utils.py
 from tkinter import Canvas
 from tkinter import PhotoImage
-import pillow as PIL
 import sys
 print(sys.executable)
 from PIL import Image, ImageTk
@@ -34,6 +33,7 @@ def set_background(window, image_path):
     canvas.place(relx=0, rely=0, anchor="nw")
 
     return window.bg_image
+
 
 
 def set_house_background(window, image_path):

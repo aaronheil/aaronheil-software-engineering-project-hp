@@ -14,7 +14,7 @@ Session = sessionmaker(bind=engine)
 session = Session()
 
 # Daten aus CSV-Datei laden
-df = pd.read_csv('/Users/heilscan/Desktop/Software Engineering Project/hp_db_prod.csv', sep=";")
+df = pd.read_csv(r"C:\Users\aaron\Desktop\HPQ_IU_Material\hp_db_prod.csv", sep=";")
 df.index.name = 'id'
 
 # Datenbanktabelle erstellen und Daten einfügen
@@ -35,32 +35,13 @@ def choose_quiz():
 
 
 def get_random_options(question_id):
-    # Pseudozufallszahlen für Auswahl generieren
-    random_options = ran.sample(set(df.index) - {question_id}, 3)
+    # Umwandlung des 'set' in eine Liste für 'random.sample'
+    random_option_ids = random.sample(list(set(df.index) - {question_id}), 3)
 
-    # Mögliche Antworten aus der Datenbank abrufen
-    query = text(f"SELECT `Wirkung` FROM zaubersprueche WHERE id IN ({', '.join(map(str, random_options))})")
-    results = session.execute(query).fetchall()
+    # Erstellen einer parameterisierten Abfrage
+    query = text("SELECT `Wirkung` FROM zaubersprueche WHERE id IN (:option1, :option2, :option3)")
+    results = session.execute(query, {'option1': random_option_ids[0], 'option2': random_option_ids[1], 'option3': random_option_ids[2]}).fetchall()
 
     # Antworten zurückgeben
     return [result[0] for result in results]
 
-
-def play_quiz():
-    user_score = 0
-    while user_score < 4:
-        question, options, correct_answer = choose_quiz()
-
-        print(f"Frage: {question}")
-        print("Antwortmöglichkeiten:")
-        for i, option in enumerate(options, 1):
-            print(f"{i}. {option}")
-
-        user_answer = input("Bitte geben Sie die Nummer Ihrer Antwort ein: ")
-        if options[int(user_answer) - 1] == correct_answer:
-            user_score += 1
-            print("Richtige Antwort!")
-        else:
-            print("Falsche Antwort.")
-
-    return user_score

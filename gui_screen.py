@@ -7,19 +7,24 @@ from utils import set_house_background
 from main import choose_quiz
 import datetime
 from PIL import Image, ImageTk
-from utils import set_background_image
+from utils import set_background
 from bots import bots, update_bot_scores
 from bots import HogwartsBot, update_bot_scores
 
 
 # Globale Variablen
-global quiz_window, house_window, bot_score_labels, score, question_count, house, bot_scores_frame
+global quiz_window, house_window, bot_score_labels, score, question_count, house, bot_scores_frame, quiz_widget_frame, quiz_background_image
 
 # Initialwerte für globale Variablen
 quiz_window = None
 house_window = None
 bot_scores_frame = None
+quiz_widget_frame = None
+test_frame = None
+quiz_background_image = None
 bot_score_labels = {}
+score_label = None
+result_label = None
 score = 0
 question_count = 0
 house = ""
@@ -43,19 +48,23 @@ def open_house_window():
     house_window.title("Harry Potter Quiz")
 
     # Setzen Sie das Fenster in den Vollbildmodus
-    #house_window.attributes("-fullscreen", True)
-    house_window.geometry("1500x1000")  # Beispielgröße, anpassen nach Bedarf
+    house_window.attributes("-fullscreen", True)
+    #house_window.geometry("1500x1000")  # Beispielgröße, anpassen nach Bedarf
 
-    # Hintergrundfoto einfügen
-    background_image = tk.PhotoImage(file="/Users/heilscan/Desktop/Software Engineering Project/pictures/prod_promt_hausauswahl.png")
+    # Laden des Hintergrundbildes mit PIL und Größenanpassung
+    pil_image = Image.open(r"C:\Users\aaron\Desktop\HPQ_IU_Material\pictures\prod_promt_hausauswahl1.png")
+    pil_image = pil_image.resize((1400, 335), Image.Resampling.LANCZOS)  # Verwenden Sie Image.Resampling.LANCZOS
+    background_image = ImageTk.PhotoImage(pil_image)
+
+
     background_label = tk.Label(house_window, image=background_image)
     background_label.grid(row=0, column=0, columnspan=4, sticky="nsew")
 
     # 1.1 Ein Haus auswählen; Haus-Bild = Button
-    image_gryffindor = tk.PhotoImage(file="/Users/heilscan/Desktop/Software Engineering Project/pictures/gryffindor.png")
-    image_slytherin = tk.PhotoImage(file="/Users/heilscan/Desktop/Software Engineering Project/pictures/slytherin.png")
-    image_hufflepuff = tk.PhotoImage(file="/Users/heilscan/Desktop/Software Engineering Project/pictures/hufflepuff.png")
-    image_ravenclaw = tk.PhotoImage(file="/Users/heilscan/Desktop/Software Engineering Project/pictures/ravenclaw.png")
+    image_gryffindor = tk.PhotoImage(file=r"C:\Users\aaron\Desktop\HPQ_IU_Material\pictures\gryffindor.png")
+    image_slytherin = tk.PhotoImage(file=r"C:\Users\aaron\Desktop\HPQ_IU_Material\pictures\slytherin.png")
+    image_hufflepuff = tk.PhotoImage(file=r"C:\Users\aaron\Desktop\HPQ_IU_Material\pictures\hufflepuff.png")
+    image_ravenclaw = tk.PhotoImage(file=r"C:\Users\aaron\Desktop\HPQ_IU_Material\pictures\ravenclaw.png")
 
     # Konfigurieren Sie die Buttons für jedes Haus, um sie im Raster anzuordnen
     btn_gryffindor = tk.Button(house_window, image=image_gryffindor, command=lambda: on_house_select('Gryffindor'))
@@ -89,9 +98,16 @@ def on_house_select(house_name):
         house_window.destroy()
     start_quiz(house_name)  # Öffnet das Quizfenster
 
+def toggle_fullscreen(event=None):
+    quiz_window.attributes("-fullscreen", False)  # Schaltet den Vollbildmodus aus
+    quiz_window.destroy()  # Schließt das Fenster
+
+#def close_window():
+    #quiz_window.destroy()
+
 # 2. Quiz-Fenster öffnen
 def start_quiz(house_name=None):
-    global quiz_window, score_label, result_label, score, house, bot_score_labels, bots, bot_scores_frame, question_count, options
+    global quiz_window, score_label, result_label, score, house, bot_score_labels, bots, bot_scores_frame, quiz_widget_frame, question_count, options, user_house, test_frame, quiz_background_image
 
     # Setze das ausgewählte Haus als das aktuelle Haus
     if house_name:
@@ -102,42 +118,106 @@ def start_quiz(house_name=None):
     if quiz_window is None:
         quiz_window = tk.Tk()
         quiz_window.title(f"Harry Potter Quiz - {house}")
-        quiz_window.geometry("1000x800")
+        quiz_window.attributes("-fullscreen", True)
+        # Schaltfläche zum Schließen des Fensters
+        #close_button = tk.Button(quiz_window, text="Schließen", command=close_window)
+        #close_button.pack()
+        # Tastenkombination zum Verlassen des Vollbildmodus
+        quiz_window.bind("<Escape>", toggle_fullscreen)
         score = 0
         question_count = 0
+
 
         # Entfernen des ausgewählten Hauses aus den Bots
         if house in bots:
             del bots[house]  # Entfernt das ausgewählte Haus aus den Bots
 
-        # Erstellen des Frames für Bot-Scores, wenn es noch nicht existiert
-        if bot_scores_frame is None:
-            bot_scores_frame = tk.Frame(quiz_window, bg='light grey')
-            bot_scores_frame.pack(side='top', fill='x')
-# hogwarts bots
-            for name in bots.keys():
-                bot_score_labels[name] = tk.Label(bot_scores_frame, text=f"{name} Punktzahl: 0", bg='light grey')
-                bot_score_labels[name].pack(side='left')
+            # Erstellen des Frames für Bot-Scores, ohne vertikale Ausdehnung
+            if bot_scores_frame is None:
+                bot_scores_frame = tk.Frame(quiz_window, bg='light grey', width=330)  # Beschränkung der Breite
 
-    # Entfernen aller Widgets, die nicht zum bot_scores_frame gehören
+                # Erstellen eines Labels für die Überschrift innerhalb des bot_scores_frame
+                header_label = tk.Label(bot_scores_frame, text="Haeuser-Scores", bg='light grey',
+                                        font=("Harry P", 40))
+                header_label.pack()  # Packen der Überschrift im bot_scores_frame
+
+                # Packen des bot_scores_frame mit Überschrift
+                bot_scores_frame.pack(side='left', anchor='n')
+
+            # hogwarts bots
+            for name in bots.keys():
+                bot_score_labels[name] = tk.Label(bot_scores_frame, text=f"{name}: 0", bg='light grey', font=("Arial", 19))
+                bot_score_labels[name].pack()  # Labels werden jetzt untereinander angeordnet
+
     for widget in quiz_window.winfo_children():
-        if widget != bot_scores_frame:
+        # Überprüfe, ob das Widget das Hintergrundbild ist
+        if isinstance(widget, tk.Label) and widget.cget("image") == str(quiz_background_image):
+            continue  # Überspringe das Hintergrundbild-Widget
+
+        if widget != bot_scores_frame and widget != test_frame:
             widget.destroy()
+            if widget == quiz_widget_frame:
+                quiz_widget_frame = None
+
+    # Erstellen des Frames für Quiz-Widgets
+    if quiz_widget_frame is None:
+        quiz_widget_frame = tk.Frame(quiz_window, bg='light grey', width=330) # Beschränkung der Breite
+
+        # Erstellen eines Labels für die Überschrift innerhalb des quiz_widget_frame
+        quiz_widget_label = tk.Label(quiz_widget_frame, text="Quiz", bg='light grey',
+                                             font=("Harry P", 40))
+        quiz_widget_label.pack()  # Packen der Überschrift im quiz_widget_frame
+
+        # Packen des quiz_widget_frame mit Überschrift
+        quiz_widget_frame.pack(side='left', anchor='n')
+
+    # Erstellen des Test-Frames
+    if test_frame is None:
+        test_frame = tk.Frame(quiz_window, bg='red', padx=10, pady=10)  # Auffällige Farbe für das Testen
+        test_label = tk.Label(test_frame, text="Test", font=("Arial", 16), bg='red')
+        test_button = tk.Button(test_frame, text="Button", command=lambda: print("Button gedrückt"))
+
+        # Packen der Widgets im Test-Frame
+        test_label.pack(pady=(0, 10))
+        test_button.pack()
+
+        # Packen des Test-Frames im quiz_window
+        test_frame.pack(side='bottom', fill='x')
+
+
+
+
+    if quiz_background_image is None:
+        # Laden des Hintergrundbildes
+        quiz_background_image = tk.PhotoImage(file=r"C:\Users\aaron\Desktop\HPQ_IU_Material\pictures\prod_perg_1.png")  # Ändern Sie den Pfad zum Bild
+        # Nachdem alle anderen Widgets hinzugefügt wurden
+        quiz_background_label = tk.Label(quiz_window, image=quiz_background_image)
+        quiz_background_label.place(x=0, y=0, relwidth=1, relheight=1)
+        quiz_background_label.lower()  # Setzt das Hintergrundbild hinter alle anderen Widgets
+        # Lade das Bild und skaliere es auf die Größe des Fensters
+
+
 
     # Lade die nächste Frage und zeige sie an
     if question_count < NUM_QUESTIONS:
         question, options, correct_answer = choose_quiz()
-        question_label = tk.Label(quiz_window, text=question, bg='light grey')
+        question_label = tk.Label(quiz_widget_frame, text=question, bg='light grey', font=("Arial", 14, "bold"))
         question_label.pack()
 
         for i, option in enumerate(options, 1):
-            button = tk.Button(quiz_window, text=option, bg='white')
+            button = tk.Button(quiz_widget_frame, text=option, bg='white', font=("Arial", 14))
             button.pack()
             button.configure(command=lambda b=button, o=option: check_answer(b, o, correct_answer, options))
 
-        score_label = tk.Label(quiz_window, text=f"Punktzahl: {score}", bg='light grey')
+        # Zerstöre score_label und result_label, wenn sie existieren, und erstelle sie neu
+        if score_label is not None:
+            score_label.destroy()
+        if result_label is not None:
+            result_label.destroy()
+
+        score_label = tk.Label(bot_scores_frame, text=f"{user_house} (You): {score}", bg='light grey', font=("Arial", 19))
         score_label.pack()
-        result_label = tk.Label(quiz_window, text="", bg='light grey')
+        result_label = tk.Label(bot_scores_frame, text="", bg='light grey', font=("Arial", 19))
         result_label.pack()
     else:
         end_quiz()
@@ -170,7 +250,7 @@ def update_bots_and_scores(options, correct_answer):
         bot.update_score(bot_choice == correct_answer)
 
         # Aktualisieren Sie die Labels der Bot-Scores
-        bot_score_labels[bot_house].config(text=f"{bot_house} Punktzahl: {bot.score}")
+        bot_score_labels[bot_house].config(text=f"{bot_house}: {bot.score}")
 
 
 def quit_quiz():
@@ -203,67 +283,13 @@ def save_result():
     global score, house
     # Erfasse das aktuelle Datum und die Uhrzeit
     current_time = datetime.datetime.now()
-    formatted_time = current_time.strftime("%Y-%m-%d %H:%M:%S")  # Format: Jahr-Monat-Tag Stunde:Minute:Sekunde
- # Speichert die Ergebnisse des Quiz in einer Datei
+    formatted_time = current_time.strftime("%d.%m.%Y %H:%M:%S")  # Deutsches Datumsformat: Tag.Monat.Jahr Stunde:Minute:Sekunde
+
+    # Speichert die Ergebnisse des Quiz in einer Datei
     with open('results.txt', 'a') as f:
         f.write(f"{house},{score},{formatted_time}\n")  # Fügen Sie das Datum und die Uhrzeit hinzu
     messagebox.showinfo('Erfolg', 'Dein Ergebnis wurde gespeichert.')
     quit_quiz()
-
-
-
-def handle_quiz_round():
-    global question_count, score_label, result_label, bots, bot_score_labels
-    if question_count == NUM_QUESTIONS:
-        end_quiz()  # End the quiz if the maximum number of questions is reached
-    else:
-        question, options, correct_answer = choose_quiz()
-
-        # Entferne alte Label-Werte, bevor sie aktualisiert werden
-        for label in bot_score_labels.values():
-            label.pack_forget()
-
-
-
-        # Display the question and options in the GUI
-        question_label = tk.Label(quiz_window, text=question, bg='light grey')
-        question_label.pack()
-
-        for i, option in enumerate(options, 1):
-            button = tk.Button(quiz_window, text=option, bg='white')
-            button.pack()
-            button.configure(command=lambda button=button, option=option: check_answer(button, option, correct_answer))
-
-
-
-def check_credentials():
-    # Überprüfen Sie die Anmeldeinformationen und starten Sie das Quiz, wenn sie korrekt sind
-    if username_entry.get() == 'admin' and password_entry.get() == 'password':
-        messagebox.showinfo('Erfolg', 'Anmeldung erfolgreich!')
-        login_window.destroy()  # Schließt das Anmeldefenster
-        open_house_window()  # Öffnet das Hausauswahlfenster
-    else:
-        messagebox.showerror('Fehler', 'Falscher Benutzername oder Passwort')
-
-    start_quiz()
-
-
-def handle_quiz_round():
-    global question_count, score_label, result_label, bots, bot_score_labels
-    if question_count == NUM_QUESTIONS:
-        end_quiz()  # End the quiz if the maximum number of questions is reached
-    else:
-        question, options, correct_answer = choose_quiz()
-
-
-        # Display the question and options in the GUI
-        question_label = tk.Label(quiz_window, text=question, bg='light grey')
-        question_label.pack()
-
-        for i, option in enumerate(options, 1):
-            button = tk.Button(quiz_window, text=option, bg='white')
-            button.pack()
-            button.configure(command=lambda button=button, option=option: check_answer(button, option, correct_answer))
 
 
 
