@@ -2,6 +2,7 @@
 from tkinter import Canvas
 from tkinter import PhotoImage
 import sys
+import pygame
 print(sys.executable)
 import tkinter as tk
 from PIL import Image, ImageTk
@@ -74,3 +75,6 @@ def set_frame_background(frame, image_path):
 
     # Speichern Sie das Bild im Canvas-Widget, um Garbage Collection zu vermeiden
     canvas.image = bg_photo
+
+
+

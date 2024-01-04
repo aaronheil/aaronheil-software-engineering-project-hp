@@ -95,7 +95,7 @@ def open_house_window():
 # Funktion, die aufgerufen wird, wenn ein Haus ausgewählt wird
 def on_house_select(house_name):
     global house_window
-    print(f"{house_name} ausgewählt")  # Beispielaktion, hier Ihre Logik einfügen
+    print(f"{house_name} ausgewählt")
     if house_window is not None:
         house_window.destroy()
     start_quiz(house_name)  # Öffnet das Quizfenster
