@@ -3,6 +3,7 @@ import pygame
 from tkinter import PhotoImage
 from utils import set_background
 from quiz_screen import open_house_window
+import home_screen
 
 
 def play_music():
@@ -15,7 +16,8 @@ def play_music():
 def open_quiz():
     play_music()  # Musik abspielen
     login_window.destroy()
-    open_house_window()
+    #open_house_window()
+    home_screen.open_home_screen()
 
 
 # Hauptfenster erstellen

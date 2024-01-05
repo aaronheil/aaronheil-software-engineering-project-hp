@@ -8,15 +8,6 @@ import tkinter as tk
 from PIL import Image, ImageTk
 
 
-# Hier definieren Sie die Funktion set_background_image
-def set_background_image(window, image_path):
-    image = Image.open(image_path)
-    image = image.resize((window.winfo_width(), window.winfo_height()), Image.ANTIALIAS)
-    photo_image = ImageTk.PhotoImage(image)
-    background_label = tk.Label(window, image=photo_image)
-    background_label.place(x=0, y=0, relwidth=1, relheight=1)
-    background_label.image = photo_image  # Verhindert, dass das Bild vom Garbage Collector gelöscht wird
-
 
 def set_background(window, image_path):
     window.state('zoomed')  # Maximiere das Fenster
@@ -35,7 +26,6 @@ def set_background(window, image_path):
     canvas.place(relx=0, rely=0, anchor="nw")
 
     return window.bg_image
-
 
 
 def set_house_background(window, image_path):
