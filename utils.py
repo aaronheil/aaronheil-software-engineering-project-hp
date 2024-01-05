@@ -1,4 +1,6 @@
-# utils.py
+import sqlite3
+
+import pandas as pd
 from tkinter import Canvas
 from tkinter import PhotoImage
 import sys
@@ -7,6 +9,25 @@ print(sys.executable)
 import tkinter as tk
 from PIL import Image, ImageTk
 
+def view_database():
+    # Verbindung zur SQLite-Datenbank herstellen
+    conn = sqlite3.connect('users.db')
+    cursor = conn.cursor()
+
+    # Abfrage der Daten
+    cursor.execute("SELECT * FROM users")
+
+    # Ausgabe der Daten in einer formatierten Tabelle
+    print("ID\tUsername")
+    print("-" * 20)
+    for row in cursor.fetchall():
+        print(f"{row[0]}\t{row[1]}")
+
+    # Schließen der Verbindung
+    conn.close()
+
+if __name__ == "__main__":
+    view_database()
 
 
 def set_background(window, image_path):
