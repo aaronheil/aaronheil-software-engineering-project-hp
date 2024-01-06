@@ -23,33 +23,93 @@ Base.metadata.create_all(engine)
 Session = sessionmaker(bind=engine)
 session = Session()
 
+def is_username_existing(username):
+    return session.query(User).filter_by(username=username).first() is not None
+
+def add_username(username):
+    if not is_username_existing(username):
+        new_user = User(username=username)
+        session.add(new_user)
+        session.commit()
+        return True
+    return False
+
+def get_recent_usernames(limit=10):
+    return [user.username for user in session.query(User.username).order_by(User.id.desc()).limit(limit)]
+
+def search_username(search_term):
+    return session.query(User.username).filter(User.username.like(f"%{search_term}%")).all()
+
+
+def on_name_submit():
+    username = dropdown_var.get()
+    if add_username(username):
+        update_ui_with_new_username(username)  # Update your UI accordingly
+    else:
+        tk.messagebox.showinfo("Info", "Dieser Name existiert bereits.")
+
+def update_ui_with_new_username(username):
+    welcome_label.config(text=f"Hallo {username}")
+    # Update the dropdown menu with recent usernames
+    dropdown['values'] = get_recent_usernames()
+
+def get_all_usernames():
+    return session.query(User.username).all()
 
 def get_or_create_username():
-    # Überprüfen, ob bereits ein Benutzername gespeichert ist
-    user = session.query(User).first()
-    if user:
-        return user.username
+    usernames = get_all_usernames()
+    if usernames:
+        return usernames[-1][0]  # Letzter Benutzername
     else:
-        # Eingabeaufforderung für den Benutzernamen
         username = simpledialog.askstring("Benutzername", "Wie lautet Ihr Name?")
-        if username:  # Überprüfen, ob der Benutzer tatsächlich einen Namen eingegeben hat
-            new_user = User(username=username)
-            session.add(new_user)
-            session.commit()
-            return username
-        else:
-            return "Unbekannter Benutzer"  # Standardname, falls kein Name eingegeben wurde
+        add_username(username)
+        return username if username else "Unbekannter Benutzer"
 
 def change_user(label):
-    # Funktion, um Benutzernamen zu ändern und das Label zu aktualisieren
     new_username = simpledialog.askstring("Neuer Benutzer", "Neuer Benutzername:")
-    user = session.query(User).first()
-    if user and new_username:
-        user.username = new_username
-        session.commit()
+    if new_username:
+        add_username(new_username)
         label.config(text=f"Hallo {new_username}")
 
+# ... [Vorherige Funktionsdefinitionen wie is_username_existing, add_username, usw.]
+
+def update_dropdown(*args):
+    search_term = dropdown_var.get()
+    filtered_names = search_username(search_term)
+    dropdown['values'] = [name[0] for name in filtered_names]
+    if not filtered_names:
+        tk.messagebox.showinfo("Suche", "Kein passender Benutzername gefunden.")
+
+
+def on_dropdown_select(event):
+    selected_name = dropdown.get()
+    update_ui_with_new_username(selected_name)
+
+def on_double_click(event):
+    selected_name = dropdown.get()
+    update_ui_with_new_username(selected_name)
+
+def on_enter_pressed(event):
+    update_dropdown()  # Aktualisiert die Liste basierend auf dem eingegebenen Suchbegriff
+    dropdown.event_generate('<Down>')  # Öffnet das Dropdown-Menü
+
+    # Sie können hier noch eine zusätzliche Logik einfügen, falls erforderlich
+
+
+
+def on_right_click(event):
+    selected_name = dropdown.get()
+    if tk.messagebox.askyesno("Löschen", f"Möchten Sie '{selected_name}' löschen?"):
+        user_to_delete = session.query(User).filter_by(username=selected_name).first()
+        if user_to_delete:
+            session.delete(user_to_delete)
+            session.commit()
+            update_ui_with_new_username("Unbekannter Benutzer")
+            dropdown['values'] = get_recent_usernames()
+
+
 def open_home_screen():
+    global name_entry, dropdown, dropdown_var, welcome_label
     home_window = tk.Tk()
     home_window.title("Home")
     home_window.attributes("-fullscreen", True)
@@ -82,8 +142,34 @@ def open_home_screen():
     welcome_label.pack(padx=10, pady=10)
 
     # Button zum Ändern des Benutzernamens
-    change_user_button = tk.Button(tab1, text="Benutzer wechseln", command=lambda: change_user(welcome_label))
+    change_user_button = tk.Button(tab1, text="Neuen User anlegen", command=lambda: change_user(welcome_label))
     change_user_button.pack(padx=10, pady=10)
+
+    # Dropdown-Menü für die Namenseingabe und -suche
+    dropdown_var = tk.StringVar()
+    dropdown = ttk.Combobox(tab1, textvariable=dropdown_var, values=get_recent_usernames())
+
+    # Bindet ein Ereignis, um auf Doppelklick zu reagieren
+    dropdown.bind("<Double-1>", on_double_click)
+
+    # Bindet ein Ereignis, um auf Rechtsklick zu reagieren
+    dropdown.bind("<Button-3>", on_right_click)
+
+    # Bindet die Enter-Taste, um die update_dropdown Funktion aufzurufen und das Dropdown-Menü zu öffnen
+    dropdown.bind("<Return>", on_enter_pressed)
+
+    # Bindet die Auswahl im Dropdown, um die Auswahl zu behandeln
+    dropdown.bind("<<ComboboxSelected>>", on_dropdown_select)
+
+    # Automatische Aktualisierung der Dropdown-Liste bei Textänderung
+    dropdown_var.trace("w", update_dropdown)
+
+    # Platzieren des Dropdown-Menüs im GUI
+    dropdown.pack()
+
+    # Button-Text ändern
+    submit_button = tk.Button(tab1, text="User auswählen", command=on_name_submit)
+    submit_button.pack()
 
     home_window.mainloop()
 
