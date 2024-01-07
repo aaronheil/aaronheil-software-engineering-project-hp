@@ -37,7 +37,6 @@ photo_button = tk.Button(login_window, image=photo, command=open_quiz,
 
 photo_button.place(x=430, y=300)
 
-
 photo_button.place(x=430, y=300)
 
 

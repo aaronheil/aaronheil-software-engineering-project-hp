@@ -4,6 +4,8 @@ from tkinter import simpledialog
 from sqlalchemy import create_engine, Column, String, Integer
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker
+from PIL import Image, ImageTk
+
 
 import pygame
 from tkinter import PhotoImage
@@ -107,26 +109,28 @@ def on_right_click(event):
             update_ui_with_new_username("Unbekannter Benutzer")
             dropdown['values'] = get_recent_usernames()
 
-
 def open_home_screen():
     global name_entry, dropdown, dropdown_var, welcome_label
+
+    def open_house_selection():
+        home_window.destroy()
+        open_house_window()
+
     home_window = tk.Tk()
     home_window.title("Home")
     home_window.attributes("-fullscreen", True)
 
     style = ttk.Style()
-    style.configure('Blue.TFrame', background='light blue')
-    style.configure('Green.TFrame', background='light green')
-    style.configure('Yellow.TFrame', background='light yellow')
+    style.configure('Beige.TFrame', background="black")
 
     style.configure('TNotebook.Tab', font=('Harry P', '100'))  # Schriftart und Größe
 
     tabControl = ttk.Notebook(home_window)
 
     # Erstellen von Tabs mit spezifischer Hintergrundfarbe
-    tab1 = ttk.Frame(tabControl, style='Blue.TFrame')
-    tab2 = ttk.Frame(tabControl, style='Green.TFrame')
-    tab3 = ttk.Frame(tabControl, style='Yellow.TFrame')
+    tab1 = ttk.Frame(tabControl, style='Beige.TFrame')
+    tab2 = ttk.Frame(tabControl, style='Beige.TFrame')
+    tab3 = ttk.Frame(tabControl, style='Beige.TFrame')
 
     tabControl.add(tab1, text='⌂ Home')
     tabControl.add(tab2, text='\U0001F3C6 Erfolge')
@@ -170,6 +174,17 @@ def open_home_screen():
     # Button-Text ändern
     submit_button = tk.Button(tab1, text="User auswählen", command=on_name_submit)
     submit_button.pack()
+
+    # Laden des Bildes und Größenänderung
+    original_image = Image.open(r"C:\Users\aaron\Desktop\HPQ_IU_Material\pictures\prod_hogwarts_houses.png")  # Ersetzen Sie "Pfad_zum_Bild.png" mit dem tatsächlichen Pfad Ihres Bildes
+    resized_image = original_image.resize((300, 300),
+                                          Image.Resampling.LANCZOS)  # Ändern Sie die Größenwerte (200, 100) entsprechend Ihren Bedürfnissen
+    house_selection_image = ImageTk.PhotoImage(resized_image)
+
+    # Button zum Öffnen des Hausauswahl-Bildschirms mit dem Bild
+    house_selection_button = tk.Button(tab1, image=house_selection_image, command=open_house_selection, borderwidth=3, relief="solid")
+    house_selection_button.image = house_selection_image  # Dies ist notwendig, um das Bildreferenzproblem zu vermeiden
+    house_selection_button.pack(padx=10, pady=10)
 
     home_window.mainloop()
 
