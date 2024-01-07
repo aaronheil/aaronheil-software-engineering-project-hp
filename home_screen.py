@@ -120,21 +120,31 @@ def open_home_screen():
     home_window.title("Home")
     home_window.attributes("-fullscreen", True)
 
+    # Konfigurieren des Stils für die Tabs
     style = ttk.Style()
-    style.configure('Beige.TFrame', background="black")
+    style.configure('TNotebook.Tab', font=('Harry P', '100'))  # Beibehalten der Schriftart und Größe
 
-    style.configure('TNotebook.Tab', font=('Harry P', '100'))  # Schriftart und Größe
+    # Laden des Hintergrundbildes
+    background_image_path = r"C:\Users\aaron\Desktop\HPQ_IU_Material\pictures\prod_perg_1.png"
+    bg_image = Image.open(background_image_path)
+    bg_photo = ImageTk.PhotoImage(bg_image)
 
     tabControl = ttk.Notebook(home_window)
 
-    # Erstellen von Tabs mit spezifischer Hintergrundfarbe
-    tab1 = ttk.Frame(tabControl, style='Beige.TFrame')
-    tab2 = ttk.Frame(tabControl, style='Beige.TFrame')
-    tab3 = ttk.Frame(tabControl, style='Beige.TFrame')
+    # Erstellen der Tabs
+    tab1 = ttk.Frame(tabControl)
+    tab2 = ttk.Frame(tabControl)
+    tab3 = ttk.Frame(tabControl)
+
+    # Hintergrundbilder hinzufügen
+    for tab in [tab1, tab2, tab3]:
+        bg_label = tk.Label(tab, image=bg_photo)
+        bg_label.place(x=0, y=0, relwidth=1, relheight=1)
+        bg_label.image = bg_photo
 
     tabControl.add(tab1, text='⌂ Home')
     tabControl.add(tab2, text='\U0001F3C6 Erfolge')
-    tabControl.add(tab3, text='\U0001F4C8 Statistik ')
+    tabControl.add(tab3, text='\U0001F4C8 Statistik')
 
     tabControl.pack(expand=1, fill="both")
 
