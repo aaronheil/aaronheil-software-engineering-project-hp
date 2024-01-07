@@ -186,8 +186,8 @@ def open_home_screen():
     submit_button.pack()
 
     # Laden des Bildes und Größenänderung
-    original_image = Image.open(r"C:\Users\aaron\Desktop\HPQ_IU_Material\pictures\prod_hogwarts_houses.png")  # Ersetzen Sie "Pfad_zum_Bild.png" mit dem tatsächlichen Pfad Ihres Bildes
-    resized_image = original_image.resize((300, 300),
+    original_image = Image.open(r"C:\Users\aaron\Desktop\HPQ_IU_Material\pictures\prod_hgw_houses.png")  # Ersetzen Sie "Pfad_zum_Bild.png" mit dem tatsächlichen Pfad Ihres Bildes
+    resized_image = original_image.resize((300, 400),
                                           Image.Resampling.LANCZOS)  # Ändern Sie die Größenwerte (200, 100) entsprechend Ihren Bedürfnissen
     house_selection_image = ImageTk.PhotoImage(resized_image)
 
