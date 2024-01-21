@@ -12,6 +12,10 @@ from tkinter import PhotoImage
 from utils import set_background
 from quiz_screen import open_house_window
 
+# Globale Variable für den aktuellen Benutzernamen
+current_username = ""
+
+
 # Datenbankmodell
 Base = declarative_base()
 class User(Base):
@@ -51,6 +55,8 @@ def on_name_submit():
         tk.messagebox.showinfo("Info", "Dieser Name existiert bereits.")
 
 def update_ui_with_new_username(username):
+    global current_username
+    current_username = username
     welcome_label.config(text=f"Hallo {username}")
     # Update the dropdown menu with recent usernames
     dropdown['values'] = get_recent_usernames()
@@ -68,9 +74,11 @@ def get_or_create_username():
         return username if username else "Unbekannter Benutzer"
 
 def change_user(label):
+    global current_username
     new_username = simpledialog.askstring("Neuer Benutzer", "Neuer Benutzername:")
     if new_username:
         add_username(new_username)
+        current_username = new_username  # Aktualisieren der globalen Variable
         label.config(text=f"Hallo {new_username}")
 
 # ... [Vorherige Funktionsdefinitionen wie is_username_existing, add_username, usw.]
@@ -110,11 +118,11 @@ def on_right_click(event):
             dropdown['values'] = get_recent_usernames()
 
 def open_home_screen():
-    global name_entry, dropdown, dropdown_var, welcome_label
+    global name_entry, dropdown, dropdown_var, welcome_label, current_username
 
     def open_house_selection():
         home_window.destroy()
-        open_house_window()
+        open_house_window(username=current_username)  # Benutzernamen als Argument übergeben
 
     home_window = tk.Tk()
     home_window.title("Home")
@@ -152,8 +160,8 @@ def open_home_screen():
     username = get_or_create_username()
 
     # Inhalte zu Tab 1 (Home) hinzufügen
-    welcome_label = tk.Label(tab1, text=f"Hallo {username}")
-    welcome_label.pack(padx=10, pady=10)
+    welcome_label = tk.Label(tab1, text=f"Hallo {username}", font=("Arial", 30))  # Schriftgröße auf 20 gesetzt
+    welcome_label.pack(padx=10, pady=10, side='left', anchor='nw')  # Links ausrichten und oben anheften
 
     # Button zum Ändern des Benutzernamens
     change_user_button = tk.Button(tab1, text="Neuen User anlegen", command=lambda: change_user(welcome_label))
@@ -191,10 +199,15 @@ def open_home_screen():
                                           Image.Resampling.LANCZOS)  # Ändern Sie die Größenwerte (200, 100) entsprechend Ihren Bedürfnissen
     house_selection_image = ImageTk.PhotoImage(resized_image)
 
+    # Container-Frame für den Button
+    button_frame = tk.Frame(tab1)
+    button_frame.pack(expand=True)  # Zentriert den Frame im Tab
+
     # Button zum Öffnen des Hausauswahl-Bildschirms mit dem Bild
-    house_selection_button = tk.Button(tab1, image=house_selection_image, command=open_house_selection, borderwidth=3, relief="solid")
-    house_selection_button.image = house_selection_image  # Dies ist notwendig, um das Bildreferenzproblem zu vermeiden
-    house_selection_button.pack(padx=10, pady=10)
+    house_selection_button = tk.Button(button_frame, image=house_selection_image, command=open_house_selection,
+                                       borderwidth=3, relief="solid")
+    house_selection_button.image = house_selection_image  # Vermeiden des Bildreferenzproblems
+    house_selection_button.pack()  # Button im zentrierten Frame platzieren
 
     home_window.mainloop()
 

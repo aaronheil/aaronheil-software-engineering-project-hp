@@ -43,48 +43,43 @@ global image_gryffindor, image_slytherin, image_hufflepuff, image_ravenclaw, bac
 
 
 #1. Hausauswahl-Fenster öffnen
-def open_house_window():
-    global house_window, image_slytherin, image_hufflepuff, image_ravenclaw, background_image
+def open_house_window(username=''):
+    global house_window, image_gryffindor, image_slytherin, image_hufflepuff, image_ravenclaw, background_image
 
     house_window = tk.Tk()
     house_window.title("Harry Potter Quiz")
-
-    # Setzen Sie das Fenster in den Vollbildmodus
     house_window.attributes("-fullscreen", True)
-    #house_window.geometry("1500x1000")  # Beispielgröße, anpassen nach Bedarf
 
     # Laden des Hintergrundbildes mit PIL und Größenanpassung
     pil_image = Image.open(r"C:\Users\aaron\Desktop\HPQ_IU_Material\pictures\prod_promt_hausauswahl1.png")
-    pil_image = pil_image.resize((1400, 335), Image.Resampling.LANCZOS)  # Verwenden Sie Image.Resampling.LANCZOS
+    pil_image = pil_image.resize((1400, 335), Image.Resampling.LANCZOS)
     background_image = ImageTk.PhotoImage(pil_image)
-
 
     background_label = tk.Label(house_window, image=background_image)
     background_label.grid(row=0, column=0, columnspan=4, sticky="nsew")
 
-    # 1.1 Ein Haus auswählen; Haus-Bild = Button
+    # Ein Haus auswählen; Haus-Bild = Button
     image_gryffindor = tk.PhotoImage(file=r"C:\Users\aaron\Desktop\HPQ_IU_Material\pictures\gryffindor.png")
     image_slytherin = tk.PhotoImage(file=r"C:\Users\aaron\Desktop\HPQ_IU_Material\pictures\slytherin.png")
     image_hufflepuff = tk.PhotoImage(file=r"C:\Users\aaron\Desktop\HPQ_IU_Material\pictures\hufflepuff.png")
     image_ravenclaw = tk.PhotoImage(file=r"C:\Users\aaron\Desktop\HPQ_IU_Material\pictures\ravenclaw.png")
 
     # Konfiguration von Buttons
-    btn_gryffindor = tk.Button(house_window, image=image_gryffindor, command=lambda: on_house_select('Gryffindor'))
+    btn_gryffindor = tk.Button(house_window, image=image_gryffindor, command=lambda: on_house_select('Gryffindor', username))
     btn_gryffindor.grid(row=1, column=0, sticky="nsew")
 
-    btn_slytherin = tk.Button(house_window, image=image_slytherin, command=lambda: on_house_select('Slytherin'))
+    btn_slytherin = tk.Button(house_window, image=image_slytherin, command=lambda: on_house_select('Slytherin', username))
     btn_slytherin.grid(row=1, column=1, sticky="nsew")
 
-    btn_hufflepuff = tk.Button(house_window, image=image_hufflepuff, command=lambda: on_house_select('Hufflepuff'))
+    btn_hufflepuff = tk.Button(house_window, image=image_hufflepuff, command=lambda: on_house_select('Hufflepuff', username))
     btn_hufflepuff.grid(row=1, column=2, sticky="nsew")
 
-    btn_ravenclaw = tk.Button(house_window, image=image_ravenclaw, command=lambda: on_house_select('Ravenclaw'))
+    btn_ravenclaw = tk.Button(house_window, image=image_ravenclaw, command=lambda: on_house_select('Ravenclaw', username))
     btn_ravenclaw.grid(row=1, column=3, sticky="nsew")
 
     # Konfiguration von dem Gewicht der Spalten und Zeilen
     for i in range(4):
         house_window.grid_columnconfigure(i, weight=1)
-
     house_window.grid_rowconfigure(0, weight=1) # Kleinerer Anteil für das Foto
     house_window.grid_rowconfigure(1, weight=3) # Größerer Anteil für die Buttons
 
@@ -92,13 +87,19 @@ def open_house_window():
 
 
 
+
 # Funktion, die aufgerufen wird, wenn ein Haus ausgewählt wird
-def on_house_select(house_name):
+# In quiz_screen.py
+
+# Funktion, die aufgerufen wird, wenn ein Haus ausgewählt wird
+def on_house_select(house_name, username):
     global house_window
-    print(f"{house_name} ausgewählt")
+    print(f"{house_name} ausgewählt, Benutzer: {username}")
     if house_window is not None:
         house_window.destroy()
-    start_quiz(house_name)  # Öffnet das Quizfenster
+    start_quiz(house_name, username)  # Öffnet das Quizfenster und übergibt den Benutzernamen
+
+
 
 def toggle_fullscreen(event=None):
     quiz_window.attributes("-fullscreen", False)  # Schaltet den Vollbildmodus aus
@@ -108,7 +109,7 @@ def toggle_fullscreen(event=None):
     #quiz_window.destroy()
 
 # 2. Quiz-Fenster öffnen
-def start_quiz(house_name=None):
+def start_quiz(house_name=None, username=''):
     global quiz_window, score_label, result_label, score, house, bot_score_labels, bots, bot_scores_frame, quiz_widget_frame, question_count, options, user_house, test_frame, quiz_background_image
 
     # Setze das ausgewählte Haus als das aktuelle Haus
@@ -237,7 +238,7 @@ def start_quiz(house_name=None):
         for i, option in enumerate(options, 1):
             button = tk.Button(quiz_widget_frame, text=option, bg='white', font=("Arial", 14))
             button.pack()
-            button.configure(command=lambda b=button, o=option: check_answer(b, o, correct_answer, options))
+            button.configure(command=lambda b=button, o=option: check_answer(b, o, correct_answer, options, username))
 
         # Zerstöre score_label und result_label, wenn sie existieren, und erstelle sie neu
         if score_label is not None:
@@ -245,15 +246,16 @@ def start_quiz(house_name=None):
         if result_label is not None:
             result_label.destroy()
 
-        score_label = tk.Label(bot_scores_frame, text=f"{user_house} (You): {score}", bg="#f5deb3", font=("Arial", 19))
+        score_label = tk.Label(bot_scores_frame, text=f"{user_house} ({username}): {score}", bg="#f5deb3",
+                               font=("Arial", 19))
         score_label.pack()
         result_label = tk.Label(bot_scores_frame, text="", bg="#f5deb3", font=("Arial", 19))
         result_label.pack()
     else:
-        end_quiz()
+        end_quiz(username)
 
 
-def check_answer(button, user_answer, correct_answer, options):
+def check_answer(button, user_answer, correct_answer, options, username):
     global score, question_count, bots
     if user_answer == correct_answer:
         button.configure(bg='green')
@@ -267,9 +269,9 @@ def check_answer(button, user_answer, correct_answer, options):
 
     question_count += 1  # Erhöht die Anzahl der gestellten Fragen
     if question_count < NUM_QUESTIONS:
-        quiz_window.after(300, start_quiz)  # Startet die nächste Frage nach 0,3 Sekunden
+        quiz_window.after(300, lambda: start_quiz(house_name=house, username=username))  # Weitergabe des Benutzernamens
     else:
-        end_quiz()
+        end_quiz(username)  # Weitergabe des Benutzernamens
 
 def update_bots_and_scores(options, correct_answer):
     global bots, bot_score_labels
@@ -294,12 +296,13 @@ def quit_quiz():
 
     #open_login_window()
 
-def end_quiz():
+def end_quiz(username=''):
     global score, house
     for widget in quiz_window.winfo_children():
         widget.destroy()  # Entfernt alle vorhandenen Widgets
 
-    end_label = tk.Label(quiz_window, text=f"Du hast das Quiz beendet. Deine Punktzahl ist {score}.", bg='light grey')
+    end_label = tk.Label(quiz_window, text=f"Du hast das Quiz beendet, {username}. Deine Punktzahl ist {score}.",
+                         bg='light grey')
     end_label.pack()
 
     save_button = tk.Button(quiz_window, text="Ergebnis speichern", command=save_result)
