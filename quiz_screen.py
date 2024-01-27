@@ -15,7 +15,7 @@ from bots import HogwartsBot, update_bot_scores
 
 
 # Globale Variablen
-global quiz_window, house_window, bot_score_labels, score, question_count, house, bot_scores_frame, quiz_widget_frame, quiz_background_image
+global quiz_window, house_window, bot_score_labels, score, question_count, house, bot_scores_frame, quiz_widget_frame, quiz_background_image, in_tiebreaker_round
 
 # Initialwerte für globale Variablen
 quiz_window = None
@@ -30,6 +30,7 @@ result_label = None
 score = 0
 question_count = 0
 house = ""
+in_tiebreaker_round = False
 
 # Konstante für die Anzahl der möglichen Antworten
 NUM_OPTIONS = 4
@@ -256,7 +257,8 @@ def start_quiz(house_name=None, username=''):
 
 
 def check_answer(button, user_answer, correct_answer, options, username):
-    global score, question_count, bots
+    global score, question_count, bots, in_tiebreaker_round
+
     if user_answer == correct_answer:
         button.configure(bg='green')
         result_label.config(text="Richtige Antwort!", fg='green')
@@ -272,6 +274,23 @@ def check_answer(button, user_answer, correct_answer, options, username):
         quiz_window.after(300, lambda: start_quiz(house_name=house, username=username))  # Weitergabe des Benutzernamens
     else:
         end_quiz(username)  # Weitergabe des Benutzernamens
+
+    # Prüfe, ob alle Fragen beantwortet wurden oder ob wir uns in einem Tiebreaker befinden
+    if question_count < NUM_QUESTIONS or in_tiebreaker_round:
+        # Lade die nächste Frage
+        quiz_window.after(300, lambda: start_quiz(house_name=house, username=username))
+    else:
+        # Überprüfe auf Unentschieden nur am Ende des normalen Spiels
+         if not in_tiebreaker_round:
+            max_bot_score = max(bot.score for bot in bots.values())
+            if score == max_bot_score:
+                # Unentschieden detektiert, starte zusätzliche Runden
+                in_tiebreaker_round = True
+                question_count = 0  # Setze die Fragezahl zurück für die zusätzlichen Runden
+                quiz_window.after(300, lambda: start_quiz(house_name=house, username=username))
+            else:
+                # Kein Unentschieden, Spiel endet
+                end_quiz(username)
 
 def update_bots_and_scores(options, correct_answer):
     global bots, bot_score_labels
@@ -297,19 +316,58 @@ def quit_quiz():
     #open_login_window()
 
 def end_quiz(username=''):
-    global score, house
-    for widget in quiz_window.winfo_children():
-        widget.destroy()  # Entfernt alle vorhandenen Widgets
+    global score, house, in_tiebreaker_round, bots, bot_score_labels, question_count
 
-    end_label = tk.Label(quiz_window, text=f"Du hast das Quiz beendet, {username}. Deine Punktzahl ist {score}.",
-                         bg='light grey')
+    if in_tiebreaker_round:
+        max_bot_score = max(bot.score for bot in bots.values())
+        if score > max_bot_score:
+            # Spieler hat gewonnen, Spiel endet
+            in_tiebreaker_round = False
+            messagebox.showinfo("Spielende", f"Herzlichen Glückwunsch {username}, du hast gewonnen!")
+        elif score == max_bot_score:
+            # Unentschieden besteht weiterhin, starte weitere zusätzliche Runden
+            in_tiebreaker_round = True
+            question_count = 0  # Setze die Fragezahl zurück für die zusätzlichen Runden
+            messagebox.showinfo("Unentschieden", "Das Spiel ist unentschieden, wir starten zusätzliche Runden!")
+            quiz_window.after(300, lambda: start_quiz(house_name=house, username=username))
+            return  # Verhindere die Ausführung des restlichen Codes, da das Spiel fortgesetzt wird
+        else:
+            # Ein Bot hat gewonnen, Spiel endet
+            in_tiebreaker_round = False
+            winning_bot = max(bots.items(), key=lambda bot: bot[1].score)[0]
+            messagebox.showinfo("Spielende", f"{winning_bot} hat gewonnen. Viel Glück beim nächsten Mal, {username}!")
+    elif not in_tiebreaker_round and question_count == NUM_QUESTIONS:
+        # Normaler Spielabschluss, wenn nicht in zusätzlichen Runden
+        # Prüfe auf Unentschieden am regulären Spielende
+        max_bot_score = max(bot.score for bot in bots.values())
+        if score > max_bot_score:
+            messagebox.showinfo("Spielende", f"Herzlichen Glückwunsch {username}, du hast gewonnen!")
+        elif score == max_bot_score:
+            # Unentschieden detektiert, starte zusätzliche Runden
+            in_tiebreaker_round = True
+            question_count = 0  # Setze die Fragezahl zurück für die zusätzlichen Runden
+            messagebox.showinfo("Unentschieden", "Das Spiel ist unentschieden, wir starten zusätzliche Runden!")
+            quiz_window.after(300, lambda: start_quiz(house_name=house, username=username))
+            return  # Verhindere die Ausführung des restlichen Codes, da das Spiel fortgesetzt wird
+        else:
+            winning_bot = max(bots.items(), key=lambda bot: bot[1].score)[0]
+            messagebox.showinfo("Spielende", f"{winning_bot} hat gewonnen. Viel Glück beim nächsten Mal, {username}!")
+
+    # Entferne alle vorhandenen Widgets
+    for widget in quiz_window.winfo_children():
+        widget.destroy()
+
+    # Zeige das Ergebnis an
+    end_label = tk.Label(quiz_window, text=f"Du hast das Quiz beendet, {username}. Deine Punktzahl ist {score}.", bg='light grey')
     end_label.pack()
 
+    # Buttons zum Speichern und Abbrechen
     save_button = tk.Button(quiz_window, text="Ergebnis speichern", command=save_result)
     save_button.pack()
 
     cancel_button = tk.Button(quiz_window, text="Abbrechen", command=quit_quiz)
     cancel_button.pack()
+
 
 
 def save_result():
