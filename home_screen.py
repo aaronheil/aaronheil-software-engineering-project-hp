@@ -4,6 +4,7 @@ from tkinter import simpledialog
 from sqlalchemy import create_engine, Column, String, Integer
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker
+from main import User, Leaderboard, get_db_session
 from PIL import Image, ImageTk
 
 
@@ -81,7 +82,7 @@ def change_user(label):
         current_username = new_username  # Aktualisieren der globalen Variable
         label.config(text=f"Hallo {new_username}")
 
-# ... [Vorherige Funktionsdefinitionen wie is_username_existing, add_username, usw.]
+
 
 def update_dropdown(*args):
     search_term = dropdown_var.get()
@@ -117,6 +118,37 @@ def on_right_click(event):
             update_ui_with_new_username("Unbekannter Benutzer")
             dropdown['values'] = get_recent_usernames()
 
+
+def show_leaderboard(tab):
+    style = ttk.Style()
+    style = ttk.Style()
+    style.configure('Treeview', background='#343a40', fieldbackground='#343a40',
+                    foreground='white')  # Dunkelgraue Hintergrund- und weiße Textfarbe für das Leaderboard
+    style.configure('Treeview.Heading', background='#343a40',
+                    foreground='white')  # Dunkelgraue Hintergrund- und weiße Textfarbe für die Überschriften
+
+    session = get_db_session()
+    leaderboard_data = session.query(Leaderboard).order_by(Leaderboard.score.desc()).all()
+
+    # Tabelle für das Leaderboard erstellen
+    columns = ('user', 'house', 'score', 'played_on')
+    leaderboard_table = ttk.Treeview(tab, columns=columns, show='headings')
+
+    # Spaltenüberschriften definieren
+    leaderboard_table.heading('user', text='User')
+    leaderboard_table.heading('house', text='Haus')
+    leaderboard_table.heading('score', text='Punktzahl')
+    leaderboard_table.heading('played_on', text='Gespielt am')
+
+    # Daten in die Tabelle einfügen
+    for entry in leaderboard_data:
+        user = session.query(User).filter_by(id=entry.user_id).first()
+        leaderboard_table.insert('', 'end', values=(user.username, entry.house, entry.score, entry.played_on))
+
+    # Tabelle im Tab platzieren
+    leaderboard_table.pack(expand=True, fill='both')
+
+
 def open_home_screen():
     global name_entry, dropdown, dropdown_var, welcome_label, current_username
 
@@ -131,6 +163,7 @@ def open_home_screen():
     # Konfigurieren des Stils für die Tabs
     style = ttk.Style()
     style.configure('TNotebook.Tab', font=('Harry P', '100'))  # Beibehalten der Schriftart und Größe
+    style.configure('TNotebook', background='#343a40')  # Dunkelgrauer Hintergrund für den gesamten Tab-Bereich
 
     # Laden des Hintergrundbildes
     background_image_path = r"C:\Users\aaron\Desktop\HPQ_IU_Material\pictures\prod_perg_1.png"
@@ -154,7 +187,12 @@ def open_home_screen():
     tabControl.add(tab2, text='\U0001F3C6 Erfolge')
     tabControl.add(tab3, text='\U0001F4C8 Statistik')
 
-    tabControl.pack(expand=1, fill="both")
+    show_leaderboard(tab3)  # Leaderboard im Tab Statistik anzeigen
+
+    # Platzieren der Tabs im Grid-Layout
+    tabControl.grid(row=0, column=0, sticky="nsew")
+    home_window.grid_columnconfigure(0, weight=1)  # Gewichtung der Spalte für gleichmäßige Verteilung
+    home_window.grid_rowconfigure(0, weight=1)
 
     # Benutzernamen abrufen oder erstellen
     username = get_or_create_username()

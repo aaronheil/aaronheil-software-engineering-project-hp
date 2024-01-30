@@ -6,6 +6,7 @@ import utils
 from main import choose_quiz
 from utils import set_house_background
 from main import choose_quiz
+from main import get_db_session, Leaderboard, User
 import datetime
 from PIL import Image, ImageTk
 from utils import set_frame_background
@@ -362,7 +363,7 @@ def end_quiz(username=''):
     end_label.pack()
 
     # Buttons zum Speichern und Abbrechen
-    save_button = tk.Button(quiz_window, text="Ergebnis speichern", command=save_result)
+    save_button = tk.Button(quiz_window, text="Ergebnis speichern", command=lambda: save_result(username))
     save_button.pack()
 
     cancel_button = tk.Button(quiz_window, text="Abbrechen", command=quit_quiz)
@@ -370,15 +371,25 @@ def end_quiz(username=''):
 
 
 
-def save_result():
+def save_result(username):
     global score, house
     # Erfasse das aktuelle Datum und die Uhrzeit
     current_time = datetime.datetime.now()
-    formatted_time = current_time.strftime("%d.%m.%Y %H:%M:%S")  # Deutsches Datumsformat: Tag.Monat.Jahr Stunde:Minute:Sekunde
 
-    # Speichert die Ergebnisse des Quiz in einer Datei
-    with open('results.txt', 'a') as f:
-        f.write(f"{house},{score},{formatted_time}\n")  # Fügen Sie das Datum und die Uhrzeit hinzu
+    session = get_db_session()
+    user = session.query(User).filter_by(username=username).first()
+
+    if user is None:
+        # Wenn der Benutzer nicht existiert, fügen Sie ihn hinzu
+        user = User(username=username)
+        session.add(user)
+        session.commit()
+
+    # Neuen Leaderboard-Eintrag erstellen
+    new_entry = Leaderboard(user_id=user.id, house=house, score=score, played_on=current_time)
+    session.add(new_entry)
+    session.commit()
+
     messagebox.showinfo('Erfolg', 'Dein Ergebnis wurde gespeichert.')
     quit_quiz()
 

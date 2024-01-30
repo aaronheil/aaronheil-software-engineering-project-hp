@@ -2,16 +2,42 @@ import random
 import random as ran
 import sqlalchemy as db
 from sqlalchemy import create_engine, text
-from sqlalchemy.orm import sessionmaker
+from sqlalchemy.orm import sessionmaker, relationship
+from sqlalchemy.ext.declarative import declarative_base
+from sqlalchemy import Column, Integer, String, Float, DateTime, ForeignKey
 import pandas as pd
+import datetime
 
+# Basisdeklaration für das ORM
+Base = declarative_base()
+
+# Benutzermodell
+class User(Base):
+    __tablename__ = 'users'
+    id = Column(Integer, primary_key=True)
+    username = Column(String)
+    leaderboard_entries = relationship("Leaderboard", order_by="Leaderboard.id", back_populates="user")
+
+# Leaderboard-Modell
+class Leaderboard(Base):
+    __tablename__ = 'leaderboard'
+    id = Column(Integer, primary_key=True)
+    user_id = Column(Integer, ForeignKey('users.id'))
+    user = relationship("User", back_populates="leaderboard_entries")
+    house = Column(String)
+    score = Column(Float)
+    played_on = Column(DateTime, default=datetime.datetime.utcnow)
 
 # Datenbankverbindung initialisieren
 engine = create_engine('sqlite:///data.db', echo=False)
+Base.metadata.create_all(engine)  # Erstellt die Tabellen, wenn sie noch nicht existieren
 
 # Session erstellen
 Session = sessionmaker(bind=engine)
 session = Session()
+
+def get_db_session():
+    return Session()
 
 # Daten aus CSV-Datei laden
 df = pd.read_csv(r"C:\Users\aaron\Desktop\HPQ_IU_Material\hp_db_prod.csv", sep=";")
@@ -44,4 +70,3 @@ def get_random_options(question_id):
 
     # Antworten zurückgeben
     return [result[0] for result in results]
-
