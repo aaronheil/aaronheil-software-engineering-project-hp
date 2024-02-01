@@ -233,14 +233,15 @@ def open_home_screen():
     house_selection_button.pack()  # Button im zentrierten Frame platzieren
 
     # Buttons für den Wechsel zwischen Frames
-    home_button = tk.Button(home_window, text='⌂ Home', command=lambda: switch_frame(home_frame))
+    home_button = tk.Button(home_window, text='⌂ Home', command=lambda: switch_frame(home_frame), font=("Harry P", 20))
     home_button.pack(side='left', fill='x', expand=True)
 
-    erfolge_button = tk.Button(home_window, text='\U0001F3C6 Erfolge', command=lambda: switch_frame(erfolge_frame))
+    erfolge_button = tk.Button(home_window, text='\U0001F3C6 Erfolge', command=lambda: switch_frame(erfolge_frame),
+                               font=("Harry P", 20))
     erfolge_button.pack(side='left', fill='x', expand=True)
 
     statistik_button = tk.Button(home_window, text='\U0001F4C8 Statistik',
-                                 command=lambda: switch_frame(statistik_frame))
+                                 command=lambda: switch_frame(statistik_frame), font=("Harry P", 20))
     statistik_button.pack(side='left', fill='x', expand=True)
 
     # Starten Sie mit dem Anzeigen des Home-Frames
