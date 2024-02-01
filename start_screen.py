@@ -5,6 +5,11 @@ from utils import set_background
 from quiz_screen import open_house_window
 import home_screen
 
+def open_quiz():
+    play_music()  # Musik abspielen
+    login_window.destroy()
+    #open_house_window()
+    home_screen.open_home_screen()
 
 def play_music():
     # Musikdatei laden und abspielen
@@ -13,11 +18,7 @@ def play_music():
     pygame.mixer.music.play(-1)  # Endlosschleife: -1 bedeutet, dass die Musik unendlich oft wiederholt wird
 
 
-def open_quiz():
-    play_music()  # Musik abspielen
-    login_window.destroy()
-    #open_house_window()
-    home_screen.open_home_screen()
+
 
 
 # Hauptfenster erstellen

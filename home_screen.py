@@ -149,6 +149,7 @@ def show_leaderboard(tab):
     leaderboard_table.pack(expand=True, fill='both')
 
 
+
 def open_home_screen():
     global name_entry, dropdown, dropdown_var, welcome_label, current_username
 
@@ -160,54 +161,39 @@ def open_home_screen():
     home_window.title("Home")
     home_window.attributes("-fullscreen", True)
 
-    # Konfigurieren des Stils für die Tabs
-    style = ttk.Style()
-    style.configure('TNotebook.Tab', font=('Harry P', '100'))  # Beibehalten der Schriftart und Größe
-    style.configure('TNotebook', background='#343a40')  # Dunkelgrauer Hintergrund für den gesamten Tab-Bereich
+    # Container für Frames
+    frame_container = tk.Frame(home_window)
+    frame_container.pack(fill='both', expand=True)
 
-    # Laden des Hintergrundbildes
-    background_image_path = r"C:\Users\aaron\Desktop\HPQ_IU_Material\pictures\prod_perg_1.png"
-    bg_image = Image.open(background_image_path)
-    bg_photo = ImageTk.PhotoImage(bg_image)
+    # Einzelne Frames mit dunkelgrauer Hintergrundfarbe
+    home_frame = tk.Frame(frame_container, bg='#343a40')
+    erfolge_frame = tk.Frame(frame_container, bg='#343a40')
+    statistik_frame = tk.Frame(frame_container, bg='#343a40')
 
-    tabControl = ttk.Notebook(home_window)
+    # Alle Frames im selben Raum stapeln
+    for frame in [home_frame, erfolge_frame, statistik_frame]:
+        frame.place(x=0, y=0, relwidth=1, relheight=1)
 
-    # Erstellen der Tabs
-    tab1 = ttk.Frame(tabControl)
-    tab2 = ttk.Frame(tabControl)
-    tab3 = ttk.Frame(tabControl)
+    # Funktion, um den Frame zu wechseln
+    def switch_frame(frame):
+        frame.tkraise()
 
-    # Hintergrundbilder hinzufügen
-    for tab in [tab1, tab2, tab3]:
-        bg_label = tk.Label(tab, image=bg_photo)
-        bg_label.place(x=0, y=0, relwidth=1, relheight=1)
-        bg_label.image = bg_photo
-
-    tabControl.add(tab1, text='⌂ Home')
-    tabControl.add(tab2, text='\U0001F3C6 Erfolge')
-    tabControl.add(tab3, text='\U0001F4C8 Statistik')
-
-    show_leaderboard(tab3)  # Leaderboard im Tab Statistik anzeigen
-
-    # Platzieren der Tabs im Grid-Layout
-    tabControl.grid(row=0, column=0, sticky="nsew")
-    home_window.grid_columnconfigure(0, weight=1)  # Gewichtung der Spalte für gleichmäßige Verteilung
-    home_window.grid_rowconfigure(0, weight=1)
+    # Inhalte für home_frame
 
     # Benutzernamen abrufen oder erstellen
     username = get_or_create_username()
 
-    # Inhalte zu Tab 1 (Home) hinzufügen
-    welcome_label = tk.Label(tab1, text=f"Hallo {username}", font=("Arial", 30))  # Schriftgröße auf 20 gesetzt
+    # Inhalte zu Home Frame hinzufügen
+    welcome_label = tk.Label(home_frame, text=f"Hallo {username}", font=("Arial", 30))  # Schriftgröße auf 30 gesetzt
     welcome_label.pack(padx=10, pady=10, side='left', anchor='nw')  # Links ausrichten und oben anheften
 
     # Button zum Ändern des Benutzernamens
-    change_user_button = tk.Button(tab1, text="Neuen User anlegen", command=lambda: change_user(welcome_label))
+    change_user_button = tk.Button(home_frame, text="Neuen User anlegen", command=lambda: change_user(welcome_label))
     change_user_button.pack(padx=10, pady=10)
 
     # Dropdown-Menü für die Namenseingabe und -suche
     dropdown_var = tk.StringVar()
-    dropdown = ttk.Combobox(tab1, textvariable=dropdown_var, values=get_recent_usernames())
+    dropdown = ttk.Combobox(home_frame, textvariable=dropdown_var, values=get_recent_usernames())
 
     # Bindet ein Ereignis, um auf Doppelklick zu reagieren
     dropdown.bind("<Double-1>", on_double_click)
@@ -228,18 +214,17 @@ def open_home_screen():
     dropdown.pack()
 
     # Button-Text ändern
-    submit_button = tk.Button(tab1, text="User auswählen", command=on_name_submit)
+    submit_button = tk.Button(home_frame, text="User auswählen", command=on_name_submit)
     submit_button.pack()
 
     # Laden des Bildes und Größenänderung
-    original_image = Image.open(r"C:\Users\aaron\Desktop\HPQ_IU_Material\pictures\prod_hgw_houses.png")  # Ersetzen Sie "Pfad_zum_Bild.png" mit dem tatsächlichen Pfad Ihres Bildes
-    resized_image = original_image.resize((300, 400),
-                                          Image.Resampling.LANCZOS)  # Ändern Sie die Größenwerte (200, 100) entsprechend Ihren Bedürfnissen
+    original_image = Image.open(r"C:\Users\aaron\Desktop\HPQ_IU_Material\pictures\prod_hgw_houses.png")
+    resized_image = original_image.resize((300, 400), Image.Resampling.LANCZOS)
     house_selection_image = ImageTk.PhotoImage(resized_image)
 
     # Container-Frame für den Button
-    button_frame = tk.Frame(tab1)
-    button_frame.pack(expand=True)  # Zentriert den Frame im Tab
+    button_frame = tk.Frame(home_frame)
+    button_frame.pack(expand=True)  # Zentriert den Frame im Home Frame
 
     # Button zum Öffnen des Hausauswahl-Bildschirms mit dem Bild
     house_selection_button = tk.Button(button_frame, image=house_selection_image, command=open_house_selection,
@@ -247,5 +232,28 @@ def open_home_screen():
     house_selection_button.image = house_selection_image  # Vermeiden des Bildreferenzproblems
     house_selection_button.pack()  # Button im zentrierten Frame platzieren
 
+    # Buttons für den Wechsel zwischen Frames
+    home_button = tk.Button(home_window, text='⌂ Home', command=lambda: switch_frame(home_frame))
+    home_button.pack(side='left', fill='x', expand=True)
+
+    erfolge_button = tk.Button(home_window, text='\U0001F3C6 Erfolge', command=lambda: switch_frame(erfolge_frame))
+    erfolge_button.pack(side='left', fill='x', expand=True)
+
+    statistik_button = tk.Button(home_window, text='\U0001F4C8 Statistik',
+                                 command=lambda: switch_frame(statistik_frame))
+    statistik_button.pack(side='left', fill='x', expand=True)
+
+    # Starten Sie mit dem Anzeigen des Home-Frames
+    switch_frame(home_frame)
+    show_leaderboard(statistik_frame)  # Leaderboard im Tab Statistik anzeigen
+
     home_window.mainloop()
+
+
+
+
+
+
+
+
 
