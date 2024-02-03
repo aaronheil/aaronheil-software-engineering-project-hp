@@ -44,62 +44,7 @@ POINTS_PER_ANSWER = 10
 global image_gryffindor, image_slytherin, image_hufflepuff, image_ravenclaw, background_image, user_house
 
 
-#1. Hausauswahl-Fenster öffnen
-def open_house_window(username=''):
-    global house_window, image_gryffindor, image_slytherin, image_hufflepuff, image_ravenclaw, background_image
 
-    house_window = tk.Tk()
-    house_window.title("Harry Potter Quiz")
-    house_window.attributes("-fullscreen", True)
-
-    # Laden des Hintergrundbildes mit PIL und Größenanpassung
-    pil_image = Image.open(r"C:\Users\aaron\Desktop\HPQ_IU_Material\pictures\prod_promt_hausauswahl1.png")
-    pil_image = pil_image.resize((1400, 335), Image.Resampling.LANCZOS)
-    background_image = ImageTk.PhotoImage(pil_image)
-
-    background_label = tk.Label(house_window, image=background_image)
-    background_label.grid(row=0, column=0, columnspan=4, sticky="nsew")
-
-    # Ein Haus auswählen; Haus-Bild = Button
-    image_gryffindor = tk.PhotoImage(file=r"C:\Users\aaron\Desktop\HPQ_IU_Material\pictures\gryffindor.png")
-    image_slytherin = tk.PhotoImage(file=r"C:\Users\aaron\Desktop\HPQ_IU_Material\pictures\slytherin.png")
-    image_hufflepuff = tk.PhotoImage(file=r"C:\Users\aaron\Desktop\HPQ_IU_Material\pictures\hufflepuff.png")
-    image_ravenclaw = tk.PhotoImage(file=r"C:\Users\aaron\Desktop\HPQ_IU_Material\pictures\ravenclaw.png")
-
-    # Konfiguration von Buttons
-    btn_gryffindor = tk.Button(house_window, image=image_gryffindor, command=lambda: on_house_select('Gryffindor', username))
-    btn_gryffindor.grid(row=1, column=0, sticky="nsew")
-
-    btn_slytherin = tk.Button(house_window, image=image_slytherin, command=lambda: on_house_select('Slytherin', username))
-    btn_slytherin.grid(row=1, column=1, sticky="nsew")
-
-    btn_hufflepuff = tk.Button(house_window, image=image_hufflepuff, command=lambda: on_house_select('Hufflepuff', username))
-    btn_hufflepuff.grid(row=1, column=2, sticky="nsew")
-
-    btn_ravenclaw = tk.Button(house_window, image=image_ravenclaw, command=lambda: on_house_select('Ravenclaw', username))
-    btn_ravenclaw.grid(row=1, column=3, sticky="nsew")
-
-    # Konfiguration von dem Gewicht der Spalten und Zeilen
-    for i in range(4):
-        house_window.grid_columnconfigure(i, weight=1)
-    house_window.grid_rowconfigure(0, weight=1) # Kleinerer Anteil für das Foto
-    house_window.grid_rowconfigure(1, weight=3) # Größerer Anteil für die Buttons
-
-    house_window.mainloop()
-
-
-
-
-# Funktion, die aufgerufen wird, wenn ein Haus ausgewählt wird
-# In quiz_screen.py
-
-# Funktion, die aufgerufen wird, wenn ein Haus ausgewählt wird
-def on_house_select(house_name, username):
-    global house_window
-    print(f"{house_name} ausgewählt, Benutzer: {username}")
-    if house_window is not None:
-        house_window.destroy()
-    start_quiz(house_name, username)  # Öffnet das Quizfenster und übergibt den Benutzernamen
 
 
 
