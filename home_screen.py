@@ -201,23 +201,43 @@ def open_home_screen():
     # Globale Variable für den aktuell ausgewählten Button
     active_button = None
 
-    # Neuer Frame für Begrüßung und Dropdown
+    # Neuer Frame für Begrüßung und Aktionen-Button
     top_frame = tk.Frame(home_frame, bg='#343a40')
-    top_frame.pack(fill='x')
+    top_frame.pack(fill='x', pady=10)
 
     # Erstellen eines Containers für Aktionen-Button und Dropdown-Menü
     actions_container = tk.Frame(top_frame, bg='#343a40')
     actions_container.pack(side='left', padx=10)
 
     # Menubutton für Aktionen
-    actions_button = tk.Menubutton(actions_container, text="Aktionen", relief=tk.RAISED)
+    actions_button = tk.Menubutton(top_frame, text="Aktionen", relief=tk.RAISED, width=20)  # Breite auf 10 gesetzt
     actions_menu = tk.Menu(actions_button, tearoff=0)
     actions_button["menu"] = actions_menu
 
     # Funktion zum Anzeigen der Dropdown-Suchleiste
     def show_dropdown():
-        # Dropdown-Menü neben dem "User auswählen" Button anzeigen
-        dropdown.place(in_=actions_container, relx=2.0, rely=4.0, anchor="w")
+        # Aktualisieren Sie die Position des Buttons, bevor Sie die Koordinaten erhalten
+        actions_button.update_idletasks()
+
+        # Berechnen Sie die Position für das Dropdown-Menü, basierend auf der Position und Größe des `actions_button`
+        x_position = actions_button.winfo_x() + actions_button.winfo_width()
+        y_position = actions_button.winfo_y()
+
+        # Debug-Ausgaben
+        print(f"Button X: {actions_button.winfo_x()}, Button Y: {actions_button.winfo_y()}")
+        print(f"Button Width: {actions_button.winfo_width()}, Button Height: {actions_button.winfo_height()}")
+        print(f"Dropdown X: {x_position}, Dropdown Y: {y_position}")
+
+        # Platzieren Sie das Dropdown-Menü rechts und direkt neben dem `actions_button`
+        # `anchor="nw"` bedeutet, dass die obere linke Ecke des Dropdowns an den Koordinaten ausgerichtet wird
+        dropdown.place(in_=actions_container, x=x_position, y=y_position, anchor="nw")
+
+        # Nach der Platzierung, führen Sie eine Aktualisierung durch, um sicherzustellen, dass Änderungen angezeigt werden
+        actions_container.update_idletasks()
+
+        # Öffnen Sie das Dropdown-Menü automatisch, wenn der Benutzer auf "User auswählen" klickt
+        dropdown.event_generate('<Button-1>')  # Simuliert einen Mausklick auf das Dropdown-Menü
+        dropdown.focus()  # Setzt den Fokus auf das Dropdown-Menü
 
     # Hinzufügen der Funktionen zum Menubutton
     actions_menu.add_command(label="Neuen User anlegen", command=lambda: change_user(welcome_label))
@@ -227,7 +247,7 @@ def open_home_screen():
 
     # Dropdown-Menü für die Namenseingabe und -suche
     dropdown_var = tk.StringVar()
-    dropdown = ttk.Combobox(actions_container, textvariable=dropdown_var, values=get_recent_usernames())
+    dropdown = ttk.Combobox(actions_container, textvariable=dropdown_var, values=get_recent_usernames(), width=20)
     # Bindet ein Ereignis, um auf Doppelklick zu reagieren
     dropdown.bind("<Double-1>", on_double_click)
 
@@ -242,8 +262,7 @@ def open_home_screen():
 
     # Automatische Aktualisierung der Dropdown-Liste bei Textänderung
     dropdown_var.trace("w", update_dropdown)
-    # Dropdown initial versteckt
-    dropdown.place_forget()
+
 
     # Benutzernamen abrufen oder erstellen
     username = get_or_create_username()
@@ -356,6 +375,8 @@ def open_home_screen():
 
     # Setzen Sie den anfänglichen aktiven Button
     update_active_button(home_button)
+
+    home_window.after(100, show_dropdown)  # Zeigt das Dropdown-Menü korre
 
     home_window.mainloop()
 
