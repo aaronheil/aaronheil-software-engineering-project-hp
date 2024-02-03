@@ -7,10 +7,14 @@ from sqlalchemy.orm import sessionmaker
 from main import User, Leaderboard, get_db_session
 from PIL import Image, ImageTk
 from quiz_screen import start_quiz
+import pygame
 
 
 # Globale Variable für den aktuellen Benutzernamen
 current_username = ""
+
+# Globale Variable für den Musikstatus
+is_music_playing = True
 
 
 # Datenbankmodell
@@ -106,14 +110,12 @@ def on_right_click(event):
             update_ui_with_new_username("Unbekannter Benutzer")
             dropdown['values'] = get_recent_usernames()
 
-
 def show_leaderboard(tab):
-    style = ttk.Style()
     style = ttk.Style()
     style.configure('Treeview', background='#343a40', fieldbackground='#343a40',
                     foreground='white')  # Dunkelgraue Hintergrund- und weiße Textfarbe für das Leaderboard
     style.configure('Treeview.Heading', background='#343a40',
-                    foreground='white')  # Dunkelgraue Hintergrund- und weiße Textfarbe für die Überschriften
+                    foreground='black')  # Dunkelgraue Hintergrundfarbe und schwarze Textfarbe für die Überschriften
 
     session = get_db_session()
     leaderboard_data = session.query(Leaderboard).order_by(Leaderboard.score.desc()).all()
@@ -161,6 +163,15 @@ def create_new_user_window(parent):
     submit_button.pack(pady=20)
 
 
+def toggle_music():
+    global is_music_playing
+    if is_music_playing:
+        pygame.mixer.music.pause()
+    else:
+        pygame.mixer.music.unpause()
+    is_music_playing = not is_music_playing
+
+
 def open_home_screen():
     global name_entry, dropdown, dropdown_var, welcome_label, current_username, active_button, home_window
 
@@ -205,6 +216,10 @@ def open_home_screen():
     change_user_button = tk.Button(top_frame, text="Neuen User anlegen", command=lambda: change_user(welcome_label))
     change_user_button.pack(padx=10, pady=10)
 
+    # Musiksteuerungs-Button
+    music_control_button = tk.Button(top_frame, text="Musik Ein/Aus", command=toggle_music)
+    music_control_button.pack(padx=10, pady=10)
+
     # Dropdown-Menü für die Namenseingabe und -suche
     dropdown_var = tk.StringVar()
     dropdown = ttk.Combobox(top_frame, textvariable=dropdown_var, values=get_recent_usernames())
@@ -233,36 +248,34 @@ def open_home_screen():
 
     # Container-Frame für die Buttons
     button_frame = tk.Frame(home_frame, bg='#343a40')
-    button_frame.pack(expand=True)
+    button_frame.pack(expand=True, padx=20, pady=20)
 
     # Funktionen zum Laden und Skalieren der Bilder
-    def load_and_resize_image(image_path, size=(300, 400)):
+    def load_and_resize_image(image_path, size=(400, 500)):
         original_image = Image.open(image_path)
         resized_image = original_image.resize(size, Image.Resampling.LANCZOS)
         return ImageTk.PhotoImage(resized_image)
 
-    # Hausauswahl-Buttons erstellen
+    # Hausauswahl-Buttons erstellen und im button_frame positionieren
     image_gryffindor = load_and_resize_image(r"C:\Users\aaron\Desktop\HPQ_IU_Material\pictures\gryffindor.png")
     btn_gryffindor = tk.Button(button_frame, image=image_gryffindor,
                                command=lambda: on_house_select('Gryffindor', current_username))
+    btn_gryffindor.pack(side='left', fill='both', expand=True, padx=200, pady=30)  # Abstand zwischen den Buttons
 
     image_slytherin = load_and_resize_image(r"C:\Users\aaron\Desktop\HPQ_IU_Material\pictures\slytherin.png")
     btn_slytherin = tk.Button(button_frame, image=image_slytherin,
                               command=lambda: on_house_select('Slytherin', current_username))
+    btn_slytherin.pack(side='left', fill='both', expand=True, padx=200, pady=30)  # Abstand zwischen den Buttons
 
     image_hufflepuff = load_and_resize_image(r"C:\Users\aaron\Desktop\HPQ_IU_Material\pictures\hufflepuff.png")
     btn_hufflepuff = tk.Button(button_frame, image=image_hufflepuff,
                                command=lambda: on_house_select('Hufflepuff', current_username))
+    btn_hufflepuff.pack(side='left', fill='both', expand=True, padx=200, pady=30)  # Abstand zwischen den Buttons
 
     image_ravenclaw = load_and_resize_image(r"C:\Users\aaron\Desktop\HPQ_IU_Material\pictures\ravenclaw.png")
     btn_ravenclaw = tk.Button(button_frame, image=image_ravenclaw,
                               command=lambda: on_house_select('Ravenclaw', current_username))
-
-    # Buttons im button_frame positionieren
-    btn_gryffindor.pack(side='left', fill='both', expand=True)
-    btn_slytherin.pack(side='left', fill='both', expand=True)
-    btn_hufflepuff.pack(side='left', fill='both', expand=True)
-    btn_ravenclaw.pack(side='left', fill='both', expand=True)
+    btn_ravenclaw.pack(side='left', fill='both', expand=True, padx=200, pady=30)  # Abstand zwischen den Buttons
 
     # Halten Sie die Bildreferenzen, um die automatische Bereinigung durch Garbage Collector zu verhindern
     button_frame.image_gryffindor = image_gryffindor
