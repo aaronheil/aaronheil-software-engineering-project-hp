@@ -205,25 +205,29 @@ def open_home_screen():
     top_frame = tk.Frame(home_frame, bg='#343a40')
     top_frame.pack(fill='x')
 
-    # Benutzernamen abrufen oder erstellen
-    username = get_or_create_username()
+    # Erstellen eines Containers für Aktionen-Button und Dropdown-Menü
+    actions_container = tk.Frame(top_frame, bg='#343a40')
+    actions_container.pack(side='left', padx=10)
 
-    # Inhalte zu Home Frame hinzufügen
-    welcome_label = tk.Label(top_frame, text=f"Hallo {username}", font=("Arial", 30))  # Schriftgröße auf 30 gesetzt
-    welcome_label.pack(padx=10, pady=10, side='left', anchor='nw')  # Links ausrichten und oben anheften
+    # Menubutton für Aktionen
+    actions_button = tk.Menubutton(actions_container, text="Aktionen", relief=tk.RAISED)
+    actions_menu = tk.Menu(actions_button, tearoff=0)
+    actions_button["menu"] = actions_menu
 
-    # Button zum Ändern des Benutzernamens
-    change_user_button = tk.Button(top_frame, text="Neuen User anlegen", command=lambda: change_user(welcome_label))
-    change_user_button.pack(padx=10, pady=10)
+    # Funktion zum Anzeigen der Dropdown-Suchleiste
+    def show_dropdown():
+        # Dropdown-Menü neben dem "User auswählen" Button anzeigen
+        dropdown.place(in_=actions_container, relx=2.0, rely=4.0, anchor="w")
 
-    # Musiksteuerungs-Button
-    music_control_button = tk.Button(top_frame, text="Musik Ein/Aus", command=toggle_music)
-    music_control_button.pack(padx=10, pady=10)
+    # Hinzufügen der Funktionen zum Menubutton
+    actions_menu.add_command(label="Neuen User anlegen", command=lambda: change_user(welcome_label))
+    actions_menu.add_command(label="User auswählen", command=show_dropdown)
+
+    actions_button.pack(side='left', fill='y')
 
     # Dropdown-Menü für die Namenseingabe und -suche
     dropdown_var = tk.StringVar()
-    dropdown = ttk.Combobox(top_frame, textvariable=dropdown_var, values=get_recent_usernames())
-
+    dropdown = ttk.Combobox(actions_container, textvariable=dropdown_var, values=get_recent_usernames())
     # Bindet ein Ereignis, um auf Doppelklick zu reagieren
     dropdown.bind("<Double-1>", on_double_click)
 
@@ -238,13 +242,20 @@ def open_home_screen():
 
     # Automatische Aktualisierung der Dropdown-Liste bei Textänderung
     dropdown_var.trace("w", update_dropdown)
+    # Dropdown initial versteckt
+    dropdown.place_forget()
 
-    # Platzieren des Dropdown-Menüs im GUI
-    dropdown.pack()
+    # Benutzernamen abrufen oder erstellen
+    username = get_or_create_username()
 
-    # Button-Text ändern
-    submit_button = tk.Button(top_frame, text="User auswählen", command=on_name_submit)
-    submit_button.pack()
+    # Inhalte zu Home Frame hinzufügen
+    welcome_label = tk.Label(top_frame, text=f"Hallo {username}", font=("Arial", 30))
+    welcome_label.pack(padx=450, pady=10, side='left', anchor='nw')
+
+    # Musiksteuerungs-Button
+    music_control_button = tk.Button(top_frame, text="Musik Ein/Aus", command=toggle_music)
+    music_control_button.pack(padx=10, pady=10, side='left')  # side='left' hinzugefügt
+
 
     # Container-Frame für die Buttons
     button_frame = tk.Frame(home_frame, bg='#343a40')
