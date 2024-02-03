@@ -9,15 +9,8 @@ from PIL import Image, ImageTk
 from quiz_screen import start_quiz
 
 
-import pygame
-from tkinter import PhotoImage
-from utils import set_background
-#from quiz_screen import open_house_window
-
 # Globale Variable für den aktuellen Benutzernamen
 current_username = ""
-
-
 
 
 # Datenbankmodell
@@ -102,10 +95,6 @@ def on_double_click(event):
 def on_enter_pressed(event):
     update_dropdown()  # Aktualisiert die Liste basierend auf dem eingegebenen Suchbegriff
     dropdown.event_generate('<Down>')  # Öffnet das Dropdown-Menü
-
-    # Sie können hier noch eine zusätzliche Logik einfügen, falls erforderlich
-
-
 
 def on_right_click(event):
     selected_name = dropdown.get()
