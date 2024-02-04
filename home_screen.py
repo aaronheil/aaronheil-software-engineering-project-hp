@@ -232,13 +232,21 @@ def open_home_screen():
     # Globale Variable für den aktuell ausgewählten Button
     active_button = None
 
+    # Benutzernamen abrufen oder erstellen
+    username = get_or_create_username()
+
     # Neuer Frame für Begrüßung und Aktionen-Button
     top_frame = tk.Frame(home_frame, bg='#343a40')
     top_frame.pack(fill='x', pady=10)
 
+    # Inhalte zu Home Frame hinzufügen
+    welcome_label = tk.Label(top_frame, text=f"Hallo {username}", font=("Arial", 20))
+    welcome_label.pack(side='left', padx=500, pady=10, anchor='n')
+
     # Erstellen eines Containers für Aktionen-Button und Dropdown-Menü
     actions_container = tk.Frame(top_frame, bg='#343a40')
-    actions_container.pack(pady=10)
+    actions_container.pack(side='left', padx=470, pady=10,
+                           anchor='n')  # Stellen Sie sicher, dass pady gleich für beide Widgets ist
 
     # Menubutton für Aktionen
     actions_button = tk.Menubutton(actions_container, text="Aktionen", font=("Arial", 20), relief=tk.RAISED, width=20)
@@ -247,16 +255,6 @@ def open_home_screen():
     actions_button.pack(side='top', anchor='center')
 
 
-    # Benutzernamen abrufen oder erstellen
-    username = get_or_create_username()
-
-    # Inhalte zu Home Frame hinzufügen
-    welcome_label = tk.Label(top_frame, text=f"Hallo {username}", font=("Arial", 20))
-    welcome_label.pack(padx=450, pady=10, side='left', anchor='nw')
-
-    # Musiksteuerungs-Button
-    music_control_button = tk.Button(top_frame, text="Musik Ein/Aus", command=toggle_music)
-    music_control_button.pack(padx=10, pady=10)
 
     # Funktion zum Anzeigen der Dropdown-Suchleiste
     def show_dropdown():
@@ -295,9 +293,15 @@ def open_home_screen():
         dropdown_list.bind('<Button-3>', on_right_click)  # Rechtsklick
         dropdown_list.bind('<Return>', on_enter_pressed)  # Enter-Taste
 
-    # Hinzufügen der Funktionen zum Menubutton
-    actions_menu.add_command(label="Neuen User anlegen", command=lambda: change_user(welcome_label))
-    actions_menu.add_command(label="User auswählen", command=show_dropdown)
+    # Unterbuttons zum Menubutton hinzufügen
+    actions_menu.add_command(label="Neuen User anlegen", command=lambda: change_user(welcome_label), font=("Arial", 16),
+                             background='white', foreground='black')
+    actions_menu.add_separator()  # Fügt eine Trennlinie hinzu
+    actions_menu.add_command(label="User auswählen", command=show_dropdown, font=("Arial", 16), background='white',
+                             foreground='black')
+    actions_menu.add_separator()  # Fügt eine Trennlinie hinzu
+    actions_menu.add_command(label="Musik Ein / Aus", command=toggle_music, font=("Arial", 16), background='white',
+                             foreground='black')
 
     # Container-Frame für die Buttons
     button_frame = tk.Frame(home_frame, bg='#343a40')
@@ -388,6 +392,9 @@ def open_home_screen():
 
     home_button = tk.Button(nav_frame, text='⌂ Home', command=switch_to_home, font=("Harry P", 40))
     home_button.pack(side='left', fill='x', expand=True)
+
+    quiz_button = tk.Button(nav_frame, text='🎮 Quiz', command=switch_to_home, font=("Harry P", 40))
+    quiz_button.pack(side='left', fill='x', expand=True)
 
     erfolge_button = tk.Button(nav_frame, text='\U0001F3C6 Erfolge', command=switch_to_erfolge, font=("Harry P", 40))
     erfolge_button.pack(side='left', fill='x', expand=True)
