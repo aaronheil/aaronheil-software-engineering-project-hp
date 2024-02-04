@@ -241,14 +241,14 @@ def open_home_screen():
     top_frame.pack(fill='x', pady=10)
 
     # Inhalte zu Home Frame hinzufügen
-    welcome_label = tk.Label(top_frame, text=f"Hallo {username}", font=("Arial", 20))
+    welcome_label = tk.Label(top_frame, text=f"Hallo {username}", font=("Harry P", 30), relief=tk.RAISED, width=20)
     welcome_label.pack(side='left', padx=(950, 0), pady=10)
 
     # Aktionen-Button direkt im top_frame ohne zusätzlichen Container
-    actions_button = tk.Menubutton(top_frame, text="Aktionen", font=("Arial", 20), relief=tk.RAISED, width=20)
+    actions_button = tk.Menubutton(top_frame, text="Aktionen", font=("Harry P", 30), relief=tk.RAISED, width=20)
     actions_menu = tk.Menu(actions_button, tearoff=0)
     actions_button["menu"] = actions_menu
-    actions_button.pack(side='left', padx=(520, 0), pady=10)
+    actions_button.pack(side='left', padx=(450, 0), pady=10)
 
     # Funktion zum Anzeigen der Dropdown-Suchleiste
     def show_dropdown():

@@ -23,7 +23,6 @@ quiz_window = None
 house_window = None
 bot_scores_frame = None
 quiz_widget_frame = None
-test_frame = None
 quiz_background_image = None
 bot_score_labels = {}
 score_label = None
@@ -44,20 +43,14 @@ POINTS_PER_ANSWER = 10
 global image_gryffindor, image_slytherin, image_hufflepuff, image_ravenclaw, background_image, user_house
 
 
-
-
-
-
 def toggle_fullscreen(event=None):
     quiz_window.attributes("-fullscreen", False)  # Schaltet den Vollbildmodus aus
     quiz_window.destroy()  # Schließt das Fenster
 
-#def close_window():
-    #quiz_window.destroy()
 
 # 2. Quiz-Fenster öffnen
 def start_quiz(house_name=None, username=''):
-    global quiz_window, score_label, result_label, score, house, bot_score_labels, bots, bot_scores_frame, quiz_widget_frame, question_count, options, user_house, test_frame, quiz_background_image
+    global quiz_window, score_label, result_label, score, house, bot_score_labels, bots, bot_scores_frame, quiz_widget_frame, question_count, options, user_house, quiz_background_image
 
     # Setze das ausgewählte Haus als das aktuelle Haus
     if house_name:
@@ -114,10 +107,7 @@ def start_quiz(house_name=None, username=''):
         if isinstance(widget, tk.Label) and widget.cget("image") == str(quiz_background_image):
             continue  # Überspringe das Hintergrundbild-Widget
 
-        if widget != bot_scores_frame and widget != test_frame:
-            widget.destroy()
-            if widget == quiz_widget_frame:
-                quiz_widget_frame = None
+
 
     # Erstellen des Frames für Quiz-Widgets
     if quiz_widget_frame is None:
@@ -138,32 +128,6 @@ def start_quiz(house_name=None, username=''):
 
         # Packen des quiz_widget_frame mit Überschrift
         quiz_widget_frame.pack(side='left', anchor='n')
-
-
-    # Erstellen des Test-Frames
-    if test_frame is None:
-        test_frame = tk.Frame(quiz_window, padx=10, pady=10)
-
-        # Laden des Bildes und Anpassen an die Größe des Frames
-        bg_image = Image.open(r"C:\Users\aaron\Desktop\HPQ_IU_Material\pictures\prod_perg_1.png")
-        bg_photo = ImageTk.PhotoImage(bg_image)
-
-        # Erstellen eines Labels oder Canvas, um das Bild zu platzieren
-        background_label = tk.Label(test_frame, image=bg_photo)
-        background_label.place(x=0, y=0, relwidth=1, relheight=1)
-        background_label.image = bg_photo
-
-        test_label = tk.Label(test_frame, text="Test", font=("Arial", 16), bg='red')
-        test_button = tk.Button(test_frame, text="Button", command=lambda: print("Button gedrückt"))
-
-        # Packen der Widgets im Test-Frame
-        test_label.pack(pady=(0, 10))
-        test_button.pack()
-
-        # Packen des Test-Frames im quiz_window
-        test_frame.pack(side='bottom', fill='x')
-
-
 
 
     if quiz_background_image is None:
