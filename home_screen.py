@@ -241,7 +241,7 @@ def open_home_screen():
     actions_container.pack(pady=10)
 
     # Menubutton für Aktionen
-    actions_button = tk.Menubutton(actions_container, text="Aktionen", relief=tk.RAISED, width=20)
+    actions_button = tk.Menubutton(actions_container, text="Aktionen", font=("Arial", 20), relief=tk.RAISED, width=20)
     actions_menu = tk.Menu(actions_button, tearoff=0)
     actions_button["menu"] = actions_menu
     actions_button.pack(side='top', anchor='center')
@@ -251,8 +251,8 @@ def open_home_screen():
     username = get_or_create_username()
 
     # Inhalte zu Home Frame hinzufügen
-    welcome_label = tk.Label(top_frame, text=f"Hallo {username}", font=("Arial", 30))
-    welcome_label.pack(padx=10, pady=10, side='left', anchor='nw')
+    welcome_label = tk.Label(top_frame, text=f"Hallo {username}", font=("Arial", 20))
+    welcome_label.pack(padx=450, pady=10, side='left', anchor='nw')
 
     # Musiksteuerungs-Button
     music_control_button = tk.Button(top_frame, text="Musik Ein/Aus", command=toggle_music)
