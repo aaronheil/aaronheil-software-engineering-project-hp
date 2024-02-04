@@ -210,72 +210,62 @@ def open_home_screen():
     actions_container.pack(pady=10)
 
     # Menubutton für Aktionen
-    actions_button = tk.Menubutton(actions_container, text="Aktionen", relief=tk.RAISED,
-                                   width=20)  # Breite auf 10 gesetzt
+    actions_button = tk.Menubutton(actions_container, text="Aktionen", relief=tk.RAISED, width=20)
     actions_menu = tk.Menu(actions_button, tearoff=0)
     actions_button["menu"] = actions_menu
     actions_button.pack(side='top', anchor='center')
 
-    # Funktion zum Anzeigen der Dropdown-Suchleiste
-    # Funktion zum Anzeigen der Dropdown-Suchleiste
-    def show_dropdown():
-        # Aktualisieren Sie die Position des Buttons, bevor Sie die Koordinaten erhalten
-        actions_button.update_idletasks()
-
-        # Berechnen Sie die Position für das Dropdown-Menü, basierend auf der Position und Größe des `actions_button`
-        x_position = actions_button.winfo_x()  # X-Position bleibt gleich, um in derselben Spalte zu bleiben
-        y_position = actions_button.winfo_y() + actions_button.winfo_height()  # Y-Position direkt unter dem Button
-
-        # Platzieren Sie das Dropdown-Menü direkt unterhalb des `actions_button`
-        dropdown.place(in_=actions_container, x=x_position, y=y_position, anchor="nw")
-
-        # Öffnen Sie das Dropdown-Menü automatisch, wenn der Benutzer auf "User auswählen" klickt
-        dropdown.event_generate('<Button-1>')  # Simuliert einen Mausklick auf das Dropdown-Menü
-        dropdown.focus()  # Setzt den Fokus auf das Dropdown-Menü
-
-        # Nach der Platzierung, führen Sie eine Aktualisierung durch, um sicherzustellen, dass Änderungen angezeigt werden
-        actions_container.update_idletasks()
-
-
-    # Hinzufügen der Funktionen zum Menubutton
-    actions_menu.add_command(label="Neuen User anlegen", command=lambda: change_user(welcome_label))
-    actions_menu.add_command(label="User auswählen", command=show_dropdown)
-
-    actions_button.pack(side='left', fill='y')
+    
 
     # Dropdown-Menü für die Namenseingabe und -suche
     dropdown_var = tk.StringVar()
-    dropdown = ttk.Combobox(actions_container, textvariable=dropdown_var, values=get_recent_usernames(), width=30)
-
-    dropdown['state'] = 'normal'  # Erlaubt die Texteingabe in der Combobox
-
-    # Platzieren des Dropdown-Menüs im actions_container
-    dropdown.pack(side='top', padx=5, pady=5)
+    dropdown = ttk.Combobox(actions_container, textvariable=dropdown_var, values=get_recent_usernames(), width=20)
+    dropdown['state'] = 'normal'
 
     # Bindet ein Ereignis, um auf Texteingabe zu reagieren und die Liste zu filtern
-    dropdown.bind('<KeyRelease>', update_dropdown)  # Aktualisiert die Liste bei jeder Eingabe
+    dropdown.bind('<KeyRelease>', update_dropdown)
 
-    # Restliche Bindungen wie zuvor
+    # Bindet ein Ereignis, um auf Doppelklick zu reagieren
     dropdown.bind("<Double-1>", on_double_click)
+
+    # Bindet ein Ereignis, um auf Rechtsklick zu reagieren
     dropdown.bind("<Button-3>", on_right_click)
+
+    # Bindet die Enter-Taste, um die update_dropdown Funktion aufzurufen und das Dropdown-Menü zu öffnen
     dropdown.bind("<Return>", on_enter_pressed)
+
+    # Bindet die Auswahl im Dropdown, um die Auswahl zu behandeln
     dropdown.bind("<<ComboboxSelected>>", on_dropdown_select)
 
-    # Fügt den Event-Listener für die Textänderung hinzu
+    # Automatische Aktualisierung der Dropdown-Liste bei Textänderung
     dropdown_var.trace("w", update_dropdown)
 
+    # Versteckt das Dropdown-Menü, wenn es nicht verwendet wird
+    dropdown.place_forget()
 
     # Benutzernamen abrufen oder erstellen
     username = get_or_create_username()
 
     # Inhalte zu Home Frame hinzufügen
     welcome_label = tk.Label(top_frame, text=f"Hallo {username}", font=("Arial", 30))
-    welcome_label.pack(padx=450, pady=10, side='left', anchor='nw')
+    welcome_label.pack(padx=10, pady=10, side='left', anchor='nw')
 
     # Musiksteuerungs-Button
     music_control_button = tk.Button(top_frame, text="Musik Ein/Aus", command=toggle_music)
-    music_control_button.pack(padx=10, pady=10, side='left')  # side='left' hinzugefügt
+    music_control_button.pack(padx=10, pady=10)
 
+    # Funktion zum Anzeigen der Dropdown-Suchleiste
+    def show_dropdown():
+        x_position = actions_button.winfo_x()
+        y_position = actions_button.winfo_y() + actions_button.winfo_height()
+        dropdown.place(in_=actions_container, x=x_position, y=y_position, anchor="nw")
+        dropdown.focus()
+        dropdown.event_generate('<Button-1>')  # Simuliert einen Mausklick auf das Dropdown-Menü
+        actions_container.update_idletasks()
+
+    # Hinzufügen der Funktionen zum Menubutton
+    actions_menu.add_command(label="Neuen User anlegen", command=lambda: change_user(welcome_label))
+    actions_menu.add_command(label="User auswählen", command=show_dropdown)
 
     # Container-Frame für die Buttons
     button_frame = tk.Frame(home_frame, bg='#343a40')
@@ -376,8 +366,6 @@ def open_home_screen():
 
     # Setzen Sie den anfänglichen aktiven Button
     update_active_button(home_button)
-
-    home_window.after(100, show_dropdown)  # Zeigt das Dropdown-Menü korre
 
     home_window.mainloop()
 
