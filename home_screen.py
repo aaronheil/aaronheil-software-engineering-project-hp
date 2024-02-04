@@ -222,11 +222,12 @@ def open_home_screen():
 
     # Einzelne Frames mit dunkelgrauer Hintergrundfarbe
     home_frame = tk.Frame(frame_container, bg='#343a40')
+    quiz_frame = tk.Frame(frame_container, bg='#343a40')
     erfolge_frame = tk.Frame(frame_container, bg='#343a40')
     statistik_frame = tk.Frame(frame_container, bg='#343a40')
 
     # Alle Frames im selben Raum stapeln
-    for frame in [home_frame, erfolge_frame, statistik_frame]:
+    for frame in [home_frame, quiz_frame, erfolge_frame, statistik_frame]:
         frame.place(x=0, y=0, relwidth=1, relheight=1)
 
     # Globale Variable für den aktuell ausgewählten Button
@@ -350,7 +351,7 @@ def open_home_screen():
     def update_active_button(new_active_button):
         global active_button
         # Setzen Sie alle Buttons auf normale Farbe zurück
-        for button in [home_button, erfolge_button, statistik_button]:
+        for button in [home_button, quiz_button, erfolge_button, statistik_button]:
             button.config(bg='SystemButtonFace')  # Setzen Sie die Standardfarbe zurück
         # Setzen Sie die Farbe des aktiven Buttons
         new_active_button.config(bg='lightgrey')  # Hervorheben des aktiven Buttons
@@ -361,26 +362,18 @@ def open_home_screen():
     def switch_frame(frame):
         frame.tkraise()
 
-    # Inhalte für home_frame
-
-
-
     # Starten Sie mit dem Anzeigen des Home-Frames
     switch_frame(home_frame)
     show_leaderboard(statistik_frame)  # Leaderboard im Tab Statistik anzeigen
 
-    def update_active_button(new_active_button):
-        global active_button
-        # Setzen Sie alle Buttons auf normale Farbe zurück
-        for button in [home_button, erfolge_button, statistik_button]:
-            button.config(bg='SystemButtonFace')  # Setzen Sie die Standardfarbe zurück
-        # Setzen Sie die Farbe des aktiven Buttons
-        new_active_button.config(bg='lightgrey')  # Hervorheben des aktiven Buttons
-        active_button = new_active_button
 
     def switch_to_home():
         switch_frame(home_frame)
         update_active_button(home_button)
+
+    def switch_to_quiz():
+        switch_frame(quiz_frame)
+        update_active_button(quiz_button)
 
     def switch_to_erfolge():
         switch_frame(erfolge_frame)
@@ -393,7 +386,7 @@ def open_home_screen():
     home_button = tk.Button(nav_frame, text='⌂ Home', command=switch_to_home, font=("Harry P", 40))
     home_button.pack(side='left', fill='x', expand=True)
 
-    quiz_button = tk.Button(nav_frame, text='🎮 Quiz', command=switch_to_home, font=("Harry P", 40))
+    quiz_button = tk.Button(nav_frame, text='🎮 Quiz', command=switch_to_quiz, font=("Harry P", 40))
     quiz_button.pack(side='left', fill='x', expand=True)
 
     erfolge_button = tk.Button(nav_frame, text='\U0001F3C6 Erfolge', command=switch_to_erfolge, font=("Harry P", 40))
