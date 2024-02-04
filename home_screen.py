@@ -207,37 +207,35 @@ def open_home_screen():
 
     # Erstellen eines Containers für Aktionen-Button und Dropdown-Menü
     actions_container = tk.Frame(top_frame, bg='#343a40')
-    actions_container.pack(side='left', padx=10)
+    actions_container.pack(pady=10)
 
     # Menubutton für Aktionen
-    actions_button = tk.Menubutton(top_frame, text="Aktionen", relief=tk.RAISED, width=20)  # Breite auf 10 gesetzt
+    actions_button = tk.Menubutton(actions_container, text="Aktionen", relief=tk.RAISED,
+                                   width=20)  # Breite auf 10 gesetzt
     actions_menu = tk.Menu(actions_button, tearoff=0)
     actions_button["menu"] = actions_menu
+    actions_button.pack(side='top', anchor='center')
 
+    # Funktion zum Anzeigen der Dropdown-Suchleiste
     # Funktion zum Anzeigen der Dropdown-Suchleiste
     def show_dropdown():
         # Aktualisieren Sie die Position des Buttons, bevor Sie die Koordinaten erhalten
         actions_button.update_idletasks()
 
         # Berechnen Sie die Position für das Dropdown-Menü, basierend auf der Position und Größe des `actions_button`
-        x_position = actions_button.winfo_x() + actions_button.winfo_width()
-        y_position = actions_button.winfo_y()
+        x_position = actions_button.winfo_x()  # X-Position bleibt gleich, um in derselben Spalte zu bleiben
+        y_position = actions_button.winfo_y() + actions_button.winfo_height()  # Y-Position direkt unter dem Button
 
-        # Debug-Ausgaben
-        print(f"Button X: {actions_button.winfo_x()}, Button Y: {actions_button.winfo_y()}")
-        print(f"Button Width: {actions_button.winfo_width()}, Button Height: {actions_button.winfo_height()}")
-        print(f"Dropdown X: {x_position}, Dropdown Y: {y_position}")
-
-        # Platzieren Sie das Dropdown-Menü rechts und direkt neben dem `actions_button`
-        # `anchor="nw"` bedeutet, dass die obere linke Ecke des Dropdowns an den Koordinaten ausgerichtet wird
+        # Platzieren Sie das Dropdown-Menü direkt unterhalb des `actions_button`
         dropdown.place(in_=actions_container, x=x_position, y=y_position, anchor="nw")
-
-        # Nach der Platzierung, führen Sie eine Aktualisierung durch, um sicherzustellen, dass Änderungen angezeigt werden
-        actions_container.update_idletasks()
 
         # Öffnen Sie das Dropdown-Menü automatisch, wenn der Benutzer auf "User auswählen" klickt
         dropdown.event_generate('<Button-1>')  # Simuliert einen Mausklick auf das Dropdown-Menü
         dropdown.focus()  # Setzt den Fokus auf das Dropdown-Menü
+
+        # Nach der Platzierung, führen Sie eine Aktualisierung durch, um sicherzustellen, dass Änderungen angezeigt werden
+        actions_container.update_idletasks()
+
 
     # Hinzufügen der Funktionen zum Menubutton
     actions_menu.add_command(label="Neuen User anlegen", command=lambda: change_user(welcome_label))
@@ -247,20 +245,23 @@ def open_home_screen():
 
     # Dropdown-Menü für die Namenseingabe und -suche
     dropdown_var = tk.StringVar()
-    dropdown = ttk.Combobox(actions_container, textvariable=dropdown_var, values=get_recent_usernames(), width=20)
-    # Bindet ein Ereignis, um auf Doppelklick zu reagieren
+    dropdown = ttk.Combobox(actions_container, textvariable=dropdown_var, values=get_recent_usernames(), width=30)
+
+    dropdown['state'] = 'normal'  # Erlaubt die Texteingabe in der Combobox
+
+    # Platzieren des Dropdown-Menüs im actions_container
+    dropdown.pack(side='top', padx=5, pady=5)
+
+    # Bindet ein Ereignis, um auf Texteingabe zu reagieren und die Liste zu filtern
+    dropdown.bind('<KeyRelease>', update_dropdown)  # Aktualisiert die Liste bei jeder Eingabe
+
+    # Restliche Bindungen wie zuvor
     dropdown.bind("<Double-1>", on_double_click)
-
-    # Bindet ein Ereignis, um auf Rechtsklick zu reagieren
     dropdown.bind("<Button-3>", on_right_click)
-
-    # Bindet die Enter-Taste, um die update_dropdown Funktion aufzurufen und das Dropdown-Menü zu öffnen
     dropdown.bind("<Return>", on_enter_pressed)
-
-    # Bindet die Auswahl im Dropdown, um die Auswahl zu behandeln
     dropdown.bind("<<ComboboxSelected>>", on_dropdown_select)
 
-    # Automatische Aktualisierung der Dropdown-Liste bei Textänderung
+    # Fügt den Event-Listener für die Textänderung hinzu
     dropdown_var.trace("w", update_dropdown)
 
 
