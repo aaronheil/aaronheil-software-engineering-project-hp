@@ -16,6 +16,10 @@ current_username = ""
 # Globale Variable für den Musikstatus
 is_music_playing = True
 
+# Globale Variablen
+dropdown_list = None
+dropdown_var = None
+
 
 # Datenbankmodell
 Base = declarative_base()
@@ -29,6 +33,18 @@ engine = create_engine('sqlite:///users.db')
 Base.metadata.create_all(engine)
 Session = sessionmaker(bind=engine)
 session = Session()
+
+# Hilfsfunktion, um Fenster in der Mitte des Bildschirms zu zentrieren
+def center_window(window, width, height):
+    # Bildschirmgröße abrufen
+    screen_width = window.winfo_screenwidth()
+    screen_height = window.winfo_screenheight()
+
+    # Berechnen der x und y Koordinaten, um das Fenster in der Mitte des Bildschirms zu platzieren
+    x = (screen_width / 2) - (width / 2)
+    y = (screen_height / 2) - (height / 2)
+
+    window.geometry('%dx%d+%d+%d' % (width, height, x, y))
 
 def is_username_existing(username):
     return session.query(User).filter_by(username=username).first() is not None
@@ -59,8 +75,6 @@ def update_ui_with_new_username(username):
     global current_username
     current_username = username
     welcome_label.config(text=f"Hallo {username}")
-    # Update the dropdown menu with recent usernames
-    dropdown['values'] = get_recent_usernames()
 
 def get_all_usernames():
     return session.query(User.username).all()
@@ -79,36 +93,53 @@ def change_user(label):
     create_new_user_window(home_window)
 
 
-
 def update_dropdown(*args):
-    search_term = dropdown_var.get()
+    search_term = search_var.get()  # Hole den Text aus der Suchleiste
     filtered_names = search_username(search_term)
-    dropdown['values'] = [name[0] for name in filtered_names]
+    dropdown_list.delete(0, 'end')  # Löscht alle Einträge in der Listbox
+
     if not filtered_names:
         tk.messagebox.showinfo("Suche", "Kein passender Benutzername gefunden.")
+    else:
+        for item in filtered_names:
+            dropdown_list.insert('end', item[0])
 
 
 def on_dropdown_select(event):
-    selected_name = dropdown.get()
+    selected_index = dropdown_list.curselection()
+    selected_name = dropdown_list.get(selected_index)
     update_ui_with_new_username(selected_name)
+
 
 def on_double_click(event):
-    selected_name = dropdown.get()
+    selected_index = dropdown_list.curselection()
+    selected_name = dropdown_list.get(selected_index)
     update_ui_with_new_username(selected_name)
 
-def on_enter_pressed(event):
-    update_dropdown()  # Aktualisiert die Liste basierend auf dem eingegebenen Suchbegriff
-    dropdown.event_generate('<Down>')  # Öffnet das Dropdown-Menü
 
 def on_right_click(event):
-    selected_name = dropdown.get()
-    if tk.messagebox.askyesno("Löschen", f"Möchten Sie '{selected_name}' löschen?"):
-        user_to_delete = session.query(User).filter_by(username=selected_name).first()
-        if user_to_delete:
-            session.delete(user_to_delete)
-            session.commit()
-            update_ui_with_new_username("Unbekannter Benutzer")
-            dropdown['values'] = get_recent_usernames()
+    selected_indices = dropdown_list.curselection()  # Holt die Liste der ausgewählten Indizes
+    if selected_indices:  # Prüfen, ob die Liste nicht leer ist
+        selected_index = selected_indices[0]  # Nehmen Sie den ersten ausgewählten Index
+        selected_name = dropdown_list.get(selected_index)  # Holt den Namen aus der Listbox
+        if tk.messagebox.askyesno("Löschen", f"Möchten Sie '{selected_name}' löschen?"):
+            user_to_delete = session.query(User).filter_by(username=selected_name).first()
+            if user_to_delete:
+                session.delete(user_to_delete)
+                session.commit()
+                update_dropdown()  # Aktualisiert die Listbox nach dem Löschen eines Benutzers
+    else:
+        tk.messagebox.showwarning("Warnung", "Kein Benutzer ausgewählt.")
+
+def on_enter_pressed(event):
+    selected_indices = dropdown_list.curselection()
+    if selected_indices:  # Prüfen, ob die Liste nicht leer ist
+        selected_index = selected_indices[0]  # Nehmen Sie den ersten ausgewählten Index
+        selected_name = dropdown_list.get(selected_index)
+        update_ui_with_new_username(selected_name)
+    else:
+        tk.messagebox.showwarning("Warnung", "Kein Benutzer ausgewählt.")
+
 
 def show_leaderboard(tab):
     style = ttk.Style()
@@ -141,7 +172,7 @@ def show_leaderboard(tab):
 def create_new_user_window(parent):
     new_user_window = tk.Toplevel(parent)
     new_user_window.title("Neuen Benutzer anlegen")
-    new_user_window.geometry("400x200")  # Größe des Fensters
+    center_window(new_user_window, 400, 200)
 
     tk.Label(new_user_window, text="Bitte geben Sie den neuen Benutzernamen ein:").pack(pady=20)
 
@@ -215,33 +246,6 @@ def open_home_screen():
     actions_button["menu"] = actions_menu
     actions_button.pack(side='top', anchor='center')
 
-    
-
-    # Dropdown-Menü für die Namenseingabe und -suche
-    dropdown_var = tk.StringVar()
-    dropdown = ttk.Combobox(actions_container, textvariable=dropdown_var, values=get_recent_usernames(), width=20)
-    dropdown['state'] = 'normal'
-
-    # Bindet ein Ereignis, um auf Texteingabe zu reagieren und die Liste zu filtern
-    dropdown.bind('<KeyRelease>', update_dropdown)
-
-    # Bindet ein Ereignis, um auf Doppelklick zu reagieren
-    dropdown.bind("<Double-1>", on_double_click)
-
-    # Bindet ein Ereignis, um auf Rechtsklick zu reagieren
-    dropdown.bind("<Button-3>", on_right_click)
-
-    # Bindet die Enter-Taste, um die update_dropdown Funktion aufzurufen und das Dropdown-Menü zu öffnen
-    dropdown.bind("<Return>", on_enter_pressed)
-
-    # Bindet die Auswahl im Dropdown, um die Auswahl zu behandeln
-    dropdown.bind("<<ComboboxSelected>>", on_dropdown_select)
-
-    # Automatische Aktualisierung der Dropdown-Liste bei Textänderung
-    dropdown_var.trace("w", update_dropdown)
-
-    # Versteckt das Dropdown-Menü, wenn es nicht verwendet wird
-    dropdown.place_forget()
 
     # Benutzernamen abrufen oder erstellen
     username = get_or_create_username()
@@ -256,12 +260,40 @@ def open_home_screen():
 
     # Funktion zum Anzeigen der Dropdown-Suchleiste
     def show_dropdown():
-        x_position = actions_button.winfo_x()
-        y_position = actions_button.winfo_y() + actions_button.winfo_height()
-        dropdown.place(in_=actions_container, x=x_position, y=y_position, anchor="nw")
-        dropdown.focus()
-        dropdown.event_generate('<Button-1>')  # Simuliert einen Mausklick auf das Dropdown-Menü
-        actions_container.update_idletasks()
+        global dropdown_list, dropdown_var, search_var
+        dropdown_window = tk.Toplevel(home_window)
+        dropdown_window.title("User auswählen")
+        # Fenstergröße und -position einstellen
+        center_window(dropdown_window, 300, 200)
+
+        # Suchleiste hinzufügen
+        search_var = tk.StringVar()
+        search_entry = tk.Entry(dropdown_window, textvariable=search_var)
+        search_entry.pack(fill='x')
+        search_entry.bind('<KeyRelease>', update_dropdown)
+
+        # Erstelle einen Frame für die Listbox und Scrollbar
+        listbox_frame = tk.Frame(dropdown_window)
+        listbox_frame.pack(fill='both', expand=True)
+
+        # Erstelle die Scrollbar
+        scrollbar = tk.Scrollbar(listbox_frame)
+        scrollbar.pack(side='right', fill='y')
+
+        # Erstelle die Listbox
+        dropdown_list = tk.Listbox(listbox_frame, yscrollcommand=scrollbar.set, height=10)
+        dropdown_list.pack(side='left', fill='both', expand=True)
+
+        # Verknüpfung von Scrollbar und Listbox
+        scrollbar.config(command=dropdown_list.yview)
+
+        # Initialisiere die Listbox mit allen Benutzernamen
+        update_dropdown()
+
+        # Event-Handler für die Listbox
+        dropdown_list.bind('<Double-1>', on_double_click)  # Doppelklick
+        dropdown_list.bind('<Button-3>', on_right_click)  # Rechtsklick
+        dropdown_list.bind('<Return>', on_enter_pressed)  # Enter-Taste
 
     # Hinzufügen der Funktionen zum Menubutton
     actions_menu.add_command(label="Neuen User anlegen", command=lambda: change_user(welcome_label))
