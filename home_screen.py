@@ -39,6 +39,7 @@ POINTS_PER_ANSWER = 10
 bots = {}
 bot_scores_frame = None
 quiz_frame = None
+user_score_label = None
 
 
 
@@ -163,7 +164,7 @@ def on_enter_pressed(event):
         tk.messagebox.showwarning("Warnung", "Kein Benutzer ausgewählt.")
 
 def start_quiz(frame_container, house_name=None, username=''):
-    global is_quiz_active, score_label, result_label, score, house, bot_score_labels, bots, bot_scores_frame, quiz_frame, question_count, options, user_house
+    global is_quiz_active, result_label, score, house, bot_score_labels, bots, bot_scores_frame, quiz_frame, question_count, options, user_house, user_score_label  # Hinzugefügt user_score_label
 
     if is_quiz_active:  # Verhindern, dass das Quiz erneut gestartet wird, wenn es bereits aktiv ist
         return
@@ -174,32 +175,40 @@ def start_quiz(frame_container, house_name=None, username=''):
         house = house_name
         user_house = house_name
 
-        # Entfernen des ausgewählten Hauses aus den Bots
-        if house in bots:
-            del bots[house]  # Entfernt das ausgewählte Haus aus den Bots
-
     # Entferne alle Widgets im quiz_frame, bevor neue Widgets hinzugefügt werden
     for widget in quiz_frame.winfo_children():
         widget.destroy()
 
     # Erstellen des Frames für Quiz-Widgets, falls noch nicht geschehen
     if quiz_frame is None:
-        quiz_frame = tk.Frame(frame_container, bg='#343a40')  # Dunkelgrauer Hintergrund
-        quiz_frame.grid(row=0, column=0, sticky='nsew')  # Platzieren des Frames
+        quiz_frame = tk.Frame(frame_container, bg='#343a40')
+        quiz_frame.grid(row=0, column=0, sticky='nsew')
 
-        # Erstellen des Frames für Bot-Scores, ohne vertikale Ausdehnung
-        bot_scores_frame = tk.Frame(quiz_frame, width=330, bg='#f5deb3')  # Beschränkung der Breite
-        bot_scores_frame.pack(side='left', anchor='n')
+        # Erstellen des Frames für Bot-Scores und User-Score, ohne vertikale Ausdehnung
+        if bot_scores_frame is None:
+            bot_scores_frame = tk.Frame(quiz_frame, width=330, bg='lightgrey')
+            bot_scores_frame.pack(side='left', anchor='n', fill='y')
 
-        # Erstellung einer Überschrift
-        header_label = tk.Label(quiz_frame, text="Haeuser-Scores", bg="#f5deb3", font=("Harry P", 40))
-        header_label.pack()  # Packen der Überschrift im bot_scores_frame
+            header_label = tk.Label(bot_scores_frame, text="Haeuser-Scores", bg="lightgrey", font=("Harry P", 40))
+            header_label.pack()
 
-        # Erstellen der Labels für die Bot-Scores
-        for bot_house, bot in bots.items():
-            bot_score_label = tk.Label(bot_scores_frame, text=f"{bot_house}: {bot.score}", bg="#f5deb3", font=("Arial", 19))
-            bot_score_label.pack()
-            bot_score_labels[bot_house] = bot_score_label
+            # Erstellen der Labels für die Bot-Scores
+            for bot_house, bot in bots.items():
+                bot_score_label = tk.Label(bot_scores_frame, text=f"{bot_house}: {bot.score}", bg="lightgrey",
+                                           font=("Arial", 19))
+                bot_score_label.pack()
+                bot_score_labels[bot_house] = bot_score_label
+
+                # Initialisierung von user_score_label
+                user_score_label = tk.Label(bot_scores_frame, text=f"{house} ({username}): {score}", bg="lightgrey",
+                                            font=("Arial", 19))
+                user_score_label.pack()
+
+            # Erstellen des Labels für den User-Score mit korrektem Hausnamen und Benutzernamen
+            #user_score_label  # Stellen Sie sicher, dass user_score_label global ist
+            user_score_label = tk.Label(bot_scores_frame, text=f"{house} ({username}): {score}", bg="lightgrey",
+                                        font=("Arial", 19))
+            user_score_label.pack()
 
     # Lade die nächste Frage und zeige sie an
     if question_count < NUM_QUESTIONS:
@@ -214,63 +223,49 @@ def start_quiz(frame_container, house_name=None, username=''):
                 command=lambda b=button, o=option, c=correct_answer, op=options, u=username,
                                fc=frame_container: check_answer(b, o, c, op, u, fc))
 
-        # Zerstöre score_label und result_label, wenn sie existieren, und erstelle sie neu
-        if score_label is not None:
-            score_label.destroy()
-        if result_label is not None:
-            result_label.destroy()
-
-        # Erstelle score_label und house_label direkt im quiz_frame
-        score_label = tk.Label(quiz_frame, text=f"Score: {score}", bg='white', font=("Arial", 19))
-        score_label.pack()
-        house_label = tk.Label(quiz_frame, text=f"Haus: {user_house}", bg='white', font=("Arial", 19))
-        house_label.pack()
         result_label = tk.Label(quiz_frame, text="", bg='white', font=("Arial", 19))
         result_label.pack()
     else:
         end_quiz(username)
 
 
-
-
-
 def check_answer(button, user_answer, correct_answer, options, username, frame_container):
-    global score, question_count, bots, in_tiebreaker_round, score_label, result_label, home_window
+    global score, question_count, bots, in_tiebreaker_round, result_label, home_window, user_score_label  # Hinzugefügt user_score_label
 
     if user_answer == correct_answer:
         button.configure(bg='green')
         result_label.config(text="Richtige Antwort!", fg='green')
-        score += POINTS_PER_ANSWER  # Erhöht die Punktzahl
+        score += POINTS_PER_ANSWER
     else:
         button.configure(bg='red')
         result_label.config(text="Falsche Antwort.", fg='red')
 
-    update_bots_and_scores(options, correct_answer)  # Aktualisieren Sie die Bots und deren Scores
+    update_bots_and_scores(options, correct_answer)
 
-    question_count += 1  # Erhöht die Anzahl der gestellten Fragen
+    # Aktualisieren Sie den Score des Users
+    user_score_label.config(text=f"{house} ({username}): {score}")  # Aktualisierung des Labels
+
+    question_count += 1
     if question_count < NUM_QUESTIONS:
-        home_window.after(300, lambda: start_quiz(frame_container, house_name=house, username=username))  # Weitergabe des Benutzernamens
-
-    else:
-        end_quiz(username)  # Weitergabe des Benutzernamens
-
-    # Prüfe, ob alle Fragen beantwortet wurden oder ob wir uns in einem Tiebreaker befinden
-    if question_count < NUM_QUESTIONS or in_tiebreaker_round:
-        # Lade die nächste Frage
         home_window.after(300, lambda: start_quiz(frame_container, house_name=house, username=username))
-
     else:
-        # Überprüfe auf Unentschieden nur am Ende des normalen Spiels
-         if not in_tiebreaker_round:
+        end_quiz(username)
+
+
+    if question_count < NUM_QUESTIONS or in_tiebreaker_round:
+        home_window.after(300, lambda: start_quiz(frame_container, house_name=house, username=username))
+    else:
+        if not in_tiebreaker_round:
             max_bot_score = max(bot.score for bot in bots.values())
             if score == max_bot_score:
-                # Unentschieden detektiert, starte zusätzliche Runden
                 in_tiebreaker_round = True
-                question_count = 0  # Setze die Fragezahl zurück für die zusätzlichen Runden
+                question_count = 0
                 home_window.after(300, lambda: start_quiz(house_name=house, username=username))
             else:
-                # Kein Unentschieden, Spiel endet
                 end_quiz(username)
+
+
+
 
 def update_bots_and_scores(options, correct_answer):
     global bots, bot_score_labels
