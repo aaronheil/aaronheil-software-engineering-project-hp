@@ -450,28 +450,28 @@ def open_home_screen():
             score = 0
             question_count = 0
 
-            # Entfernen des ausgewählten Hauses aus den Bots
-            if house in bots:
-                del bots[house]  # Entfernt das ausgewählte Haus aus den Bots
+        # Entfernen des ausgewählten Hauses aus den Bots
+        if house in bots:
+            del bots[house]  # Entfernt das ausgewählte Haus aus den Bots
 
-                # Erstellen des Frames für Bot-Scores, ohne vertikale Ausdehnung
-                if bot_scores_frame is None:
-                    bot_scores_frame = tk.Frame(quiz_widget_frame, width=330)  # Beschränkung der Breite
+        # Erstellen des Frames für Bot-Scores, ohne vertikale Ausdehnung
+        if bot_scores_frame is None:
+            bot_scores_frame = tk.Frame(quiz_frame)  # Beschränkung der Breite
 
 
-                    # Erstellung einer Überschrift
-                    header_label = tk.Label(bot_scores_frame, text="Haeuser-Scores", bg="#f5deb3",
-                                            font=("Harry P", 40))
-                    header_label.pack()  # Packen der Überschrift im bot_scores_frame
+            # Erstellung einer Überschrift
+            header_label = tk.Label(bot_scores_frame, text="Haeuser-Scores", bg="#f5deb3",
+                                    font=("Harry P", 40))
+            header_label.pack()  # Packen der Überschrift im bot_scores_frame
 
-                    # Packen des bot_scores_frame mit Überschrift
-                    bot_scores_frame.pack(side='left', anchor='n')
+            # Packen des bot_scores_frame mit Überschrift
+            bot_scores_frame.pack(side='right', anchor='n')
 
-                # hogwarts bots
-                for name in bots.keys():
-                    bot_score_labels[name] = tk.Label(bot_scores_frame, text=f"{name}: 0", bg="#f5deb3",
-                                                      font=("Arial", 19))
-                    bot_score_labels[name].pack()  # Labels werden jetzt untereinander angeordnet
+            # hogwarts bots
+            for name in bots.keys():
+                bot_score_labels[name] = tk.Label(bot_scores_frame, text=f"{name}: 0", bg="#f5deb3",
+                                                  font=("Arial", 19))
+                bot_score_labels[name].pack()  # Labels werden jetzt untereinander angeordnet
 
         for widget in quiz_frame.winfo_children():
             # Überprüfe, ob das Widget das Hintergrundbild ist
@@ -488,9 +488,7 @@ def open_home_screen():
             quiz_widget_frame = tk.Frame(quiz_frame, width=330)  # Beschränkung der Breite
 
 
-            # Erstellen eines Labels oder Canvas, um das Bild zu platzieren
-            background_label = tk.Label(quiz_widget_frame)
-            background_label.place(x=0, y=0, relwidth=1, relheight=1)
+
 
 
             # Erstellen eines Labels für die Überschrift innerhalb des quiz_widget_frame
