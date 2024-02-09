@@ -7,6 +7,7 @@ from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker
 from main import choose_quiz
 from main import get_db_session, Leaderboard, User
+from bots import HogwartsBot
 from bots import bots, update_bot_scores
 import datetime
 from PIL import Image, ImageTk
@@ -44,6 +45,12 @@ bot_scores_frame = None
 quiz_frame = None
 quiz_widget_frame = None
 user_score_label = None
+
+# Predefined list of Hogwarts houses
+houses = ["Gryffindor", "Slytherin", "Hufflepuff", "Ravenclaw"]
+
+# Initialize bots dictionary with a bot for each house
+bots = {house: HogwartsBot(house_name=house) for house in houses}
 
 
 
