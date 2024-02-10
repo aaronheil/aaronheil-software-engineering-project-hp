@@ -593,7 +593,12 @@ def open_home_screen():
 
 
     def end_quiz(username=''):
-        global score, house, in_tiebreaker_round, bots, bot_score_labels, question_count
+        global score, house, in_tiebreaker_round, bots, bot_score_labels, question_count, is_quiz_active
+
+        is_quiz_active = False
+        score = 0
+        question_count = 0
+        house = ""
 
         if in_tiebreaker_round:
             max_bot_score = max(bot.score for bot in bots.values())
