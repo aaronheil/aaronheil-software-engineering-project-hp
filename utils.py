@@ -1,9 +1,11 @@
 import sqlite3
+
 import pandas as pd
 from tkinter import Canvas
 from tkinter import PhotoImage
 import sys
 import pygame
+print(sys.executable)
 import tkinter as tk
 from PIL import Image, ImageTk
 

@@ -4,7 +4,6 @@ from tkinter import PhotoImage
 from utils import set_background
 #from quiz_screen import open_house_window
 import home_screen
-import sqlalchemy
 
 def open_quiz():
     play_music()  # Musik abspielen

@@ -18,6 +18,10 @@ class HogwartsBot:
         if is_correct:
             self.score += POINTS_PER_ANSWER
 
+    def reset_score(self):
+        """Setzt den Punktestand des Bots zurück."""
+        self.score = 0
+
 
 # Erstellen Sie Bots für jedes Haus
 bots = {

@@ -243,6 +243,28 @@ def toggle_music():
     is_music_playing = not is_music_playing
 
 
+def setup_quiz():
+    global quiz_frame, quiz_widget_frame, is_quiz_active, score, question_count
+
+    # Markiere das Quiz als nicht aktiv
+    is_quiz_active = False
+
+    # Setze den Score und den Fragezähler zurück
+    score = 0
+    question_count = 0
+
+    # Entferne alle Widgets im quiz_frame
+    for widget in quiz_frame.winfo_children():
+        widget.destroy()
+
+    # Erstelle den quiz_widget_frame neu
+    quiz_widget_frame = tk.Frame(quiz_frame, bg='#343a40')
+    quiz_widget_frame.pack(fill='both', expand=True)
+
+    # Hier kannst du weitere Widgets oder Anweisungen für das Quiz hinzufügen
+    print("Quiz-Setup ist bereit.")
+
+
 def open_home_screen():
     global quiz_frame, name_entry, dropdown, dropdown_var, welcome_label, current_username, active_button, home_window
 
@@ -360,22 +382,22 @@ def open_home_screen():
     image_gryffindor = load_and_resize_image(r"C:\Users\aaron\Desktop\HPQ_IU_Material\pictures\gryffindor.png")
     btn_gryffindor = tk.Button(button_frame, image=image_gryffindor,
                                command=lambda: on_house_select('Gryffindor', current_username))
-    btn_gryffindor.grid(row=0, column=0, sticky='nsew', padx=10, pady=10)  # Abstand zwischen den Buttons
+    btn_gryffindor.grid(row=0, column=0, sticky='nsew', padx=250, pady=150)  # Abstand zwischen den Buttons
 
     image_slytherin = load_and_resize_image(r"C:\Users\aaron\Desktop\HPQ_IU_Material\pictures\slytherin.png")
     btn_slytherin = tk.Button(button_frame, image=image_slytherin,
                               command=lambda: on_house_select('Slytherin', current_username))
-    btn_slytherin.grid(row=0, column=1, sticky='nsew', padx=10, pady=10)  # Abstand zwischen den Buttons
+    btn_slytherin.grid(row=0, column=1, sticky='nsew', padx=250, pady=150)  # Abstand zwischen den Buttons
 
     image_hufflepuff = load_and_resize_image(r"C:\Users\aaron\Desktop\HPQ_IU_Material\pictures\hufflepuff.png")
     btn_hufflepuff = tk.Button(button_frame, image=image_hufflepuff,
                                command=lambda: on_house_select('Hufflepuff', current_username))
-    btn_hufflepuff.grid(row=0, column=2, sticky='nsew', padx=10, pady=10)  # Abstand zwischen den Buttons
+    btn_hufflepuff.grid(row=0, column=2, sticky='nsew', padx=250, pady=150)  # Abstand zwischen den Buttons
 
     image_ravenclaw = load_and_resize_image(r"C:\Users\aaron\Desktop\HPQ_IU_Material\pictures\ravenclaw.png")
     btn_ravenclaw = tk.Button(button_frame, image=image_ravenclaw,
                               command=lambda: on_house_select('Ravenclaw', current_username))
-    btn_ravenclaw.grid(row=0, column=3, sticky='nsew', padx=10, pady=10)  # Abstand zwischen den Buttons
+    btn_ravenclaw.grid(row=0, column=3, sticky='nsew', padx=250, pady=150)  # Abstand zwischen den Buttons
 
     # Halten Sie die Bildreferenzen, um die automatische Bereinigung durch Garbage Collector zu verhindern
     button_frame.image_gryffindor = image_gryffindor
@@ -590,15 +612,12 @@ def open_home_screen():
         if quiz_frame is not None:
             quiz_frame.destroy()
             quiz_frame = None
+            setup_quiz()
+
 
 
     def end_quiz(username=''):
-        global score, house, in_tiebreaker_round, bots, bot_score_labels, question_count, is_quiz_active
-
-        is_quiz_active = False
-        score = 0
-        question_count = 0
-        house = ""
+        global score, house, in_tiebreaker_round, bots, bot_score_labels, question_count
 
         if in_tiebreaker_round:
             max_bot_score = max(bot.score for bot in bots.values())
@@ -647,12 +666,22 @@ def open_home_screen():
                              bg='light grey')
         end_label.pack()
 
+
         # Buttons zum Speichern und Abbrechen
         save_button = tk.Button(quiz_frame, text="Ergebnis speichern", command=lambda: save_result(username))
         save_button.pack()
 
         cancel_button = tk.Button(quiz_frame, text="Abbrechen", command=quit_quiz)
         cancel_button.pack()
+
+        setup_quiz()  # Quiz neu initialisieren
+
+        # Schalte zum Home-Frame und aktualisiere den aktiven Button
+        switch_frame(home_frame)
+        update_active_button(home_button)
+
+
+
 
     def save_result(username):
         global score, house
@@ -675,6 +704,7 @@ def open_home_screen():
 
         messagebox.showinfo('Erfolg', 'Dein Ergebnis wurde gespeichert.')
         quit_quiz()
+        setup_quiz()
 
     def switch_to_erfolge():
         switch_frame(erfolge_frame)
