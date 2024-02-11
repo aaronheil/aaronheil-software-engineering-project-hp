@@ -114,13 +114,18 @@ def get_all_usernames():
     return session.query(User.username).all()
 
 def get_or_create_username():
-    usernames = get_all_usernames()
-    if usernames:
-        return usernames[-1][0]  # Letzter Benutzername
-    else:
-        username = simpledialog.askstring("Benutzername", "Wie lautet Ihr Name?")
+    session = get_db_session()
+    latest_entry = session.query(Leaderboard).order_by(Leaderboard.played_on.desc()).first()
+    if latest_entry:
+        user = session.query(User).filter_by(id=latest_entry.user_id).first()
+        if user:
+            return user.username
+    # Falls kein Eintrag existiert oder ein Fehler auftritt, fordern Sie einen neuen Benutzernamen an
+    username = simpledialog.askstring("Benutzername", "Wie lautet Ihr Name?")
+    if username and not is_username_existing(username):
         add_username(username)
-        return username if username else "Unbekannter Benutzer"
+    return username if username else "Unbekannter Benutzer"
+
 
 def change_user(label):
     global current_username
@@ -266,7 +271,7 @@ def setup_quiz():
 
 
 def open_home_screen():
-    global quiz_frame, name_entry, dropdown, dropdown_var, welcome_label, current_username, active_button, home_window
+    global current_username, name_entry, dropdown, dropdown_var, welcome_label, current_username, active_button, home_window
 
 
     home_window = tk.Tk()
@@ -298,15 +303,17 @@ def open_home_screen():
     # Globale Variable für den aktuell ausgewählten Button
     active_button = None
 
-    # Benutzernamen abrufen oder erstellen
-    username = get_or_create_username()
+    current_username = get_or_create_username()  # Aktualisiere den aktuellen Benutzernamen
+
+
+
 
 
     # Neuer Frame für Begrüßung und Aktionen-Button
     top_frame = tk.Frame(home_frame, bg='#343a40')
     top_frame.grid(row=0, column=0, sticky='nsew', padx=20, pady=10)
 
-    welcome_label = tk.Label(top_frame, text=f"Hallo {username}", font=("Harry P", 30), relief=tk.RAISED)
+    welcome_label = tk.Label(top_frame, text=f"Hallo {current_username}", font=("Harry P", 30), relief=tk.RAISED)
     welcome_label.grid(row=0, column=0, sticky='w', padx=10, pady=10)
 
     # Aktionen-Button direkt im top_frame ohne zusätzlichen Container
@@ -408,7 +415,7 @@ def open_home_screen():
     # Anpassung der on_house_select Funktion
     def on_house_select(house_name, username):
         global house, current_username
-        if not username:  # Überprüfen, ob der Benutzername leer ist
+        if not current_username:  # Überprüfen, ob der Benutzername leer ist
             messagebox.showinfo("Fehler", "Bitte erst einen Benutzer auswählen.")
             return
         if not house_name:
@@ -457,6 +464,7 @@ def open_home_screen():
         else:
             # Hinweis: Sie können hier eine Benachrichtigung anzeigen oder die Auswahl erzwingen
             messagebox.showinfo("Info", "Bitte wählen Sie einen Benutzer und ein Haus, bevor Sie das Quiz starten.")
+            switch_to_home()
 
     def start_quiz(house_name=None, username=''):
         global quiz_frame, score_label, result_label, score, house, bot_score_labels, bots, bot_scores_frame, quiz_widget_frame, question_count, options, user_house, quiz_background_image
