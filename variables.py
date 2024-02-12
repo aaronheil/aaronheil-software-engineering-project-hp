@@ -1,11 +1,13 @@
 from bots import HogwartsBot
 
+#Initialisierungen
 
 houses = ["Gryffindor", "Slytherin", "Hufflepuff", "Ravenclaw"]
+bots = {house: HogwartsBot(house_name=house) for house in houses}
 
-# Deklaration der globalen Bot-Variablen mit primären Bezug zu Bots
-global global_bot_vars
-global_bot_vars = {
+# Deklaration der Bot-Variablen mit primären Bezug zu Bots
+
+bot_vars = {
     'houses': houses,
     'bots': {house: HogwartsBot(house_name=house) for house in houses},
     'bot_score_labels': {},
