@@ -16,42 +16,6 @@ import home_area_functions
 import variables
 
 
-global bot_score_labels, score, question_count, house, bot_scores_frame, quiz_widget_frame, quiz_background_image, in_tiebreaker_round
-
-# Globale Variable für den aktuellen Benutzernamen
-current_username = ""
-
-# Globale Variable für den Musikstatus
-is_music_playing = True
-
-# Globale Variablen
-dropdown_list = None
-dropdown_var = None
-
-is_quiz_active = False
-
-
-# Globale Variablen für das Quizspiel
-score = 0
-question_count = 0
-house = ""
-in_tiebreaker_round = False
-bot_score_labels = {}
-score_label = None
-result_label = None
-NUM_OPTIONS = 4
-NUM_QUESTIONS = 10
-POINTS_PER_ANSWER = 10
-bots = {}
-bot_scores_frame = None
-quiz_frame = None
-quiz_widget_frame = None
-user_score_label = None
-
-
-
-
-
 
 # Datenbankmodell
 Base = declarative_base()

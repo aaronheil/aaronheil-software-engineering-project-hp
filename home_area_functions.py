@@ -1,6 +1,7 @@
 import selection_screen
 import pygame
 import tkinter as tk
+import variables
 
 
 # Hilfsfunktion, um Fenster in der Mitte des Bildschirms zu zentrieren
@@ -144,9 +145,9 @@ def create_new_user_window(parent):
 
 
 def toggle_music():
-    global is_music_playing
-    if is_music_playing:
+    variables.is_music_playing
+    if variables.is_music_playing:
         pygame.mixer.music.pause()
     else:
         pygame.mixer.music.unpause()
-    is_music_playing = not is_music_playing
+    variables.is_music_playing = not variables.is_music_playing
