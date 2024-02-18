@@ -17,25 +17,25 @@ def center_window(window, width, height):
     window.geometry('%dx%d+%d+%d' % (width, height, x, y))
 
 def is_username_existing(username):
-    return session.query(User).filter_by(username=username).first() is not None
+    return variables.session.query(User).filter_by(username=username).first() is not None
 
 def add_username(username):
     if not is_username_existing(username):
         new_user = User(username=username)
-        session.add(new_user)
-        session.commit()
+        variables.session.add(new_user)
+        variables.session.commit()
         return True
     return False
 
 def get_recent_usernames(limit=10):
-    return [user.username for user in session.query(User.username).order_by(User.id.desc()).limit(limit)]
+    return [user.username for user in variables.session.query(User.username).order_by(User.id.desc()).limit(limit)]
 
 def search_username(search_term):
-    return session.query(User.username).filter(User.username.like(f"%{search_term}%")).all()
+    return variables.session.query(User.username).filter(User.username.like(f"%{search_term}%")).all()
 
 
 def on_name_submit():
-    username = dropdown_var.get()
+    username = variables.dropdown_var.get()
     if add_username(username):
         update_ui_with_new_username(username)  # Update your UI accordingly
     else:

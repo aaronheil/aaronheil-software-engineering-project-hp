@@ -1,5 +1,21 @@
 from bots import HogwartsBot
 
+
+
+# Datenbankmodell
+Base = declarative_base()
+class User(Base):
+    __tablename__ = 'users'
+    id = Column(Integer, primary_key=True)
+    username = Column(String)
+
+# Datenbankverbindung
+engine = create_engine('sqlite:///users.db')
+Base.metadata.create_all(engine)
+Session = sessionmaker(bind=engine)
+session = Session()
+
+
 #Initialisierungen
 
 is_music_playing = True
