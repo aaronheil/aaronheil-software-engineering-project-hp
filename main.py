@@ -1,5 +1,4 @@
 import random
-import random as ran
 import sqlalchemy as db
 from sqlalchemy import create_engine, text
 from sqlalchemy.orm import sessionmaker, relationship
@@ -48,7 +47,7 @@ df.to_sql('zaubersprueche', con=engine, if_exists='replace', index=True)
 
 def choose_quiz():
     # Pseudozufallszahl für Frageauswahl generieren
-    question_id = ran.choice(df.index)
+    question_id = random.choice(df.index)
 
     # Frage und mögliche Antworten aus der Datenbank abrufen
     query = text(f"SELECT `Zauberspruch / Fluch`, `Wirkung` FROM zaubersprueche WHERE id = {question_id}")

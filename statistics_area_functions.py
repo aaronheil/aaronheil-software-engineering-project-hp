@@ -1,29 +1,49 @@
-import variables
+import tkinter as tk
+from tkinter import ttk
+import main
+import locale
 
-def show_leaderboard(tab):
-    style = ttk.Style()
-    style.configure('Treeview', background='#343a40', fieldbackground='#343a40',
-                    foreground='white')  # Dunkelgraue Hintergrund- und weiße Textfarbe für das Leaderboard
-    style.configure('Treeview.Heading', background='#343a40',
-                    foreground='black')  # Dunkelgraue Hintergrundfarbe und schwarze Textfarbe für die Überschriften
+class LeaderboardView:
+    def __init__(self, tab):
+        self.tab = tab
+        self.leaderboard_loaded = False
+        self.setup_leaderboard()
 
-    session = get_db_session()
-    leaderboard_data = session.query(Leaderboard).order_by(Leaderboard.score.desc()).all()
+    def setup_leaderboard(self):
+        if self.tab.winfo_children():
+            return
 
-    # Tabelle für das Leaderboard erstellen
-    columns = ('user', 'house', 'score', 'played_on')
-    leaderboard_table = ttk.Treeview(tab, columns=columns, show='headings')
+        # Lokalisierung auf Deutsch
+        locale.setlocale(locale.LC_TIME, 'de_DE.utf8')
 
-    # Spaltenüberschriften definieren
-    leaderboard_table.heading('user', text='User')
-    leaderboard_table.heading('house', text='Haus')
-    leaderboard_table.heading('score', text='Punktzahl')
-    leaderboard_table.heading('played_on', text='Gespielt am')
+        style = ttk.Style()
+        style.configure('Treeview', font=('Harry P', 20), background='#343a40', fieldbackground='#343a40', foreground='white')
+        # Erhöhe die Zeilenhöhe, um den vertikalen Abstand zwischen den Einträgen zu erhöhen
+        style.configure('Treeview', rowheight=50)
+        style.configure('Treeview.Heading', font=('Harry P', 30, 'bold'), background='#343a40', foreground='black')
 
-    # Daten in die Tabelle einfügen
-    for entry in leaderboard_data:
-        user = session.query(User).filter_by(id=entry.user_id).first()
-        leaderboard_table.insert('', 'end', values=(user.username, entry.house, entry.score, entry.played_on))
+        session = main.get_db_session()
+        leaderboard_data = session.query(main.Leaderboard).order_by(main.Leaderboard.score.desc()).all()
 
-    # Tabelle im Tab platzieren
-    leaderboard_table.pack(expand=True, fill='both')
+        columns = ('user', 'house', 'score', 'played_on')
+        self.leaderboard_table = ttk.Treeview(self.tab, columns=columns, show='headings')
+
+        self.leaderboard_table.heading('user', text='User')
+        self.leaderboard_table.heading('house', text='Haus')
+        self.leaderboard_table.heading('score', text='Punktzahl')
+        self.leaderboard_table.heading('played_on', text='Gespielt am')
+
+        for entry in leaderboard_data:
+            user = session.query(main.User).filter_by(id=entry.user_id).first()
+            # Formatieren des Datums mit 50 Leerzeichen am Anfang
+            played_on_formatted = " " * 45 + entry.played_on.strftime('%d. %B %Y')
+            # Formatieren des Scores ohne "Punkte" und mit 50 Leerzeichen am Anfang
+            score_formatted = " " * 50 + (f"{int(entry.score)}" if entry.score.is_integer() else f"{entry.score}")
+            # Einfügen der formatierten Werte mit zusätzlichen Leerzeichen am Anfang für Username und Haus
+            self.leaderboard_table.insert('', 'end',
+                                          values=(" " * 50 + user.username, " " * 50 + entry.house, score_formatted,
+                                                  played_on_formatted))
+
+        self.leaderboard_table.pack(expand=True, fill='both')
+        self.leaderboard_loaded = True
+

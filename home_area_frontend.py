@@ -1,3 +1,20 @@
+import tkinter as tk
+from tkinter import ttk
+from tkinter import simpledialog
+from tkinter import messagebox
+import home_area_backend
+import selection_screen
+
+
+class HomeArea:
+    def __init__(self, master):
+        self.master = master
+        self.setup_ui()
+
+    def setup_ui(self):
+        # Hier kommt der UI-Code, der zuvor direkt in der open_home_screen Funktion war
+        # Zum Beispiel könnte dies die Erstellung von Buttons, Labels, etc. beinhalten
+        pass
 
 
 def open_home_screen():
@@ -7,6 +24,11 @@ def open_home_screen():
     home_window = tk.Tk()
     home_window.title("Home")
     home_window.attributes("-fullscreen", True)
+
+    # Erstellt eine Instanz der HomeArea Klasse mit home_window als master
+    home_area = HomeArea(home_window)
+
+
 
     # Navigation Frame für die Buttons
     nav_frame = tk.Frame(home_window, bg='#343a40')
@@ -33,7 +55,7 @@ def open_home_screen():
     # Globale Variable für den aktuell ausgewählten Button
     active_button = None
 
-    current_username = get_or_create_username()  # Aktualisiere den aktuellen Benutzernamen
+    current_username = home_area_backend.get_or_create_username()  # Aktualisiere den aktuellen Benutzernamen
 
 
 
