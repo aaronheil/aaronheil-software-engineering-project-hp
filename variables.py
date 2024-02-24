@@ -2,6 +2,8 @@ from bots import HogwartsBot
 from sqlalchemy import create_engine, Column, Integer, String
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker
+import datetime
+
 
 # Basisklasse für das Datenbankmodell mittels SQLAlchemy's ORM
 Base = declarative_base()
@@ -67,6 +69,19 @@ class BotConfig:
         # Ein Dictionary zur Speicherung der Punktestände der Bots.
         self.bot_score_labels = {}
 
+class HomeAreaUI:
+    def __init__(self):
+        self.top_frame = None
+        self.button_frame = None
+        self.welcome_label = None
+        self.actions_button = None
+        self.dropdown_list = None
+        self.active_button = None
+        self.home_window = None
 
+class UserInteraction:
+    def __init__(self):
+        self.name_entry = None
+        self.dropdown_var = None
 
 

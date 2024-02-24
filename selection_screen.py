@@ -15,13 +15,14 @@ import pygame
 import home_area_backend
 from variables import AppState
 from home_area_frontend import HomeArea
-from statistics_area_functions import LeaderboardView
+from statistics_area_frontend import LeaderboardView
 
 
 class SelectionScreen:
     def __init__(self, master):
         self.master = master
-        self.current_username = None  # Beispiel für eine Benutzervariable
+        self.app_state = AppState()
+        #self.app_state.current_username = "NeuerBenutzername"  # Beispiel für eine Benutzervariable
         self.is_quiz_active = False  # Beispielstatus für das Quiz
         self.house = None  # Beispiel für eine Hausvariable
         self.active_button = None  # Speichert den aktuell aktiven Button
