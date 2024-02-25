@@ -32,6 +32,86 @@ class HomeAreaFrontend:
         self.actions_button["menu"] = self.actions_menu
         self.actions_button.grid(row=0, column=1, sticky='w', padx=10, pady=10)
 
+        # Unterbuttons zum Menubutton hinzufügen
+        self.actions_menu.add_command(label="Neuen User anlegen", command=lambda: self.change_user(),
+                                      font=("Arial", 16), background='white', foreground='black')
+        self.actions_menu.add_separator()
+        self.actions_menu.add_command(label="User auswählen", command=self.show_dropdown, font=("Arial", 16),
+                                      background='white', foreground='black')
+        self.actions_menu.add_separator()
+        self.actions_menu.add_command(label="Musik Ein / Aus", command=self.toggle_music, font=("Arial", 16),
+                                      background='white', foreground='black')
+
+        # Button-Frame für die Auswahl der Häuser
+        self.button_frame = tk.Frame(self.home_frame, bg='#343a40')
+        self.button_frame.grid(row=1, column=0, sticky='nsew', padx=20, pady=20)
+        self.button_frame.grid_columnconfigure([0, 1, 2, 3], weight=1)
+        self.button_frame.grid_rowconfigure(0, weight=1)
+
+        # Funktionen zum Laden und Skalieren der Bilder
+        def load_and_resize_image(image_path, size=(400, 500)):
+            original_image = Image.open(image_path)
+            resized_image = original_image.resize(size, Image.Resampling.LANCZOS)
+            return ImageTk.PhotoImage(resized_image)
+
+        # Hausauswahl-Buttons erstellen und im button_frame positionieren
+        image_gryffindor = load_and_resize_image(r"C:\Users\aaron\Desktop\HPQ_IU_Material\pictures\gryffindor.png")
+        btn_gryffindor = tk.Button(self.button_frame, image=image_gryffindor,
+                                   command=lambda: self.on_house_select('Gryffindor', self.current_username))
+        btn_gryffindor.grid(row=0, column=0, sticky='nsew', padx=250, pady=150)  # Abstand zwischen den Buttons
+
+        image_slytherin = load_and_resize_image(r"C:\Users\aaron\Desktop\HPQ_IU_Material\pictures\slytherin.png")
+        btn_slytherin = tk.Button(self.button_frame, image=image_slytherin,
+                                  command=lambda: self.on_house_select('Slytherin', self.current_username))
+        btn_slytherin.grid(row=0, column=1, sticky='nsew', padx=250, pady=150)  # Abstand zwischen den Buttons
+
+        image_hufflepuff = load_and_resize_image(r"C:\Users\aaron\Desktop\HPQ_IU_Material\pictures\hufflepuff.png")
+        btn_hufflepuff = tk.Button(self.button_frame, image=image_hufflepuff,
+                                   command=lambda: self.on_house_select('Hufflepuff', self.current_username))
+        btn_hufflepuff.grid(row=0, column=2, sticky='nsew', padx=250, pady=150)  # Abstand zwischen den Buttons
+
+        image_ravenclaw = load_and_resize_image(r"C:\Users\aaron\Desktop\HPQ_IU_Material\pictures\ravenclaw.png")
+        btn_ravenclaw = tk.Button(self.button_frame, image=image_ravenclaw,
+                                  command=lambda: self.on_house_select('Ravenclaw', self.current_username))
+        btn_ravenclaw.grid(row=0, column=3, sticky='nsew', padx=250, pady=150)  # Abstand zwischen den Buttons
+
+        # Halten Sie die Bildreferenzen, um die automatische Bereinigung durch Garbage Collector zu verhindern
+        self.button_frame.image_gryffindor = image_gryffindor
+        self.button_frame.image_slytherin = image_slytherin
+        self.button_frame.image_hufflepuff = image_hufflepuff
+        self.button_frame.image_ravenclaw = image_ravenclaw
+
+    def on_house_select(self, house_name):
+        if not self.current_username:
+            messagebox.showinfo("Fehler", "Bitte erst einen Benutzer auswählen.")
+            return
+        if not house_name:
+            messagebox.showinfo("Fehler", "Bitte erst ein Haus auswählen.")
+            return
+        self.house = house_name  # Verwende self.house statt global
+        print(f"{house_name} ausgewählt, Benutzer: {self.current_username}")
+        # switch_frame und start_quiz müssen entsprechend angepasst werden
+        """
+               switch_frame(quiz_frame)
+               update_active_button(quiz_button)
+               start_quiz(house_name, username)
+       """
+
+    def switch_to_quiz(self):
+        if self.is_quiz_active:
+            messagebox.showinfo("Info", "Das Quiz läuft bereits.")
+            return
+        # Die Methode switch_frame muss angepasst werden, um innerhalb der Klasse zu funktionieren
+        self.switch_frame("quiz")
+        self.update_active_button(self.quiz_button)
+        # Überprüfe, ob ein Benutzername und ein Haus ausgewählt wurden
+        if self.current_username and self.house:
+            # Die Methode start_quiz muss angepasst werden, um innerhalb der Klasse zu funktionieren
+            self.start_quiz(self.house, self.current_username)
+        else:
+            messagebox.showinfo("Info", "Bitte wählen Sie einen Benutzer und ein Haus, bevor Sie das Quiz starten.")
+            self.switch_to_home()  # Stellt sicher, dass auch diese Methode entsprechend angepasst ist
+
     def show_dropdown(self):
         self.dropdown_window = tk.Toplevel(self.master)
         self.dropdown_window.title("User auswählen")
@@ -62,77 +142,11 @@ class HomeAreaFrontend:
         self.dropdown_list.bind('<Button-3>', self.on_right_click)
         self.dropdown_list.bind('<Return>', self.on_enter_pressed)
 
+"""
+# Initialisiere die Listbox mit allen Benutzernamen
+#update_dropdown()
 
 
-        # Initialisiere die Listbox mit allen Benutzernamen
-       # update_dropdown()
-
-
-
-    # Unterbuttons zum Menubutton hinzufügen
-    actions_menu.add_command(label="Neuen User anlegen", command=lambda: change_user(welcome_label), font=("Arial", 16),
-                             background='white', foreground='black')
-    actions_menu.add_separator()  # Fügt eine Trennlinie hinzu
-    actions_menu.add_command(label="User auswählen", command=show_dropdown, font=("Arial", 16), background='white',
-                             foreground='black')
-    actions_menu.add_separator()  # Fügt eine Trennlinie hinzu
-    actions_menu.add_command(label="Musik Ein / Aus", command=toggle_music, font=("Arial", 16), background='white',
-                             foreground='black')
-
-
-    button_frame = tk.Frame(home_frame, bg='#343a40')
-    button_frame.grid(row=1, column=0, sticky='nsew', padx=20, pady=20)
-    button_frame.grid_columnconfigure([0, 1, 2, 3], weight=1)
-    button_frame.grid_rowconfigure(0, weight=1)
-
-    # Funktionen zum Laden und Skalieren der Bilder
-    def load_and_resize_image(image_path, size=(400, 500)):
-        original_image = Image.open(image_path)
-        resized_image = original_image.resize(size, Image.Resampling.LANCZOS)
-        return ImageTk.PhotoImage(resized_image)
-
-    # Hausauswahl-Buttons erstellen und im button_frame positionieren
-    image_gryffindor = load_and_resize_image(r"C:\Users\aaron\Desktop\HPQ_IU_Material\pictures\gryffindor.png")
-    btn_gryffindor = tk.Button(button_frame, image=image_gryffindor,
-                               command=lambda: on_house_select('Gryffindor', current_username))
-    btn_gryffindor.grid(row=0, column=0, sticky='nsew', padx=250, pady=150)  # Abstand zwischen den Buttons
-
-    image_slytherin = load_and_resize_image(r"C:\Users\aaron\Desktop\HPQ_IU_Material\pictures\slytherin.png")
-    btn_slytherin = tk.Button(button_frame, image=image_slytherin,
-                              command=lambda: on_house_select('Slytherin', current_username))
-    btn_slytherin.grid(row=0, column=1, sticky='nsew', padx=250, pady=150)  # Abstand zwischen den Buttons
-
-    image_hufflepuff = load_and_resize_image(r"C:\Users\aaron\Desktop\HPQ_IU_Material\pictures\hufflepuff.png")
-    btn_hufflepuff = tk.Button(button_frame, image=image_hufflepuff,
-                               command=lambda: on_house_select('Hufflepuff', current_username))
-    btn_hufflepuff.grid(row=0, column=2, sticky='nsew', padx=250, pady=150)  # Abstand zwischen den Buttons
-
-    image_ravenclaw = load_and_resize_image(r"C:\Users\aaron\Desktop\HPQ_IU_Material\pictures\ravenclaw.png")
-    btn_ravenclaw = tk.Button(button_frame, image=image_ravenclaw,
-                              command=lambda: on_house_select('Ravenclaw', current_username))
-    btn_ravenclaw.grid(row=0, column=3, sticky='nsew', padx=250, pady=150)  # Abstand zwischen den Buttons
-
-    # Halten Sie die Bildreferenzen, um die automatische Bereinigung durch Garbage Collector zu verhindern
-    button_frame.image_gryffindor = image_gryffindor
-    button_frame.image_slytherin = image_slytherin
-    button_frame.image_hufflepuff = image_hufflepuff
-    button_frame.image_ravenclaw = image_ravenclaw
-
-    # Anpassung der on_house_select Funktion
-    def on_house_select(house_name, username):
-        global house, current_username
-        if not current_username:  # Überprüfen, ob der Benutzername leer ist
-            messagebox.showinfo("Fehler", "Bitte erst einen Benutzer auswählen.")
-            return
-        if not house_name:
-            messagebox.showinfo("Fehler", "Bitte erst ein Haus auswählen.")
-            return
-        house = house_name
-        current_username = username
-        print(f"{house_name} ausgewählt, Benutzer: {username}")
-        switch_frame(quiz_frame)
-        update_active_button(quiz_button)
-        start_quiz(house_name, username)
 
     def update_active_button(new_active_button):
         global active_button
@@ -142,23 +156,8 @@ class HomeAreaFrontend:
         # Setzen Sie die Farbe des aktiven Buttons
         new_active_button.config(bg='lightgrey')  # Hervorheben des aktiven Buttons
         active_button = new_active_button
+"""
 
 
-
-
-    def switch_to_quiz():
-        global current_username, house, is_quiz_active
-        if is_quiz_active:
-            messagebox.showinfo("Info", "Das Quiz läuft bereits.")
-            return
-        switch_frame(quiz_frame)
-        update_active_button(quiz_button)
-        # Überprüfe, ob ein Benutzername und ein Haus ausgewählt wurden
-        if current_username and house:
-            start_quiz(frame_container, house, current_username)
-        else:
-            # Hinweis: Sie können hier eine Benachrichtigung anzeigen oder die Auswahl erzwingen
-            messagebox.showinfo("Info", "Bitte wählen Sie einen Benutzer und ein Haus, bevor Sie das Quiz starten.")
-            switch_to_home()
 
 
