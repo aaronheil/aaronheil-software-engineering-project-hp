@@ -1,4 +1,9 @@
 
+# Initialisieren Sie quiz_frame, falls noch nicht geschehen
+    quiz_frame = tk.Frame(frame_container, bg='#343a40')
+    quiz_frame.grid(row=0, column=0, sticky='nsew')
+
+
 def start_quiz(house_name=None, username=''):
     global quiz_frame, score_label, result_label, score, house, bot_score_labels, bots, bot_scores_frame, quiz_widget_frame, question_count, options, user_house, quiz_background_image
 

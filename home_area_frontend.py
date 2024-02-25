@@ -3,11 +3,10 @@ from tkinter import ttk
 from tkinter import simpledialog
 from tkinter import messagebox
 import home_area_backend
-from home_area_backend import UserInterfaceManager
+from home_area_backend import UserInterfaceManager, WindowManager
 from PIL import Image, ImageTk
 from variables import HomeAreaUI
-import selection_screen
-from selection_screen import SelectionScreen
+
 
 
 class HomeAreaFrontend:
@@ -18,54 +17,35 @@ class HomeAreaFrontend:
         self.active_button = None
         self.setup_ui()
 
-
-
-
     def setup_ui(self):
-        # Hier kommt der UI-Code, der zuvor direkt in der open_home_screen Funktion war
-        # Zum Beispiel könnte dies die Erstellung von Buttons, Labels, etc. beinhalten
-        pass
+        # Erstellen des Top-Frames für Begrüßung und Aktionen-Button
+        self.top_frame = tk.Frame(self.home_frame, bg='#343a40')
+        self.top_frame.grid(row=0, column=0, sticky='nsew', padx=20, pady=10)
+        self.welcome_label = tk.Label(self.top_frame, text=f"Hallo {self.current_username}", font=("Harry P", 30),
+                                      relief=tk.RAISED)
+        self.welcome_label.grid(row=0, column=0, sticky='w', padx=10, pady=10)
 
+        # Aktionen-Menübutton
+        self.actions_button = tk.Menubutton(self.top_frame, text="Aktionen", font=("Harry P", 30), relief=tk.RAISED,
+                                            width=20)
+        self.actions_menu = tk.Menu(self.actions_button, tearoff=0)
+        self.actions_button["menu"] = self.actions_menu
+        self.actions_button.grid(row=0, column=1, sticky='w', padx=10, pady=10)
 
-
-
-    current_username = home_area_backend.get_or_create_username()  # Aktualisiere den aktuellen Benutzernamen
-
-
-
-    # Neuer Frame für Begrüßung und Aktionen-Button
-    top_frame = tk.Frame(home_frame, bg='#343a40')
-    top_frame.grid(row=0, column=0, sticky='nsew', padx=20, pady=10)
-
-    welcome_label = tk.Label(top_frame, text=f"Hallo {current_username}", font=("Harry P", 30), relief=tk.RAISED)
-    welcome_label.grid(row=0, column=0, sticky='w', padx=10, pady=10)
-
-    # Aktionen-Button direkt im top_frame ohne zusätzlichen Container
-    actions_button = tk.Menubutton(top_frame, text="Aktionen", font=("Harry P", 30), relief=tk.RAISED, width=20)
-    actions_menu = tk.Menu(actions_button, tearoff=0)
-    actions_button["menu"] = actions_menu
-    actions_button.grid(row=0, column=1, sticky='w', padx=10, pady=10)
-
-    # Initialisieren Sie quiz_frame, falls noch nicht geschehen
-    quiz_frame = tk.Frame(frame_container, bg='#343a40')
-    quiz_frame.grid(row=0, column=0, sticky='nsew')
-
-    # Funktion zum Anzeigen der Dropdown-Suchleiste
-    def show_dropdown():
-        global dropdown_list, dropdown_var, search_var
-        dropdown_window = tk.Toplevel(home_window)
-        dropdown_window.title("User auswählen")
-        # Fenstergröße und -position einstellen
-        center_window(dropdown_window, 300, 200)
+    def show_dropdown(self):
+        self.dropdown_window = tk.Toplevel(self.master)
+        self.dropdown_window.title("User auswählen")
+        # Fenster zentrieren
+        WindowManager.center_window(self.dropdown_window, 300, 200)
 
         # Suchleiste hinzufügen
-        search_var = tk.StringVar()
-        search_entry = tk.Entry(dropdown_window, textvariable=search_var)
+        self.search_var = tk.StringVar()
+        search_entry = tk.Entry(self.dropdown_window, textvariable=self.search_var)
         search_entry.pack(fill='x')
-        search_entry.bind('<KeyRelease>', update_dropdown)
+        search_entry.bind('<KeyRelease>', self.update_dropdown)
 
         # Erstelle einen Frame für die Listbox und Scrollbar
-        listbox_frame = tk.Frame(dropdown_window)
+        listbox_frame = tk.Frame(self.dropdown_window)
         listbox_frame.pack(fill='both', expand=True)
 
         # Erstelle die Scrollbar
@@ -73,19 +53,21 @@ class HomeAreaFrontend:
         scrollbar.pack(side='right', fill='y')
 
         # Erstelle die Listbox
-        dropdown_list = tk.Listbox(listbox_frame, yscrollcommand=scrollbar.set, height=10)
-        dropdown_list.pack(side='left', fill='both', expand=True)
-
-        # Verknüpfung von Scrollbar und Listbox
-        scrollbar.config(command=dropdown_list.yview)
-
-        # Initialisiere die Listbox mit allen Benutzernamen
-        update_dropdown()
+        self.dropdown_list = tk.Listbox(listbox_frame, yscrollcommand=scrollbar.set, height=10)
+        self.dropdown_list.pack(side='left', fill='both', expand=True)
+        scrollbar.config(command=self.dropdown_list.yview)
 
         # Event-Handler für die Listbox
-        dropdown_list.bind('<Double-1>', on_double_click)  # Doppelklick
-        dropdown_list.bind('<Button-3>', on_right_click)  # Rechtsklick
-        dropdown_list.bind('<Return>', on_enter_pressed)  # Enter-Taste
+        self.dropdown_list.bind('<Double-1>', self.on_double_click)
+        self.dropdown_list.bind('<Button-3>', self.on_right_click)
+        self.dropdown_list.bind('<Return>', self.on_enter_pressed)
+
+
+
+        # Initialisiere die Listbox mit allen Benutzernamen
+       # update_dropdown()
+
+
 
     # Unterbuttons zum Menubutton hinzufügen
     actions_menu.add_command(label="Neuen User anlegen", command=lambda: change_user(welcome_label), font=("Arial", 16),
