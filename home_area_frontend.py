@@ -5,7 +5,7 @@ from tkinter import messagebox
 import home_area_backend
 from home_area_backend import UserInterfaceManager, WindowManager, MusicManager
 from PIL import Image, ImageTk
-from variables import HomeAreaUI
+from variables import HomeAreaUI, AppState
 from main import session
 
 
@@ -15,15 +15,19 @@ class HomeAreaFrontend:
         self.home_frame = home_frame
         self.active_button = None
         self.home_area_ui = HomeAreaUI()
+        self.app_state = AppState()  # AppState Instanz erstellen
+        self.music_manager = MusicManager(self.app_state)
         self.setup_ui()
         self.ui_manager = UserInterfaceManager(dropdown_list=home_area_backend, session=home_area_backend)
-        self.current_username = self.ui_manager.get_or_create_username()
+        #self.current_username = self.ui_manager.get_or_create_username()
+
+
 
     def setup_ui(self):
         # Erstellen des Top-Frames für Begrüßung und Aktionen-Button
         self.top_frame = tk.Frame(self.home_frame, bg='#343a40')
         self.top_frame.grid(row=0, column=0, sticky='nsew', padx=20, pady=10)
-        self.welcome_label = tk.Label(self.top_frame, text=f"Hallo {self.current_username}", font=("Harry P", 30),
+        self.welcome_label = tk.Label(self.top_frame, text="Hallo", font=("Harry P", 30),
                                       relief=tk.RAISED)
         self.welcome_label.grid(row=0, column=0, sticky='w', padx=10, pady=10)
 
@@ -41,7 +45,7 @@ class HomeAreaFrontend:
         self.actions_menu.add_command(label="User auswählen", command=self.show_dropdown, font=("Arial", 16),
                                       background='white', foreground='black')
         self.actions_menu.add_separator()
-        self.actions_menu.add_command(label="Musik Ein / Aus", command=MusicManager.toggle_music, font=("Arial", 16),
+        self.actions_menu.add_command(label="Musik Ein / Aus", command=self.music_manager.toggle_music, font=("Arial", 16),
                                       background='white', foreground='black')
 
         # Button-Frame für die Auswahl der Häuser

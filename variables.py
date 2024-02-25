@@ -11,6 +11,9 @@ Base = declarative_base()
 
 #  Benutzer-Datenbankmodell mit einer Tabelle 'users'.
 # Jeder Benutzer hat eine eindeutige ID und einen Benutzernamen.
+
+""" Enthält alle jemals angelegten User(namen) """
+
 class User(Base):
     __tablename__ = 'users'  # Name der Tabelle in der Datenbank
     id = Column(Integer, primary_key=True)  # Eindeutige ID als Primärschlüssel

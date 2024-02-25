@@ -3,7 +3,7 @@ from tkinter import simpledialog, messagebox
 import selection_screen
 import pygame
 import variables
-from variables import User, Session, HomeAreaUI
+from variables import User, Session, HomeAreaUI, AppState
 import main
 from main import session
 
@@ -150,15 +150,14 @@ class UserInterfaceManager:
         submit_button.pack(pady=20)
 
 
-
 class MusicManager:
-    """Verwaltet Musik-bezogene Aktionen."""
+    """ Logik zum Musik ein- und ausschalten"""
+    def __init__(self, app_state):
+        self.app_state = app_state
 
-    @staticmethod
-    def toggle_music():
-        """Schaltet die Musik ein oder aus."""
-        if variables.is_music_playing:
+    def toggle_music(self):
+        if self.app_state.is_music_playing:
             pygame.mixer.music.pause()
         else:
             pygame.mixer.music.unpause()
-        variables.is_music_playing = not variables.is_music_playing
+        self.app_state.is_music_playing = not self.app_state.is_music_playing
