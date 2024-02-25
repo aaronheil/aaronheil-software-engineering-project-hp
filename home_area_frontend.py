@@ -3,13 +3,23 @@ from tkinter import ttk
 from tkinter import simpledialog
 from tkinter import messagebox
 import home_area_backend
+from home_area_backend import UserInterfaceManager
+from PIL import Image, ImageTk
+from variables import HomeAreaUI
 import selection_screen
+from selection_screen import SelectionScreen
 
 
-class HomeArea:
-    def __init__(self, master):
+class HomeAreaFrontend:
+    def __init__(self, master, home_frame):
         self.master = master
+        self.home_frame = home_frame
+        self.current_username = home_area_backend.get_or_create_username()
+        self.active_button = None
         self.setup_ui()
+
+
+
 
     def setup_ui(self):
         # Hier kommt der UI-Code, der zuvor direkt in der open_home_screen Funktion war
@@ -17,19 +27,9 @@ class HomeArea:
         pass
 
 
-def open_home_screen():
-    global current_username, name_entry, dropdown, dropdown_var, welcome_label, current_username, active_button, home_window
 
-
-
-
-
-    # Globale Variable für den aktuell ausgewählten Button
-    active_button = None
 
     current_username = home_area_backend.get_or_create_username()  # Aktualisiere den aktuellen Benutzernamen
-
-
 
 
 

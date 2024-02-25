@@ -14,7 +14,7 @@ from PIL import Image, ImageTk
 import pygame
 import home_area_backend
 from variables import AppState
-from home_area_frontend import HomeArea
+from home_area_frontend import HomeAreaFrontend
 from statistics_area_frontend import LeaderboardView
 
 
@@ -54,7 +54,7 @@ class SelectionScreen:
 
 
 
-        self.home_area = HomeArea(self.home_frame)
+        self.home_area = HomeAreaFrontend(self.home_frame)
 
     def setup_nav_buttons(self):
         self.home_button = tk.Button(self.nav_frame, text='⌂ Home', font=("Harry P", 40),

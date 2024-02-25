@@ -4,7 +4,7 @@ from tkinter import PhotoImage
 # from utils import set_background
 # from quiz_screen import open_house_window
 from selection_screen import SelectionScreen
-from home_area_frontend import HomeArea
+from home_area_frontend import HomeAreaFrontend
 
 
 # Definition der Hauptklasse für den Startbildschirm der Anwendung.
