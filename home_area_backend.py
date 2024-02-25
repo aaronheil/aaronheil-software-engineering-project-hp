@@ -1,7 +1,56 @@
+import tkinter as tk
+from tkinter import simpledialog, messagebox
 import selection_screen
 import pygame
-import tkinter as tk
 import variables
+from variables import User
+
+
+class UsernameManager:
+    def __init__(self):
+        pass
+
+    @staticmethod
+    def is_username_existing(username):
+        return variables.session.query(User).filter_by(username=username).first() is not None
+
+    @staticmethod
+    def add_username(username):
+        if not UsernameManager.is_username_existing(username):
+            new_user = User(username=username)
+            variables.session.add(new_user)
+            variables.session.commit()
+            return True
+        return False
+
+    @staticmethod
+    def get_recent_usernames(limit=10):
+        return [user.username for user in variables.session.query(User.username).order_by(User.id.desc()).limit(limit)]
+
+    @staticmethod
+    def search_username(search_term):
+        return variables.session.query(User.username).filter(User.username.like(f"%{search_term}%")).all()
+
+
+
+class UserInterfaceManager:
+    def __init__(self, home_window):
+        self.home_window = home_window
+        self.dropdown_var = tk.StringVar(self.home_window)
+
+    def on_name_submit(self):
+        username = self.dropdown_var.get()
+        if UsernameManager.add_username(username):
+            self.update_ui_with_new_username(username)
+        else:
+            tk.messagebox.showinfo("Info", "Dieser Name existiert bereits.")
+
+    def update_ui_with_new_username(self, username):
+        variables.app_state.current_username = username
+        # Hier sollte die UI entsprechend aktualisiert werden, z.B. Welcome Label etc.
+
+
+
 
 
 # Hilfsfunktion, um Fenster in der Mitte des Bildschirms zu zentrieren
@@ -16,35 +65,16 @@ def center_window(window, width, height):
 
     window.geometry('%dx%d+%d+%d' % (width, height, x, y))
 
-def is_username_existing(username):
-    return variables.session.query(User).filter_by(username=username).first() is not None
-
-def add_username(username):
-    if not is_username_existing(username):
-        new_user = User(username=username)
-        variables.session.add(new_user)
-        variables.session.commit()
-        return True
-    return False
-
-def get_recent_usernames(limit=10):
-    return [user.username for user in variables.session.query(User.username).order_by(User.id.desc()).limit(limit)]
-
-def search_username(search_term):
-    return variables.session.query(User.username).filter(User.username.like(f"%{search_term}%")).all()
 
 
-def on_name_submit():
-    username = variables.dropdown_var.get()
-    if add_username(username):
-        update_ui_with_new_username(username)  # Update your UI accordingly
-    else:
-        tk.messagebox.showinfo("Info", "Dieser Name existiert bereits.")
 
-def update_ui_with_new_username(username):
-    global current_username
-    current_username = username
-    welcome_label.config(text=f"Hallo {username}")
+
+
+
+
+
+
+
 
 def get_all_usernames():
     return session.query(User.username).all()
