@@ -3,8 +3,9 @@ from tkinter import simpledialog, messagebox
 import selection_screen
 import pygame
 import variables
-from variables import User, Session
+from variables import User, Session, HomeAreaUI
 import main
+from main import session
 
 
 class WindowManager:
@@ -42,12 +43,10 @@ class UsernameManager:
     def search_username(search_term):
         return variables.session.query(User.username).filter(User.username.like(f"%{search_term}%")).all()
 
-
-
 class UserInterfaceManager:
-    def __init__(self, home_window):
-        self.home_window = home_window
-        self.dropdown_var = tk.StringVar(self.home_window)
+    def __init__(self, session, dropdown_list):
+        self.session = session
+        self.dropdown_list = dropdown_list
 
     def on_name_submit(self):
         username = self.dropdown_var.get()
@@ -76,11 +75,12 @@ class UserInterfaceManager:
         return username if username else "Unbekannter Benutzer"
 
     def change_user(label):
-        create_new_user_window(home_window)
+        label.create_new_user_window(selection_screen.home_frame)
 
-    def update_dropdown(*args):
-        search_term = search_var.get()  # Hole den Text aus der Suchleiste
-        filtered_names = search_username(search_term)
+    def update_dropdown(search_var, dropdown_list, *args):
+        search_term = search_var.get()
+        # Hole den Text aus der Suchleiste
+        filtered_names = UsernameManager.search_username(search_term)
         dropdown_list.delete(0, 'end')  # Löscht alle Einträge in der Listbox
 
         if not filtered_names:
@@ -90,46 +90,45 @@ class UserInterfaceManager:
                 dropdown_list.insert('end', item[0])
 
     def on_dropdown_select(event):
-        selected_index = dropdown_list.curselection()
-        selected_name = dropdown_list.get(selected_index)
-        update_ui_with_new_username(selected_name)
+        selected_index = HomeAreaUI.dropdown_list.curselection()
+        selected_name = HomeAreaUI.dropdown_list.get(selected_index)
+        event.update_ui_with_new_username(selected_name)
 
-    def on_double_click(event):
-        selected_index = dropdown_list.curselection()
-        selected_name = dropdown_list.get(selected_index)
-        update_ui_with_new_username(selected_name)
+    def on_double_click(self, event):
+        selected_indices = self.dropdown_list.curselection()
+        if selected_indices:
+            selected_index = selected_indices[0]
+            selected_name = self.dropdown_list.get(selected_index)
+            self.update_ui_with_new_username(selected_name)
 
-    def on_right_click(event):
-        selected_indices = dropdown_list.curselection()  # Holt die Liste der ausgewählten Indizes
-        if selected_indices:  # Prüfen, ob die Liste nicht leer ist
-            selected_index = selected_indices[0]  # Nehmen Sie den ersten ausgewählten Index
-            selected_name = dropdown_list.get(selected_index)  # Holt den Namen aus der Listbox
-            if tk.messagebox.askyesno("Löschen", f"Möchten Sie '{selected_name}' löschen?"):
-                user_to_delete = session.query(User).filter_by(username=selected_name).first()
-                if user_to_delete:
-                    session.delete(user_to_delete)
-                    session.commit()
-                    update_dropdown()  # Aktualisiert die Listbox nach dem Löschen eines Benutzers
-        else:
-            tk.messagebox.showwarning("Warnung", "Kein Benutzer ausgewählt.")
-
-    def on_enter_pressed(event):
+    def on_right_click(self, dropdown_list, event):
         selected_indices = dropdown_list.curselection()
-        if selected_indices:  # Prüfen, ob die Liste nicht leer ist
-            selected_index = selected_indices[0]  # Nehmen Sie den ersten ausgewählten Index
+        if selected_indices:
+            selected_index = selected_indices[0]
             selected_name = dropdown_list.get(selected_index)
-            update_ui_with_new_username(selected_name)
+            if tk.messagebox.askyesno("Löschen", f"Möchten Sie '{selected_name}' löschen?"):
+                user_to_delete = self.session.query(User).filter_by(username=selected_name).first()
+                if user_to_delete:
+                    self.session.delete(user_to_delete)
+                    self.session.commit()
+                    self.update_dropdown(
+                        dropdown_list)  # Angenommen, diese Methode existiert und aktualisiert die Listbox
         else:
             tk.messagebox.showwarning("Warnung", "Kein Benutzer ausgewählt.")
 
-    def toggle_fullscreen(event=None):
-        home_window.attributes("-fullscreen", False)  # Schaltet den Vollbildmodus aus
-        home_window.destroy()  # Schließt das Fenster
+    def on_enter_pressed(self, dropdown_list, event):
+        selected_indices = dropdown_list.curselection()
+        if selected_indices:
+            selected_index = selected_indices[0]
+            selected_name = dropdown_list.get(selected_index)
+            self.update_ui_with_new_username(selected_name)
+        else:
+            tk.messagebox.showwarning("Warnung", "Kein Benutzer ausgewählt.")
 
-    def create_new_user_window(parent):
-        new_user_window = tk.Toplevel(parent)
+    def create_new_user_window(self):
+        new_user_window = tk.Toplevel(self.main_window)  # Annahme, dass main_window eine Instanzvariable ist
         new_user_window.title("Neuen Benutzer anlegen")
-        center_window(new_user_window, 400, 200)
+        WindowManager.center_window(new_user_window, 400, 200)
 
         tk.Label(new_user_window, text="Bitte geben Sie den neuen Benutzernamen ein:").pack(pady=20)
 
@@ -139,9 +138,9 @@ class UserInterfaceManager:
         def submit_new_username():
             username = username_entry.get()
             if username:
-                if add_username(username):  # Füge den neuen Benutzer hinzu, wenn der Name nicht leer ist
+                if UsernameManager.add_username(username):  # Verwende die Klasse UsernameManager
+                    self.update_ui_with_new_username(username, new_user_window)  # Annahme einer angepassten Methode
                     new_user_window.destroy()
-                    update_ui_with_new_username(username)
                 else:
                     tk.messagebox.showwarning("Warnung", "Benutzername existiert bereits!")
             else:

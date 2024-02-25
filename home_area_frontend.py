@@ -3,19 +3,21 @@ from tkinter import ttk
 from tkinter import simpledialog
 from tkinter import messagebox
 import home_area_backend
-from home_area_backend import UserInterfaceManager, WindowManager
+from home_area_backend import UserInterfaceManager, WindowManager, MusicManager
 from PIL import Image, ImageTk
 from variables import HomeAreaUI
-
+from main import session
 
 
 class HomeAreaFrontend:
     def __init__(self, master, home_frame):
         self.master = master
         self.home_frame = home_frame
-        self.current_username = home_area_backend.get_or_create_username()
         self.active_button = None
+        self.home_area_ui = HomeAreaUI()
         self.setup_ui()
+        self.ui_manager = UserInterfaceManager(dropdown_list=home_area_backend, session=home_area_backend)
+        self.current_username = self.ui_manager.get_or_create_username()
 
     def setup_ui(self):
         # Erstellen des Top-Frames für Begrüßung und Aktionen-Button
@@ -39,7 +41,7 @@ class HomeAreaFrontend:
         self.actions_menu.add_command(label="User auswählen", command=self.show_dropdown, font=("Arial", 16),
                                       background='white', foreground='black')
         self.actions_menu.add_separator()
-        self.actions_menu.add_command(label="Musik Ein / Aus", command=self.toggle_music, font=("Arial", 16),
+        self.actions_menu.add_command(label="Musik Ein / Aus", command=MusicManager.toggle_music, font=("Arial", 16),
                                       background='white', foreground='black')
 
         # Button-Frame für die Auswahl der Häuser
@@ -122,7 +124,7 @@ class HomeAreaFrontend:
         self.search_var = tk.StringVar()
         search_entry = tk.Entry(self.dropdown_window, textvariable=self.search_var)
         search_entry.pack(fill='x')
-        search_entry.bind('<KeyRelease>', self.update_dropdown)
+        search_entry.bind('<KeyRelease>', UserInterfaceManager.update_dropdown)
 
         # Erstelle einen Frame für die Listbox und Scrollbar
         listbox_frame = tk.Frame(self.dropdown_window)
@@ -138,9 +140,9 @@ class HomeAreaFrontend:
         scrollbar.config(command=self.dropdown_list.yview)
 
         # Event-Handler für die Listbox
-        self.dropdown_list.bind('<Double-1>', self.on_double_click)
-        self.dropdown_list.bind('<Button-3>', self.on_right_click)
-        self.dropdown_list.bind('<Return>', self.on_enter_pressed)
+        self.dropdown_list.bind('<Double-1>', self.ui_manager.on_double_click)
+        self.dropdown_list.bind('<Button-3>', self.ui_manager.on_right_click)
+        self.dropdown_list.bind('<Return>', self.ui_manager.on_enter_pressed)
 
 """
 # Initialisiere die Listbox mit allen Benutzernamen

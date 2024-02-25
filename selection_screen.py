@@ -52,9 +52,7 @@ class SelectionScreen:
         for frame in self.frames.values():
             frame.grid(row=0, column=0, sticky='nsew')
 
-
-
-        self.home_area = HomeAreaFrontend(self.home_frame)
+        self.home_area = HomeAreaFrontend(self.master, self.home_frame)
 
     def setup_nav_buttons(self):
         self.home_button = tk.Button(self.nav_frame, text='⌂ Home', font=("Harry P", 40),
@@ -83,6 +81,7 @@ class SelectionScreen:
 
     def switch_to_home(self):
         self.switch_frame("home")
+        #HomeAreaFrontend(self.home_frame)
 
     def switch_to_quiz(self):
         if self.is_quiz_active:

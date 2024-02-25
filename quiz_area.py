@@ -1,4 +1,4 @@
-
+"""
 # Initialisieren Sie quiz_frame, falls noch nicht geschehen
     quiz_frame = tk.Frame(frame_container, bg='#343a40')
     quiz_frame.grid(row=0, column=0, sticky='nsew')
@@ -257,3 +257,5 @@ def save_result(username):
 
 
 home_window.mainloop()
+
+"""
