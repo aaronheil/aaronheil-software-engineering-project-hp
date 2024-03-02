@@ -22,7 +22,8 @@ class HomeAreaFrontend:
         self.username_manger = UsernameManager(every_username_session)
         self.ui_manager = UserInterfaceManager(dropdown_list=home_area_backend,
                                                session=home_area_backend,
-                                               home_frame=self.home_frame)
+                                               home_frame=self.home_frame,
+                                               app_state=self.app_state)
 
         #self.current_username = self.ui_manager.get_or_create_username()
 

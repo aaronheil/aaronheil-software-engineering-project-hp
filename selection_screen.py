@@ -110,6 +110,7 @@ class SelectionScreen:
 
 def main():
     root = tk.Tk()
+    root.title("Auswahlfenster")
     root.attributes("-fullscreen", True)
     app = SelectionScreen(root)
     root.mainloop()

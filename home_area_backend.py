@@ -87,10 +87,11 @@ class UsernameManager:
 
 
 class UserInterfaceManager:
-    def __init__(self, session, dropdown_list, home_frame):
+    def __init__(self, session, dropdown_list, home_frame, app_state):
         self.session = session
         self.home_frame = home_frame
         self.dropdown_list = dropdown_list
+        self.app_state = app_state  # Speichert die AppState-Instanz als Attribut
 
 
     def on_name_submit(self):
@@ -101,7 +102,7 @@ class UserInterfaceManager:
             tk.messagebox.showinfo("Info", "Dieser Name existiert bereits.")
 
     def update_ui_with_new_username(self, username):
-        variables.app_state.current_username = username
+        self.app_state.current_username = username
         # Hier sollte die UI entsprechend aktualisiert werden, z.B. Welcome Label etc.
 
     def get_all_usernames(self):

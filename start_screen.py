@@ -1,6 +1,7 @@
 import tkinter as tk
 import pygame
 from tkinter import PhotoImage
+from variables import AppState
 # from utils import set_background
 # from quiz_screen import open_house_window
 from selection_screen import SelectionScreen
@@ -10,9 +11,10 @@ from home_area_frontend import HomeAreaFrontend
 # Definition der Hauptklasse für den Startbildschirm der Anwendung.
 class StartScreen:
     # Initialisierungsmethode, die beim Erstellen einer Instanz der Klasse aufgerufen wird.
-    def __init__(self, master):
+    def __init__(self, master, app_state):
         # Speichert das übergeordnete Tkinter-Widget (in der Regel ein Tk-Fenster).
         self.master = master
+        self.app_state = app_state
         # Setzt den Titel des Fensters.
         self.master.title("Harry Potter Quiz")
         # Setzt das Fenster in den Vollbildmodus.
@@ -75,8 +77,10 @@ class StartScreen:
 def main():
     # Erstellt das Hauptfenster.
     root = tk.Tk()
+    root.title("Start-Fenster")
+    app_state = AppState() # AppState Instanz-Erstellung
     # Erstellt eine Instanz der StartScreen-Klasse.
-    app = StartScreen(root)
+    app = StartScreen(root, app_state)
     # Startet die Tkinter-Ereignisschleife.
     root.mainloop()
 
