@@ -5,7 +5,7 @@ from tkinter import messagebox
 import home_area_backend
 from home_area_backend import UsernameManager, UserInterfaceManager, WindowManager, MusicManager
 from PIL import Image, ImageTk
-from variables import HomeAreaUI, AppState, User, every_username_session
+from variables import HomeAreaUI, AppState, User, UserInteraction, every_username_session
 from main import session
 
 
@@ -20,10 +20,13 @@ class HomeAreaFrontend:
         self.music_manager = MusicManager(self.app_state)
         self.setup_ui()
         self.username_manger = UsernameManager(every_username_session)
+        self.user_interaction = UserInteraction()
         self.ui_manager = UserInterfaceManager(dropdown_list=home_area_backend,
                                                session=home_area_backend,
                                                home_frame=self.home_frame,
-                                               app_state=self.app_state)
+                                               app_state=self.app_state,
+                                               username_manager=self.username_manger,
+                                               user_interaction=self.user_interaction)
 
         #self.current_username = self.ui_manager.get_or_create_username()
 

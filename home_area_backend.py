@@ -3,7 +3,7 @@ from tkinter import simpledialog, messagebox
 import selection_screen
 import pygame
 import variables
-from variables import User, Session, HomeAreaUI, every_username_session, AppState
+from variables import User, Session, HomeAreaUI, UserInteraction, every_username_session, AppState
 import main
 from main import session
 
@@ -87,16 +87,17 @@ class UsernameManager:
 
 
 class UserInterfaceManager:
-    def __init__(self, session, dropdown_list, home_frame, app_state):
+    def __init__(self, session, dropdown_list, home_frame, app_state, username_manager, user_interaction):
         self.session = session
         self.home_frame = home_frame
         self.dropdown_list = dropdown_list
         self.app_state = app_state  # Speichert die AppState-Instanz als Attribut
-
+        self.username_manager = username_manager
+        self.user_interaction = user_interaction
 
     def on_name_submit(self):
-        username = self.dropdown_var.get()
-        if UsernameManager.add_username(username):
+        username = self.user_interaction.dropdown_var.get()
+        if self.username_manager.add_username(username):
             self.update_ui_with_new_username(username)
         else:
             tk.messagebox.showinfo("Info", "Dieser Name existiert bereits.")
@@ -106,7 +107,7 @@ class UserInterfaceManager:
         # Hier sollte die UI entsprechend aktualisiert werden, z.B. Welcome Label etc.
 
     def get_all_usernames(self):
-        return variables.session.query(User.username).all()
+        return variables.every_username_session.query(User.username).all()
 
     def get_or_create_username(self):
         session = Session()
@@ -189,7 +190,7 @@ class UserInterfaceManager:
             """ Überprüfung und Speicherung des neuen Benutzernamens"""
             username = username_entry.get()
             if username:
-                if UsernameManager.add_username(username):  # Verwende die Klasse UsernameManager
+                if self.username_manager.add_username(username):  # Verwende die Klasse UsernameManager
                     self.update_ui_with_new_username(username, new_user_window)  # Annahme einer angepassten Methode
                     new_user_window.destroy()
                 else:
