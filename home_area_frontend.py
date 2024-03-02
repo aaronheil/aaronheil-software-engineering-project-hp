@@ -3,9 +3,9 @@ from tkinter import ttk
 from tkinter import simpledialog
 from tkinter import messagebox
 import home_area_backend
-from home_area_backend import UserInterfaceManager, WindowManager, MusicManager
+from home_area_backend import UsernameManager, UserInterfaceManager, WindowManager, MusicManager
 from PIL import Image, ImageTk
-from variables import HomeAreaUI, AppState
+from variables import HomeAreaUI, AppState, User, every_username_session
 from main import session
 
 
@@ -16,8 +16,10 @@ class HomeAreaFrontend:
         self.active_button = None
         self.home_area_ui = HomeAreaUI()
         self.app_state = AppState()  # AppState Instanz erstellen
+        self.user = User()
         self.music_manager = MusicManager(self.app_state)
         self.setup_ui()
+        self.username_manger = UsernameManager(every_username_session)
         self.ui_manager = UserInterfaceManager(dropdown_list=home_area_backend, session=home_area_backend)
         #self.current_username = self.ui_manager.get_or_create_username()
 
@@ -39,7 +41,7 @@ class HomeAreaFrontend:
         self.actions_button.grid(row=0, column=1, sticky='w', padx=10, pady=10)
 
         # Unterbuttons zum Menubutton hinzufügen
-        self.actions_menu.add_command(label="Neuen User anlegen", command=lambda: self.change_user(),
+        self.actions_menu.add_command(label="Neuen User anlegen", command=lambda: self.username_manger.add_username,
                                       font=("Arial", 16), background='white', foreground='black')
         self.actions_menu.add_separator()
         self.actions_menu.add_command(label="User auswählen", command=self.show_dropdown, font=("Arial", 16),

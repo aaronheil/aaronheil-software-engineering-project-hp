@@ -28,7 +28,7 @@ Base.metadata.create_all(engine)
 # Konfiguriert und erstellt eine SessionFactory, um mit der Datenbank zu interagieren.
 Session = sessionmaker(bind=engine)
 # Erstellt eine Session, um Operationen in der Datenbank durchzuführen.
-session = Session()
+every_username_session = Session()
 
 
 # Definiert eine Klasse für den Anwendungszustand.

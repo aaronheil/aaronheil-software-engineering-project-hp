@@ -3,7 +3,7 @@ from tkinter import simpledialog, messagebox
 import selection_screen
 import pygame
 import variables
-from variables import User, Session, HomeAreaUI, AppState
+from variables import User, Session, HomeAreaUI, every_username_session, AppState
 import main
 from main import session
 
@@ -19,29 +19,72 @@ class WindowManager:
 
 
 class UsernameManager:
-    def __init__(self):
-        pass
+    """
+    Verwaltet Benutzeroperationen bezüglich der Überprüfung, Hinzufügung und Abfrage von Benutzernamen.
+    """
 
-    @staticmethod
-    def is_username_existing(username):
-        return variables.session.query(User).filter_by(username=username).first() is not None
+    def __init__(self, session):
+        """
+        Initialisiert den UsernameManager mit einer Datenbanksession.
 
-    @staticmethod
-    def add_username(username):
-        if not UsernameManager.is_username_existing(username):
+        Args:
+            session: Die Datenbanksession, die für Abfragen verwendet wird.
+        """
+        self.session = session
+
+    def is_username_existing(self, username):
+        """
+        Prüft, ob ein Benutzername bereits in der Datenbank existiert.
+
+        Args:
+            username: Der zu überprüfende Benutzername.
+
+        Returns:
+            True, wenn der Benutzername existiert, sonst False.
+        """
+        return self.session.query(User).filter_by(username=username).first() is not None
+
+    def add_username(self, username):
+        """
+        Fügt einen neuen Benutzernamen hinzu, wenn dieser noch nicht existiert.
+
+        Args:
+            username: Der hinzuzufügende Benutzername.
+
+        Returns:
+            True, wenn der Benutzername erfolgreich hinzugefügt wurde, sonst False.
+        """
+        if not self.is_username_existing(username):
             new_user = User(username=username)
-            variables.session.add(new_user)
-            variables.session.commit()
+            self.session.add(new_user)
+            self.session.commit()
             return True
         return False
 
-    @staticmethod
-    def get_recent_usernames(limit=10):
-        return [user.username for user in variables.session.query(User.username).order_by(User.id.desc()).limit(limit)]
+    def get_recent_usernames(self, limit=10):
+        """
+        Ruft die neuesten Benutzernamen basierend auf der angegebenen Limitierung ab.
 
-    @staticmethod
-    def search_username(search_term):
-        return variables.session.query(User.username).filter(User.username.like(f"%{search_term}%")).all()
+        Args:
+            limit: Die maximale Anzahl der zurückzugebenden Benutzernamen.
+
+        Returns:
+            Eine Liste der neuesten Benutzernamen.
+        """
+        return [user.username for user in self.session.query(User.username).order_by(User.id.desc()).limit(limit)]
+
+    def search_username(self, search_term):
+        """
+        Sucht nach Benutzernamen, die den Suchbegriff enthalten.
+
+        Args:
+            search_term: Der Begriff, nach dem in Benutzernamen gesucht wird.
+
+        Returns:
+            Eine Liste von Benutzernamen, die den Suchbegriff enthalten.
+        """
+        return self.session.query(User.username).filter(User.username.like(f"%{search_term}%")).all()
+
 
 class UserInterfaceManager:
     def __init__(self, session, dropdown_list):
@@ -125,7 +168,11 @@ class UserInterfaceManager:
         else:
             tk.messagebox.showwarning("Warnung", "Kein Benutzer ausgewählt.")
 
+
+# Funktionen zum Handling bei Anlage eines neuen Benutzernamens
+
     def create_new_user_window(self):
+        """ Öffnet ein kleines neues Fenster zur Eingabe des neuen Benutzernamens"""
         new_user_window = tk.Toplevel(self.main_window)  # Annahme, dass main_window eine Instanzvariable ist
         new_user_window.title("Neuen Benutzer anlegen")
         WindowManager.center_window(new_user_window, 400, 200)
@@ -136,6 +183,7 @@ class UserInterfaceManager:
         username_entry.pack()
 
         def submit_new_username():
+            """ Überprüfung und Speicherung des neuen Benutzernamens"""
             username = username_entry.get()
             if username:
                 if UsernameManager.add_username(username):  # Verwende die Klasse UsernameManager
