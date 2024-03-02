@@ -87,9 +87,11 @@ class UsernameManager:
 
 
 class UserInterfaceManager:
-    def __init__(self, session, dropdown_list):
+    def __init__(self, session, dropdown_list, home_frame):
         self.session = session
+        self.home_frame = home_frame
         self.dropdown_list = dropdown_list
+
 
     def on_name_submit(self):
         username = self.dropdown_var.get()
@@ -171,9 +173,9 @@ class UserInterfaceManager:
 
 # Funktionen zum Handling bei Anlage eines neuen Benutzernamens
 
-    def create_new_user_window(self):
+    def create_new_user_window(self, home_frame):
         """ Öffnet ein kleines neues Fenster zur Eingabe des neuen Benutzernamens"""
-        new_user_window = tk.Toplevel(self.main_window)  # Annahme, dass main_window eine Instanzvariable ist
+        new_user_window = tk.Toplevel(home_frame)
         new_user_window.title("Neuen Benutzer anlegen")
         WindowManager.center_window(new_user_window, 400, 200)
 

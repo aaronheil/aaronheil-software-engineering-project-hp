@@ -20,7 +20,10 @@ class HomeAreaFrontend:
         self.music_manager = MusicManager(self.app_state)
         self.setup_ui()
         self.username_manger = UsernameManager(every_username_session)
-        self.ui_manager = UserInterfaceManager(dropdown_list=home_area_backend, session=home_area_backend)
+        self.ui_manager = UserInterfaceManager(dropdown_list=home_area_backend,
+                                               session=home_area_backend,
+                                               home_frame=self.home_frame)
+
         #self.current_username = self.ui_manager.get_or_create_username()
 
 
@@ -41,13 +44,18 @@ class HomeAreaFrontend:
         self.actions_button.grid(row=0, column=1, sticky='w', padx=10, pady=10)
 
         # Unterbuttons zum Menubutton hinzufügen
-        self.actions_menu.add_command(label="Neuen User anlegen", command=lambda: self.username_manger.add_username,
+        self.actions_menu.add_command(label="Neuen User anlegen",
+                                      command=lambda: self.ui_manager.create_new_user_window(self.home_frame),
                                       font=("Arial", 16), background='white', foreground='black')
+
         self.actions_menu.add_separator()
-        self.actions_menu.add_command(label="User auswählen", command=self.show_dropdown, font=("Arial", 16),
+        self.actions_menu.add_command(label="User auswählen", command=self.show_dropdown,
+                                      font=("Arial", 16),
                                       background='white', foreground='black')
+
         self.actions_menu.add_separator()
-        self.actions_menu.add_command(label="Musik Ein / Aus", command=self.music_manager.toggle_music, font=("Arial", 16),
+        self.actions_menu.add_command(label="Musik Ein / Aus", command=self.music_manager.toggle_music,
+                                      font=("Arial", 16),
                                       background='white', foreground='black')
 
         # Button-Frame für die Auswahl der Häuser
