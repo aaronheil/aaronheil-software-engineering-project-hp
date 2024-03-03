@@ -15,7 +15,7 @@ import pygame
 import home_area_backend
 from variables import AppState
 from home_area_frontend import HomeAreaFrontend
-from statistics_area_frontend import LeaderboardView
+from statistics_area import LeaderboardView
 
 
 class SelectionScreen:
