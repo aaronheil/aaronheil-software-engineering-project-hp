@@ -49,12 +49,13 @@ class UsernameManager:
         """
         if not UsernameManager.is_username_existing(username):
             new_user = User(username=username)
-            every_username_session.session.add(new_user)
-            every_username_session.session.commit()
+            every_username_session.add(new_user)
+            every_username_session.commit()
             return True
         return False
 
-    def get_recent_usernames(self, limit=10):
+    @staticmethod
+    def get_recent_usernames(limit=10):
         """
         Ruft die neuesten Benutzernamen basierend auf der angegebenen Limitierung ab.
 
@@ -64,7 +65,7 @@ class UsernameManager:
         Returns:
             Eine Liste der neuesten Benutzernamen.
         """
-        return [user.username for user in self.session.query(User.username).order_by(User.id.desc()).limit(limit)]
+        return [user.username for user in every_username_session.query(User.username).order_by(User.id.desc()).limit(limit)]
 
     @staticmethod
     def search_username(search_term):
