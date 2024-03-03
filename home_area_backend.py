@@ -82,12 +82,12 @@ class UsernameManager:
 
 
 class UserInterfaceManager:
-    def __init__(self, session, dropdown_list, home_frame, app_state, username_manager, user_interaction):
+    def __init__(self, session, home_area_ui, home_frame, app_state, username_manager, user_interaction):
         self.session = session
         self.home_frame = home_frame
-        self.dropdown_list = dropdown_list
         self.app_state = app_state  # Speichert die AppState-Instanz als Attribut
         self.username_manager = username_manager
+        self.home_area_ui = home_area_ui
         self.user_interaction = user_interaction
 
 
@@ -120,17 +120,16 @@ class UserInterfaceManager:
     def change_user(label):
         label.create_new_user_window(selection_screen.home_frame)
 
-    def update_dropdown(search_term, dropdown_list, *args):
-        # search_term ist jetzt direkt der Suchbegriff als String
-        # filtered_names erhält die gefilterten Benutzernamen basierend auf dem Suchbegriff
+    def update_dropdown(self, *args):
+        search_term = UsernameManager.search_var.get()  # search_var wird genutzt in home_area_frontend.py
         filtered_names = UsernameManager.search_username(search_term)
-        dropdown_list.delete(0, 'end')  # Löscht alle Einträge in der Listbox
+        self.home_area_ui.dropdown_list.delete(0, 'end')  # Löscht alle Einträge in der Listbox
 
         if not filtered_names:
             tk.messagebox.showinfo("Suche", "Kein passender Benutzername gefunden.")
         else:
             for item in filtered_names:
-                dropdown_list.insert('end', item[0])
+                self.home_area_ui.dropdown_list.insert('end', item[0])
 
     def on_dropdown_select(event):
         selected_index = HomeAreaUI.dropdown_list.curselection()

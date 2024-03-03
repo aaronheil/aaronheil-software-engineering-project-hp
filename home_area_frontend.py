@@ -20,12 +20,12 @@ class HomeAreaFrontend:
         self.music_manager = MusicManager(self.app_state)
         self.username_manger = UsernameManager()
         self.user_interaction = UserInteraction()
-        self.ui_manager = UserInterfaceManager(dropdown_list=home_area_backend,
-                                               session=home_area_backend,
+        self.ui_manager = UserInterfaceManager(session=home_area_backend,
                                                home_frame=self.home_frame,
                                                app_state=self.app_state,
                                                username_manager=self.username_manger,
-                                               user_interaction=self.user_interaction)
+                                               user_interaction=self.user_interaction,
+                                               home_area_ui=self.home_area_ui)
         self.setup_ui()
         self.set_and_update_username()
 
