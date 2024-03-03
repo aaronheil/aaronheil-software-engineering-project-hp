@@ -125,9 +125,9 @@ class UserInterfaceManager:
     def change_user(label):
         label.create_new_user_window(selection_screen.home_frame)
 
-    def update_dropdown(search_var, dropdown_list, *args):
-        search_term = search_var.get()
-        # Hole den Text aus der Suchleiste
+    def update_dropdown(search_term, dropdown_list, *args):
+        # search_term ist jetzt direkt der Suchbegriff als String
+        # filtered_names erhält die gefilterten Benutzernamen basierend auf dem Suchbegriff
         filtered_names = UsernameManager.search_username(search_term)
         dropdown_list.delete(0, 'end')  # Löscht alle Einträge in der Listbox
 

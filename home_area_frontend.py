@@ -143,34 +143,43 @@ class HomeAreaFrontend:
             self.switch_to_home()  # Stellt sicher, dass auch diese Methode entsprechend angepasst ist
 
     def show_dropdown(self):
+        # Erstellt ein neues Fenster für das Dropdown-Menü
         self.dropdown_window = tk.Toplevel(self.master)
         self.dropdown_window.title("User auswählen")
-        # Fenster zentrieren
+        # Zentriert das Dropdown-Fenster auf dem Bildschirm
         WindowManager.center_window(self.dropdown_window, 300, 200)
 
-        # Suchleiste hinzufügen
+        # Fügt eine Suchleiste hinzu, um Benutzern zu ermöglichen, nach Namen zu suchen
         self.search_var = tk.StringVar()
         search_entry = tk.Entry(self.dropdown_window, textvariable=self.search_var)
-        search_entry.pack(fill='x')
-        search_entry.bind('<KeyRelease>', UserInterfaceManager.update_dropdown)
+        search_entry.pack(fill='x')  # Fügt die Suchleiste zum Fenster hinzu
 
-        # Erstelle einen Frame für die Listbox und Scrollbar
+        # Initialisiert einen Frame, der die Listbox und Scrollbar enthält
         listbox_frame = tk.Frame(self.dropdown_window)
         listbox_frame.pack(fill='both', expand=True)
 
-        # Erstelle die Scrollbar
+        # Fügt eine Scrollbar hinzu, um durch die Listbox scrollen zu können
         scrollbar = tk.Scrollbar(listbox_frame)
         scrollbar.pack(side='right', fill='y')
 
-        # Erstelle die Listbox
+        # Initialisiert die Listbox, die die Namen anzeigt
         self.dropdown_list = tk.Listbox(listbox_frame, yscrollcommand=scrollbar.set, height=10)
         self.dropdown_list.pack(side='left', fill='both', expand=True)
-        scrollbar.config(command=self.dropdown_list.yview)
+        scrollbar.config(command=self.dropdown_list.yview)  # Verbindet die Scrollbar mit der Listbox
 
-        # Event-Handler für die Listbox
-        self.dropdown_list.bind('<Double-1>', self.ui_manager.on_double_click)
-        self.dropdown_list.bind('<Button-3>', self.ui_manager.on_right_click)
-        self.dropdown_list.bind('<Return>', self.ui_manager.on_enter_pressed)
+        # Definiert eine Wrapper-Funktion für das KeyRelease-Event der Suchleiste
+        def on_search_key_release(*args):
+            # Ruft update_dropdown mit dem aktuellen Wert der Suchleiste und der Dropdown-Liste als Argumente auf
+            search_term = self.search_var.get()  # Erhält den aktuellen Text der Suchleiste
+            self.ui_manager.update_dropdown(search_term, self.dropdown_list)  # Korrekter Aufruf der Methode
+
+        search_entry.bind('<KeyRelease>', on_search_key_release)
+
+        # Bindet verschiedene Event-Handler für die Listbox, um auf Benutzeraktionen zu reagieren
+        self.dropdown_list.bind('<Double-1>', self.ui_manager.on_double_click)  # Doppelklick
+        self.dropdown_list.bind('<Button-3>', self.ui_manager.on_right_click)  # Rechtsklick
+        self.dropdown_list.bind('<Return>', self.ui_manager.on_enter_pressed)  # Enter-Taste
+
 
 """
 # Initialisiere die Listbox mit allen Benutzernamen
