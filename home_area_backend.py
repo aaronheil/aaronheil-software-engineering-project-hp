@@ -131,38 +131,38 @@ class UserInterfaceManager:
             for item in filtered_names:
                 self.home_area_ui.dropdown_list.insert('end', item[0])
 
-    def on_dropdown_select(event):
-        selected_index = HomeAreaUI.dropdown_list.curselection()
-        selected_name = HomeAreaUI.dropdown_list.get(selected_index)
+    def on_dropdown_select(self, event):
+        selected_index = self.home_area_ui.dropdown_list.curselection()
+        selected_name = self.home_area_ui.dropdown_list.get(selected_index)
         event.update_ui_with_new_username(selected_name)
 
     def on_double_click(self, event):
-        selected_indices = self.dropdown_list.curselection()
+        selected_indices = self.home_area_ui.dropdown_list.curselection()
         if selected_indices:
             selected_index = selected_indices[0]
-            selected_name = self.dropdown_list.get(selected_index)
+            selected_name = self.home_area_ui.dropdown_list.get(selected_index)
             self.update_ui_with_new_username(selected_name)
 
-    def on_right_click(self, dropdown_list, event):
-        selected_indices = dropdown_list.curselection()
+    def on_right_click(self, event):
+        selected_indices = self.home_area_ui.dropdown_list.curselection()
         if selected_indices:
             selected_index = selected_indices[0]
-            selected_name = dropdown_list.get(selected_index)
+            selected_name = self.home_area_ui.dropdown_list.get(selected_index)
             if tk.messagebox.askyesno("Löschen", f"Möchten Sie '{selected_name}' löschen?"):
                 user_to_delete = self.session.query(User).filter_by(username=selected_name).first()
                 if user_to_delete:
                     self.session.delete(user_to_delete)
                     self.session.commit()
-                    self.update_dropdown(
-                        dropdown_list)  # Angenommen, diese Methode existiert und aktualisiert die Listbox
+                    self.update_dropdown()
+
         else:
             tk.messagebox.showwarning("Warnung", "Kein Benutzer ausgewählt.")
 
-    def on_enter_pressed(self, dropdown_list, event):
-        selected_indices = dropdown_list.curselection()
+    def on_enter_pressed(self, event):
+        selected_indices = self.home_area_ui.dropdown_list.curselection()
         if selected_indices:
             selected_index = selected_indices[0]
-            selected_name = dropdown_list.get(selected_index)
+            selected_name = self.home_area_ui.dropdown_list.get(selected_index)
             self.update_ui_with_new_username(selected_name)
         else:
             tk.messagebox.showwarning("Warnung", "Kein Benutzer ausgewählt.")
