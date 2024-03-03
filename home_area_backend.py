@@ -20,19 +20,11 @@ class WindowManager:
 
 class UsernameManager:
     """
-    Verwaltet Benutzeroperationen bezüglich der Überprüfung, Hinzufügung und Abfrage von Benutzernamen.
+        Verwaltet Benutzeroperationen bezüglich der Überprüfung, Hinzufügung und Abfrage von Benutzernamen.
     """
 
-    def __init__(self, session):
-        """
-        Initialisiert den UsernameManager mit einer Datenbanksession.
-
-        Args:
-            session: Die Datenbanksession, die für Abfragen verwendet wird.
-        """
-        self.session = session
-
-    def is_username_existing(self, username):
+    @staticmethod
+    def is_username_existing(username):
         """
         Prüft, ob ein Benutzername bereits in der Datenbank existiert.
 
@@ -42,9 +34,10 @@ class UsernameManager:
         Returns:
             True, wenn der Benutzername existiert, sonst False.
         """
-        return self.session.query(User).filter_by(username=username).first() is not None
+        return every_username_session.query(User).filter_by(username=username).first() is not None
 
-    def add_username(self, username):
+    @staticmethod
+    def add_username(username):
         """
         Fügt einen neuen Benutzernamen hinzu, wenn dieser noch nicht existiert.
 
@@ -54,10 +47,10 @@ class UsernameManager:
         Returns:
             True, wenn der Benutzername erfolgreich hinzugefügt wurde, sonst False.
         """
-        if not self.is_username_existing(username):
+        if not UsernameManager.is_username_existing(username):
             new_user = User(username=username)
-            self.session.add(new_user)
-            self.session.commit()
+            every_username_session.session.add(new_user)
+            every_username_session.session.commit()
             return True
         return False
 
@@ -73,7 +66,8 @@ class UsernameManager:
         """
         return [user.username for user in self.session.query(User.username).order_by(User.id.desc()).limit(limit)]
 
-    def search_username(self, search_term):
+    @staticmethod
+    def search_username(search_term):
         """
         Sucht nach Benutzernamen, die den Suchbegriff enthalten.
 
@@ -83,7 +77,7 @@ class UsernameManager:
         Returns:
             Eine Liste von Benutzernamen, die den Suchbegriff enthalten.
         """
-        return self.every_username_session.query(User.username).filter(User.username.like(f"%{search_term}%")).all()
+        return every_username_session.query(User.username).filter(User.username.like(f"%{search_term}%")).all()
 
 
 class UserInterfaceManager:
