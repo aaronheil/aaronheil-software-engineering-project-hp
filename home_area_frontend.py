@@ -18,7 +18,7 @@ class HomeAreaFrontend:
         self.app_state = AppState()  # AppState Instanz erstellen
         self.user = User()
         self.music_manager = MusicManager(self.app_state)
-        self.username_manger = UsernameManager(every_username_session)
+        self.username_manger = UsernameManager()
         self.user_interaction = UserInteraction()
         self.ui_manager = UserInterfaceManager(dropdown_list=home_area_backend,
                                                session=home_area_backend,
