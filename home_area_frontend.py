@@ -18,7 +18,6 @@ class HomeAreaFrontend:
         self.app_state = AppState()  # AppState Instanz erstellen
         self.user = User()
         self.music_manager = MusicManager(self.app_state)
-        self.setup_ui()
         self.username_manger = UsernameManager(every_username_session)
         self.user_interaction = UserInteraction()
         self.ui_manager = UserInterfaceManager(dropdown_list=home_area_backend,
@@ -27,16 +26,27 @@ class HomeAreaFrontend:
                                                app_state=self.app_state,
                                                username_manager=self.username_manger,
                                                user_interaction=self.user_interaction)
+        self.setup_ui()
+        self.set_and_update_username()
 
-        #self.current_username = self.ui_manager.get_or_create_username()
+    def set_and_update_username(self):
+        # Setzt den Benutzernamen und aktualisiert anschließend das Welcome-Label
+        username = self.ui_manager.get_or_create_username()  # Diese Methode muss den Benutzernamen synchron zurückgeben
+        self.app_state.current_username = username  # Aktualisiere den AppState mit dem neuen Benutzernamen
+        self.update_welcome_label()  # Aktualisiere das Welcome-Label mit dem neuen Benutzernamen
 
+    def update_welcome_label(self):
+        # Aktualisiert das Welcome-Label mit dem aktuellen Benutzernamen
+        welcome_text = f"Hallo {self.app_state.current_username}"
+        self.welcome_label.config(text=welcome_text)
 
 
     def setup_ui(self):
         # Erstellen des Top-Frames für Begrüßung und Aktionen-Button
         self.top_frame = tk.Frame(self.home_frame, bg='#343a40')
         self.top_frame.grid(row=0, column=0, sticky='nsew', padx=20, pady=10)
-        self.welcome_label = tk.Label(self.top_frame, text="Hallo", font=("Harry P", 30),
+        self.welcome_label = tk.Label(self.top_frame, text="Hallo",
+                                      font=("Harry P", 30),
                                       relief=tk.RAISED)
         self.welcome_label.grid(row=0, column=0, sticky='w', padx=10, pady=10)
 

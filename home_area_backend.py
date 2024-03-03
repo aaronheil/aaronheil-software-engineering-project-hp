@@ -5,7 +5,7 @@ import pygame
 import variables
 from variables import User, Session, HomeAreaUI, UserInteraction, every_username_session, AppState
 import main
-from main import session
+from main import Leaderboard, Session
 
 
 class WindowManager:
@@ -83,7 +83,7 @@ class UsernameManager:
         Returns:
             Eine Liste von Benutzernamen, die den Suchbegriff enthalten.
         """
-        return self.session.query(User.username).filter(User.username.like(f"%{search_term}%")).all()
+        return self.every_username_session.query(User.username).filter(User.username.like(f"%{search_term}%")).all()
 
 
 class UserInterfaceManager:
@@ -95,6 +95,7 @@ class UserInterfaceManager:
         self.username_manager = username_manager
         self.user_interaction = user_interaction
 
+
     def on_name_submit(self):
         username = self.user_interaction.dropdown_var.get()
         if self.username_manager.add_username(username):
@@ -104,10 +105,10 @@ class UserInterfaceManager:
 
     def update_ui_with_new_username(self, username):
         self.app_state.current_username = username
-        # Hier sollte die UI entsprechend aktualisiert werden, z.B. Welcome Label etc.
+        # z.B. für Welcome Label etc.
 
     def get_all_usernames(self):
-        return variables.every_username_session.query(User.username).all()
+        return every_username_session.query(User.username).all()
 
     def get_or_create_username(self):
         session = Session()
@@ -118,7 +119,7 @@ class UserInterfaceManager:
                 return user.username
         username = simpledialog.askstring("Benutzername", "Wie lautet Ihr Name?")
         if username and not UsernameManager.is_username_existing(username):
-            UsernameManager.add_username(username)
+            self.username_manager.add_username(username)
         return username if username else "Unbekannter Benutzer"
 
     def change_user(label):
