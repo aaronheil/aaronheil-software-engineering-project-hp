@@ -12,9 +12,9 @@ from bots import bots, update_bot_scores
 import datetime
 from PIL import Image, ImageTk
 import pygame
-import home_area_backend
+import home_area
 from variables import AppState
-from home_area_frontend import HomeAreaFrontend
+from home_area import HomeAreaFrontend
 from statistics_area import LeaderboardView
 
 

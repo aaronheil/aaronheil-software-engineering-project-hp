@@ -1,23 +1,14 @@
 import tkinter as tk
-from tkinter import simpledialog, messagebox
+from tkinter import simpledialog, messagebox, ttk
 import selection_screen
 import pygame
-import variables
 from variables import User, Session, HomeAreaUI, UserInteraction, every_username_session, AppState
 import main
-from main import Leaderboard, Session
-
-# Importe aus
-
-
-from tkinter import ttk
-
-from home_area_backend import UsernameManager, UserInterfaceManager, WindowManager, MusicManager
+from main import Leaderboard, Session, session
 from PIL import Image, ImageTk
-from variables import HomeAreaUI, AppState, User, UserInteraction, every_username_session
-from main import session
 
-"""Backend-Logik"""
+
+# Backend-Logik
 
 
 class WindowManager:
@@ -101,6 +92,7 @@ class UserInterfaceManager:
         self.username_manager = username_manager
         self.home_area_ui = home_area_ui
         self.user_interaction = user_interaction
+        self.search_var = tk.StringVar()
 
 
     def on_name_submit(self):
@@ -133,7 +125,7 @@ class UserInterfaceManager:
         label.create_new_user_window(selection_screen.home_frame)
 
     def update_dropdown(self, *args):
-        search_term = UsernameManager.search_var.get()  # search_var wird genutzt in home_area_frontend.py
+        search_term = self.search_var.get()  # search_var wird genutzt in home_area_frontend.py
         filtered_names = UsernameManager.search_username(search_term)
         self.home_area_ui.dropdown_list.delete(0, 'end')  # Löscht alle Einträge in der Listbox
 
@@ -222,7 +214,7 @@ class MusicManager:
         self.app_state.is_music_playing = not self.app_state.is_music_playing
 
 
-"""Frontend-Logik"""
+# Frontend-Logik
 
 
 
@@ -237,7 +229,7 @@ class HomeAreaFrontend:
         self.music_manager = MusicManager(self.app_state)
         self.username_manger = UsernameManager()
         self.user_interaction = UserInteraction()
-        self.ui_manager = UserInterfaceManager(session=home_area_backend,
+        self.ui_manager = UserInterfaceManager(session=session,
                                                home_frame=self.home_frame,
                                                app_state=self.app_state,
                                                username_manager=self.username_manger,
@@ -245,6 +237,8 @@ class HomeAreaFrontend:
                                                home_area_ui=self.home_area_ui)
         self.setup_ui()
         self.set_and_update_username()
+
+
 
     def set_and_update_username(self):
         # Setzt den Benutzernamen und aktualisiert anschließend das Welcome-Label
@@ -367,9 +361,10 @@ class HomeAreaFrontend:
         WindowManager.center_window(self.dropdown_window, 300, 200)
 
         # Fügt eine Suchleiste hinzu, um Benutzern zu ermöglichen, nach Namen zu suchen
-        search_var = tk.StringVar()
-        search_entry = tk.Entry(self.dropdown_window, textvariable=search_var)
+        self.ui_manager.search_var = tk.StringVar()
+        search_entry = tk.Entry(self.dropdown_window, textvariable=self.ui_manager.search_var)
         search_entry.pack(fill='x')  # Fügt die Suchleiste zum Fenster hinzu
+        search_entry.bind('<KeyRelease>', self.ui_manager.update_dropdown)
 
         # Initialisiert einen Frame, der die Listbox und Scrollbar enthält
         listbox_frame = tk.Frame(self.dropdown_window)
@@ -380,22 +375,16 @@ class HomeAreaFrontend:
         scrollbar.pack(side='right', fill='y')
 
         # Initialisiert die Listbox, die die Namen anzeigt
-        self.dropdown_list = tk.Listbox(listbox_frame, yscrollcommand=scrollbar.set, height=10)
-        self.dropdown_list.pack(side='left', fill='both', expand=True)
-        scrollbar.config(command=self.dropdown_list.yview)  # Verbindet die Scrollbar mit der Listbox
+        self.home_area_ui.dropdown_list = tk.Listbox(listbox_frame, yscrollcommand=scrollbar.set, height=10)
+        self.home_area_ui.dropdown_list.pack(side='left', fill='both', expand=True)
+        scrollbar.config(command=self.home_area_ui.dropdown_list.yview)  # Verbindet die Scrollbar mit der Listbox
 
-        # Definiert eine Wrapper-Funktion für das KeyRelease-Event der Suchleiste
-        def on_search_key_release(*args):
-            # Ruft update_dropdown mit dem aktuellen Wert der Suchleiste und der Dropdown-Liste als Argumente auf
-            search_term = self.search_var.get()  # Erhält den aktuellen Text der Suchleiste
-            self.ui_manager.update_dropdown(search_term, self.dropdown_list)  # Korrekter Aufruf der Methode
-
-        search_entry.bind('<KeyRelease>', on_search_key_release)
+        self.ui_manager.update_dropdown()
 
         # Bindet verschiedene Event-Handler für die Listbox, um auf Benutzeraktionen zu reagieren
-        self.dropdown_list.bind('<Double-1>', self.ui_manager.on_double_click)  # Doppelklick
-        self.dropdown_list.bind('<Button-3>', self.ui_manager.on_right_click)  # Rechtsklick
-        self.dropdown_list.bind('<Return>', self.ui_manager.on_enter_pressed)  # Enter-Taste
+        self.home_area_ui.dropdown_list.bind('<Double-1>', self.ui_manager.on_double_click)  # Doppelklick
+        self.home_area_ui.dropdown_list.bind('<Button-3>', self.ui_manager.on_right_click)  # Rechtsklick
+        self.home_area_ui.dropdown_list.bind('<Return>', self.ui_manager.on_enter_pressed)  # Enter-Taste
 
 
 """
