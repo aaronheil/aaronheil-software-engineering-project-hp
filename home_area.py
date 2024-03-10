@@ -193,8 +193,8 @@ class UserInterfaceManager:
             """ Überprüfung und Speicherung des neuen Benutzernamens"""
             username = username_entry.get()
             if username:
-                if self.username_manager.add_username(username):  # Verwende die Klasse UsernameManager
-                    self.update_ui_with_new_username(username, new_user_window)  # Annahme einer angepassten Methode
+                if self.username_manager.add_username(username):
+                    self.update_ui_with_new_username(username)  # Aufruf über die HomeAreaFrontend Instanz
                     new_user_window.destroy()
                 else:
                     tk.messagebox.showwarning("Warnung", "Benutzername existiert bereits!")
@@ -239,7 +239,8 @@ class HomeAreaFrontend:
                                                username_manager=self.username_manger,
                                                user_interaction=self.user_interaction,
                                                home_area_ui=self.home_area_ui,
-                                               home_area_frontend=self)
+                                               home_area_frontend=self,
+                                               )
         self.setup_ui()
         self.set_and_update_username()
 
