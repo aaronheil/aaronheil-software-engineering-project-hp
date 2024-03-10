@@ -85,7 +85,7 @@ class UsernameManager:
 
 
 class UserInterfaceManager:
-    def __init__(self, session, home_area_ui, home_frame, app_state, username_manager, user_interaction):
+    def __init__(self, session, home_area_ui, home_frame, app_state, username_manager, user_interaction, home_area_frontend):
         self.session = session
         self.home_frame = home_frame
         self.app_state = app_state  # Speichert die AppState-Instanz als Attribut
@@ -93,6 +93,7 @@ class UserInterfaceManager:
         self.home_area_ui = home_area_ui
         self.user_interaction = user_interaction
         self.search_var = tk.StringVar()
+        self.home_area_frontend = home_area_frontend
 
 
     def on_name_submit(self):
@@ -104,6 +105,7 @@ class UserInterfaceManager:
 
     def update_ui_with_new_username(self, username):
         self.app_state.current_username = username
+        self.home_area_frontend.update_welcome_label()
         # z.B. für Welcome Label etc.
 
     def get_all_usernames(self):
@@ -137,8 +139,10 @@ class UserInterfaceManager:
 
     def on_dropdown_select(self, event):
         selected_index = self.home_area_ui.dropdown_list.curselection()
-        selected_name = self.home_area_ui.dropdown_list.get(selected_index)
-        event.update_ui_with_new_username(selected_name)
+        if selected_index:
+            selected_name = self.home_area_ui.dropdown_list.get(selected_index)
+            self.update_ui_with_new_username(
+                selected_name)  # Stellt sicher, dass diese Zeile korrekt den Namen übergibt
 
     def on_double_click(self, event):
         selected_indices = self.home_area_ui.dropdown_list.curselection()
@@ -234,7 +238,8 @@ class HomeAreaFrontend:
                                                app_state=self.app_state,
                                                username_manager=self.username_manger,
                                                user_interaction=self.user_interaction,
-                                               home_area_ui=self.home_area_ui)
+                                               home_area_ui=self.home_area_ui,
+                                               home_area_frontend=self)
         self.setup_ui()
         self.set_and_update_username()
 
