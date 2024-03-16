@@ -54,6 +54,8 @@ class SelectionScreen:
 
         self.home_area = HomeAreaFrontend(self.master, self.home_frame)
 
+        self.switch_to_home()
+
     def setup_nav_buttons(self):
         self.home_button = tk.Button(self.nav_frame, text='⌂ Home', font=("Harry P", 40),
                                      command=self.switch_to_home)
