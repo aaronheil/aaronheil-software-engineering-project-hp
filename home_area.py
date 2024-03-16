@@ -289,44 +289,42 @@ class HomeAreaFrontend:
                                       font=("Arial", 16),
                                       background='white', foreground='black')
 
-        # Button-Frame für die Auswahl der Häuser
+        # Initialisierung von self.button_frame mit erweitertem Padding für mehr Zentrierung
         self.button_frame = tk.Frame(self.home_frame, bg='#343a40')
-        self.button_frame.grid(row=1, column=0, sticky='nsew', padx=20, pady=20)
-        self.button_frame.grid_columnconfigure([0, 1, 2, 3], weight=1)
-        self.button_frame.grid_rowconfigure(0, weight=1)
+        self.button_frame.place(relx=0.5, rely=0.5, anchor='center')
 
-        # Funktionen zum Laden und Skalieren der Bilder
-        def load_and_resize_image(image_path, size=(400, 500)):
-            original_image = Image.open(image_path)
-            resized_image = original_image.resize(size, Image.Resampling.LANCZOS)
-            return ImageTk.PhotoImage(resized_image)
+        # Anpassen des Grid-Layouts im home_frame für Zentrierung
+        self.home_frame.grid_rowconfigure(0, weight=1)  # Leerer Puffer oben
+        self.home_frame.grid_rowconfigure(1, weight=2)  # Hauptinhalt
+        self.home_frame.grid_rowconfigure(2, weight=1)  # Leerer Puffer unten
+        self.home_frame.grid_columnconfigure(0, weight=1)  # Leerer Puffer links
+        self.home_frame.grid_columnconfigure(1, weight=2)  # Hauptinhalt
+        self.home_frame.grid_columnconfigure(2, weight=1)  # Leerer Puffer rechts
 
-        # Hausauswahl-Buttons erstellen und im button_frame positionieren
-        image_gryffindor = load_and_resize_image(r"C:\Users\aaron\Desktop\HPQ_IU_Material\pictures\gryffindor.png")
-        btn_gryffindor = tk.Button(self.button_frame, image=image_gryffindor,
-                                   command=lambda: self.on_house_select('Gryffindor', self.current_username))
-        btn_gryffindor.grid(row=0, column=0, sticky='nsew', padx=250, pady=150)  # Abstand zwischen den Buttons
+        # Hausauswahl-Buttons erstellen und im button_frame positionieren mit grid()
+        self.create_house_button(0, r"C:\Users\aaron\Desktop\HPQ_IU_Material\pictures\gryffindor.png",
+                                 'Gryffindor', size=(400, 500))
+        self.create_house_button(1, r"C:\Users\aaron\Desktop\HPQ_IU_Material\pictures\slytherin.png",
+                                 'Slytherin', size=(400, 500))
+        self.create_house_button(2, r"C:\Users\aaron\Desktop\HPQ_IU_Material\pictures\hufflepuff.png",
+                                 'Hufflepuff', size=(400, 500))
+        self.create_house_button(3, r"C:\Users\aaron\Desktop\HPQ_IU_Material\pictures\ravenclaw.png",
+                                 'Ravenclaw', size=(400, 500))
 
-        image_slytherin = load_and_resize_image(r"C:\Users\aaron\Desktop\HPQ_IU_Material\pictures\slytherin.png")
-        btn_slytherin = tk.Button(self.button_frame, image=image_slytherin,
-                                  command=lambda: self.on_house_select('Slytherin', self.current_username))
-        btn_slytherin.grid(row=0, column=1, sticky='nsew', padx=250, pady=150)  # Abstand zwischen den Buttons
+    # Funktion zum Erstellen und Platzieren der Buttons
+    def create_house_button(self, column, image_path, house_name, size=(100, 125)):  # Size Parameter hinzugefügt
+        image = self.load_and_resize_image(image_path, size)  # Verwenden des neuen Size Parameters
+        button = tk.Button(self.button_frame, image=image, command=lambda: self.on_house_select(house_name))
+        button.grid(row=0, column=column, sticky='nsew', padx=10, pady=10)
+        button.image = image  # Referenz auf das Bild behalten, um GC zu verhindern
 
-        image_hufflepuff = load_and_resize_image(r"C:\Users\aaron\Desktop\HPQ_IU_Material\pictures\hufflepuff.png")
-        btn_hufflepuff = tk.Button(self.button_frame, image=image_hufflepuff,
-                                   command=lambda: self.on_house_select('Hufflepuff', self.current_username))
-        btn_hufflepuff.grid(row=0, column=2, sticky='nsew', padx=250, pady=150)  # Abstand zwischen den Buttons
+    # Methode zum Laden und Skalieren der Bilder (sofern noch nicht vorhanden)
+    def load_and_resize_image(self, image_path, size=(100, 125)):
+        original_image = Image.open(image_path)
+        resized_image = original_image.resize(size, Image.Resampling.LANCZOS)  # Aktualisiert von Image.ANTIALIAS
+        return ImageTk.PhotoImage(resized_image)
 
-        image_ravenclaw = load_and_resize_image(r"C:\Users\aaron\Desktop\HPQ_IU_Material\pictures\ravenclaw.png")
-        btn_ravenclaw = tk.Button(self.button_frame, image=image_ravenclaw,
-                                  command=lambda: self.on_house_select('Ravenclaw', self.current_username))
-        btn_ravenclaw.grid(row=0, column=3, sticky='nsew', padx=250, pady=150)  # Abstand zwischen den Buttons
 
-        # Halten Sie die Bildreferenzen, um die automatische Bereinigung durch Garbage Collector zu verhindern
-        self.button_frame.image_gryffindor = image_gryffindor
-        self.button_frame.image_slytherin = image_slytherin
-        self.button_frame.image_hufflepuff = image_hufflepuff
-        self.button_frame.image_ravenclaw = image_ravenclaw
 
     def on_house_select(self, house_name):
         if not self.current_username:
