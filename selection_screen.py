@@ -16,6 +16,7 @@ import home_area
 from variables import AppState
 from home_area import HomeAreaFrontend
 from statistics_area import LeaderboardView
+from quiz_area import QuizApp
 
 
 class SelectionScreen:
@@ -90,6 +91,8 @@ class SelectionScreen:
             messagebox.showinfo("Info", "Das Quiz läuft bereits.")
             return
         self.switch_frame("quiz")
+        QuizApp(self.quiz_frame)
+
         # Weitere Logik für switch_to_quiz hier...
         # Zum Beispiel die Überprüfung von current_username und house
         # und die Startlogik für das Quiz.

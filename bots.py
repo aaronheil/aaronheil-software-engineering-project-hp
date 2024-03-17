@@ -1,6 +1,6 @@
 import random
 
-# Definieren Sie eine Konstante für die Punktzahl pro richtiger Antwort
+
 POINTS_PER_ANSWER = 10
 
 
@@ -23,7 +23,7 @@ class HogwartsBot:
         self.score = 0
 
 
-# Erstellen Sie Bots für jedes Haus
+
 bots = {
     'Gryffindor': HogwartsBot('Gryffindor'),
     'Slytherin': HogwartsBot('Slytherin'),

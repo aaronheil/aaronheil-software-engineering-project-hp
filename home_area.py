@@ -327,14 +327,14 @@ class HomeAreaFrontend:
 
 
     def on_house_select(self, house_name):
-        if not self.current_username:
+        if not self.app_state.current_username:
             messagebox.showinfo("Fehler", "Bitte erst einen Benutzer auswählen.")
             return
         if not house_name:
             messagebox.showinfo("Fehler", "Bitte erst ein Haus auswählen.")
             return
         self.house = house_name  # Verwende self.house statt global
-        print(f"{house_name} ausgewählt, Benutzer: {self.current_username}")
+        print(f"{house_name} ausgewählt, Benutzer: {self.app_state.current_username}")
         # switch_frame und start_quiz müssen entsprechend angepasst werden
         """
                switch_frame(quiz_frame)
