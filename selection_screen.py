@@ -87,15 +87,14 @@ class SelectionScreen:
         #HomeAreaFrontend(self.home_frame)
 
     def switch_to_quiz(self):
-        if self.is_quiz_active:
+        if self.app_state.is_quiz_active:
             messagebox.showinfo("Info", "Das Quiz läuft bereits.")
             return
+        self.app_state.is_quiz_active = True
         self.switch_frame("quiz")
-        QuizApp(self.quiz_frame)
-
-        # Weitere Logik für switch_to_quiz hier...
-        # Zum Beispiel die Überprüfung von current_username und house
-        # und die Startlogik für das Quiz.
+        # Initialisiere die QuizApp nur, wenn sie noch nicht existiert oder neu initialisiert werden soll
+        if not hasattr(self, 'quiz_app'):
+            self.quiz_app = QuizApp(self.quiz_frame)
 
     def switch_to_erfolge(self):
         self.switch_frame("erfolge")
