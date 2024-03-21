@@ -74,26 +74,26 @@ class QuizApp:
 
         self.update_bots_and_scores(options, correct_answer)  # Aktualisieren Sie die Bots und deren Scores
 
-        QuizConfig.question_count += 1  # Erhöht die Anzahl der gestellten Fragen
-        if QuizConfig.question_count < QuizConfig.NUM_QUESTIONS:
-            quiz_frame.after(300, lambda: self.start_quiz(house_name=house,
+        self.quiz_config.question_count += 1  # Erhöht die Anzahl der gestellten Fragen
+        if self.quiz_config.question_count < QuizConfig.NUM_QUESTIONS:
+            self.quiz_config.quiz_frame.after(300, lambda: self.start_quiz(house_name=self.app_state.house,
                                                           username=username))  # Weitergabe des Benutzernamens
         else:
             self.end_quiz(username)  # Weitergabe des Benutzernamens
 
         # Prüfe, ob alle Fragen beantwortet wurden oder ob wir uns in einem Tiebreaker befinden
-        if QuizConfig.question_count < QuizConfig.NUM_QUESTIONS or QuizConfig.in_tiebreaker_round:
+        if self.quiz_config.question_count < QuizConfig.NUM_QUESTIONS or QuizConfig.in_tiebreaker_round:
             # Lade die nächste Frage
-            quiz_frame.after(300, lambda: self.start_quiz(house_name=house, username=username))
+            self.quiz_config.quiz_frame.after(300, lambda: self.start_quiz(house_name=self.app_state.house, username=username))
         else:
             # Überprüfe auf Unentschieden nur am Ende des normalen Spiels
             if not QuizConfig.in_tiebreaker_round:
                 max_bot_score = max(bot.score for bot in bots.values())
-                if score == max_bot_score:
+                if self.quiz_config.score == max_bot_score:
                     # Unentschieden detektiert, starte zusätzliche Runden
                     in_tiebreaker_round = True
                     question_count = 0  # Setze die Fragezahl zurück für die zusätzlichen Runden
-                    quiz_frame.after(300, lambda: self.start_quiz(house_name=house, username=username))
+                    self.quiz_config.quiz_frame.after(300, lambda: self.start_quiz(house_name=self.app_state.house, username=username))
                 else:
                     # Kein Unentschieden, Spiel endet
                     self.end_quiz(username)
