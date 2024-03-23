@@ -39,11 +39,15 @@ class QuizApp:
     def display_bot_scores(self):
         self.quiz_config.bot_scores_frame = tk.Frame(self.master, bg="lightgrey")
         self.quiz_config.bot_scores_frame.pack(side='top', fill='x', pady=10)
-        header_label = tk.Label(self.quiz_config.bot_scores_frame, text="Häuser-Scores", bg="lightgrey", font=("Harry P", 20))
+        header_label = tk.Label(self.quiz_config.bot_scores_frame, text="Häuser-Scores", bg="lightgrey",
+                                font=("Harry P", 20))
         header_label.pack()
 
         for name, bot in bots.items():
-            self.bot_config.bot_score_labels[name] = tk.Label(self.quiz_config.bot_scores_frame, text=f"{name}: {bot.score}", bg="lightgrey", font=("Arial", 19))
+            self.bot_config.bot_score_labels[name] = tk.Label(self.quiz_config.bot_scores_frame,
+                                                              text=f"{name}: {bot.score}", bg="lightgrey",
+                                                              font=("Arial", 19))
+
             self.bot_config.bot_score_labels[name].pack(side='left', padx=10)
 
     def load_next_question(self):
