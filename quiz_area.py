@@ -37,17 +37,17 @@ class QuizApp:
         self.load_next_question()
 
     def display_bot_scores(self):
-        self.bot_scores_frame = tk.Frame(self.master, bg="#f5deb3")
-        self.bot_scores_frame.pack(side='top', fill='x', pady=10)
-        header_label = tk.Label(self.bot_scores_frame, text="Häuser-Scores", bg="#f5deb3", font=("Harry P", 20))
+        self.quiz_config.bot_scores_frame = tk.Frame(self.master, bg="lightgrey")
+        self.quiz_config.bot_scores_frame.pack(side='top', fill='x', pady=10)
+        header_label = tk.Label(self.quiz_config.bot_scores_frame, text="Häuser-Scores", bg="lightgrey", font=("Harry P", 20))
         header_label.pack()
 
         for name, bot in bots.items():
-            self.bot_score_labels[name] = tk.Label(self.bot_scores_frame, text=f"{name}: {bot.score}", bg="#f5deb3", font=("Arial", 19))
-            self.bot_score_labels[name].pack(side='left', padx=10)
+            self.bot_config.bot_score_labels[name] = tk.Label(self.quiz_config.bot_scores_frame, text=f"{name}: {bot.score}", bg="lightgrey", font=("Arial", 19))
+            self.bot_config.bot_score_labels[name].pack(side='left', padx=10)
 
     def load_next_question(self):
-        if self.question_count < QuizConfig.NUM_QUESTIONS:
+        if self.quiz_config.question_count < QuizConfig.NUM_QUESTIONS:
             question, options, correct_answer = choose_quiz()
             self.display_question(question, options, correct_answer)
         else:
