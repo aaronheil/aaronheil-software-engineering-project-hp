@@ -87,7 +87,7 @@ class QuizApp:
             self.quiz_config.quiz_frame.after(300, lambda: self.start_quiz(house_name=self.app_state.house, username=username))
         else:
             # Überprüfe auf Unentschieden nur am Ende des normalen Spiels
-            if not QuizConfig.in_tiebreaker_round:
+            if not self.quiz_config.in_tiebreaker_round:
                 max_bot_score = max(bot.score for bot in bots.values())
                 if self.quiz_config.score == max_bot_score:
                     # Unentschieden detektiert, starte zusätzliche Runden

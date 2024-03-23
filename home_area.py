@@ -343,16 +343,16 @@ class HomeAreaFrontend:
        """
 
     def switch_to_quiz(self):
-        if self.is_quiz_active:
+        if self.app_state.is_quiz_active:
             messagebox.showinfo("Info", "Das Quiz läuft bereits.")
             return
         # Die Methode switch_frame muss angepasst werden, um innerhalb der Klasse zu funktionieren
         self.switch_frame("quiz")
         self.update_active_button(self.quiz_button)
         # Überprüfe, ob ein Benutzername und ein Haus ausgewählt wurden
-        if self.current_username and self.house:
+        if self.app_state.current_username and self.house:
             # Die Methode start_quiz muss angepasst werden, um innerhalb der Klasse zu funktionieren
-            self.start_quiz(self.house, self.current_username)
+            self.start_quiz(self.house, self.app_state.current_username)
         else:
             messagebox.showinfo("Info", "Bitte wählen Sie einen Benutzer und ein Haus, bevor Sie das Quiz starten.")
             self.switch_to_home()  # Stellt sicher, dass auch diese Methode entsprechend angepasst ist
