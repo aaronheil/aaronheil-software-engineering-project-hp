@@ -1,11 +1,14 @@
 import tkinter as tk
 from tkinter import simpledialog, messagebox, ttk
+
 import selection_screen
+
 import pygame
 from variables import User, Session, HomeAreaUI, UserInteraction, every_username_session, AppState
 import main
 from main import Leaderboard, Session, session
 from PIL import Image, ImageTk
+
 
 
 # Backend-Logik
@@ -223,7 +226,7 @@ class MusicManager:
 
 
 class HomeAreaFrontend:
-    def __init__(self, master, home_frame):
+    def __init__(self, master, home_frame, switch_to_quiz_callback):
         self.master = master
         self.home_frame = home_frame
         self.active_button = None
@@ -243,6 +246,9 @@ class HomeAreaFrontend:
                                                )
         self.setup_ui()
         self.set_and_update_username()
+        self.switch_to_quiz_callback = switch_to_quiz_callback
+
+
 
 
 
@@ -333,8 +339,9 @@ class HomeAreaFrontend:
         if not house_name:
             messagebox.showinfo("Fehler", "Bitte erst ein Haus auswählen.")
             return
-        self.house = house_name  # Verwende self.house statt global
+        self.app_state.house = house_name  # Verwende self.house statt global
         print(f"{house_name} ausgewählt, Benutzer: {self.app_state.current_username}")
+        self.switch_to_quiz_callback()
         # switch_frame und start_quiz müssen entsprechend angepasst werden
         """
                switch_frame(quiz_frame)
@@ -350,9 +357,9 @@ class HomeAreaFrontend:
         self.switch_frame("quiz")
         self.update_active_button(self.quiz_button)
         # Überprüfe, ob ein Benutzername und ein Haus ausgewählt wurden
-        if self.app_state.current_username and self.house:
+        if self.app_state.current_username and self.app_state.house:
             # Die Methode start_quiz muss angepasst werden, um innerhalb der Klasse zu funktionieren
-            self.start_quiz(self.house, self.app_state.current_username)
+            self.start_quiz(self.app_state.house, self.app_state.current_username)
         else:
             messagebox.showinfo("Info", "Bitte wählen Sie einen Benutzer und ein Haus, bevor Sie das Quiz starten.")
             self.switch_to_home()  # Stellt sicher, dass auch diese Methode entsprechend angepasst ist

@@ -53,7 +53,7 @@ class SelectionScreen:
         for frame in self.frames.values():
             frame.grid(row=0, column=0, sticky='nsew')
 
-        self.home_area = HomeAreaFrontend(self.master, self.home_frame)
+        self.home_area = HomeAreaFrontend(self.master, self.home_frame, self.switch_to_quiz)
 
         self.switch_to_home()
 
@@ -85,6 +85,10 @@ class SelectionScreen:
     def switch_to_home(self):
         self.switch_frame("home")
         #HomeAreaFrontend(self.home_frame)
+
+
+    def switch_to_quiz_callback(self):
+        self.switch_to_quiz()
 
     def switch_to_quiz(self):
         if self.app_state.is_quiz_active:
