@@ -38,7 +38,7 @@ class QuizApp:
         self.load_next_question()
 
         # Initialisierung result_label
-        self.quiz_config.result_label = tk.Label(self.master, text="", bg='white', font=("Arial", 14))
+        self.quiz_config.result_label = tk.Label(self.master, text="", bg='#343a40', font=("Arial", 14))
         self.quiz_config.result_label.pack(pady=(10, 20))
 
     def display_bot_scores(self):

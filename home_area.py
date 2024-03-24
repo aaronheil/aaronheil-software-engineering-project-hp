@@ -261,24 +261,24 @@ class HomeAreaFrontend:
     def update_welcome_label(self):
         # Aktualisiert das Welcome-Label mit dem aktuellen Benutzernamen
         welcome_text = f"Hallo {self.app_state.current_username}"
-        self.welcome_label.config(text=welcome_text)
+        self.home_area_ui.welcome_label.config(text=welcome_text)
 
 
     def setup_ui(self):
         # Erstellen des Top-Frames für Begrüßung und Aktionen-Button
-        self.top_frame = tk.Frame(self.home_frame, bg='#343a40')
-        self.top_frame.grid(row=0, column=0, sticky='nsew', padx=20, pady=10)
-        self.welcome_label = tk.Label(self.top_frame, text="Hallo",
+        self.home_area_ui.top_frame = tk.Frame(self.home_frame, bg='#343a40')
+        self.home_area_ui.top_frame.grid(row=0, column=0, sticky='nsew', padx=20, pady=10)
+        self.home_area_ui.welcome_label = tk.Label(self.home_area_ui.top_frame, text="Hallo",
                                       font=("Harry P", 30),
                                       relief=tk.RAISED)
-        self.welcome_label.grid(row=0, column=0, sticky='w', padx=10, pady=10)
+        self.home_area_ui.welcome_label.grid(row=0, column=0, sticky='w', padx=10, pady=10)
 
         # Aktionen-Menübutton
-        self.actions_button = tk.Menubutton(self.top_frame, text="Aktionen", font=("Harry P", 30), relief=tk.RAISED,
-                                            width=20)
-        self.actions_menu = tk.Menu(self.actions_button, tearoff=0)
-        self.actions_button["menu"] = self.actions_menu
-        self.actions_button.grid(row=0, column=1, sticky='w', padx=10, pady=10)
+        self.home_area_ui.actions_button = tk.Menubutton(self.home_area_ui.top_frame, text="Aktionen",
+                                                         font=("Harry P", 30), relief=tk.RAISED, width=20)
+        self.actions_menu = tk.Menu(self.home_area_ui.actions_button, tearoff=0)
+        self.home_area_ui.actions_button["menu"] = self.actions_menu
+        self.home_area_ui.actions_button.grid(row=0, column=1, sticky='w', padx=10, pady=10)
 
         # Unterbuttons zum Menubutton hinzufügen
         self.actions_menu.add_command(label="Neuen User anlegen",
