@@ -11,6 +11,7 @@ class QuizApp:
         self.master = master
         self.house = house_name
         self.username = username
+        self.current_options = []
 
         # Instanz von QuizConfig aus variables.py
         self.quiz_config = QuizConfig()
@@ -35,6 +36,10 @@ class QuizApp:
 
         # Lade die erste Frage
         self.load_next_question()
+
+        # Initialisierung result_label
+        self.quiz_config.result_label = tk.Label(self.master, text="", bg='white', font=("Arial", 14))
+        self.quiz_config.result_label.pack(pady=(10, 20))
 
     def display_bot_scores(self):
         self.quiz_config.bot_scores_frame = tk.Frame(self.master, bg="lightgrey")
@@ -64,7 +69,8 @@ class QuizApp:
         for option in options:
             button = tk.Button(self.master, text=option, bg='white', font=("Arial", 14))
             button.pack(pady=5)
-            button.bind('<Button-1>', lambda event, o=option: self.check_answer(o, correct_answer))
+            button.bind('<Button-1>', lambda event, o=option: self.check_answer(o, correct_answer, self.current_options,
+                                                                                self.username))
 
     def check_answer(self, user_answer, correct_answer, options, username):
 

@@ -65,7 +65,8 @@ def get_random_options(question_id):
 
     # Erstellen einer parameterisierten Abfrage
     query = text("SELECT `Wirkung` FROM zaubersprueche WHERE id IN (:option1, :option2, :option3)")
-    results = session.execute(query, {'option1': random_option_ids[0], 'option2': random_option_ids[1], 'option3': random_option_ids[2]}).fetchall()
+    results = session.execute(query, {'option1': random_option_ids[0], 'option2': random_option_ids[1],
+                                      'option3': random_option_ids[2]}).fetchall()
 
     # Antworten zurückgeben
     return [result[0] for result in results]
