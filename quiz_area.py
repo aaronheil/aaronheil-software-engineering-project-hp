@@ -69,17 +69,19 @@ class QuizApp:
         for option in options:
             button = tk.Button(self.master, text=option, bg='white', font=("Arial", 14))
             button.pack(pady=5)
-            button.bind('<Button-1>', lambda event, o=option: self.check_answer(o, correct_answer, self.current_options,
-                                                                                self.username))
+            # Ändern Sie hier, um das Button-Objekt und die Option zu übergeben
+            button.bind('<Button-1>',
+                        lambda event, b=button, o=option: self.check_answer(b, o, correct_answer, self.current_options,
+                                                                            self.username))
 
-    def check_answer(self, user_answer, correct_answer, options, username):
+    def check_answer(self, button, user_answer, correct_answer, options, username):
 
         if user_answer == correct_answer:
-            #self.configure(bg='green')
+            button.configure(bg='green')
             self.quiz_config.result_label.config(text="Richtige Antwort!", fg='green')
             self.quiz_config.score += self.quiz_config.POINTS_PER_ANSWER  # Erhöht die Punktzahl
         else:
-            #self.configure(bg='red')
+            button.configure(bg='red')
             self.quiz_config.result_label.config(text="Falsche Antwort.", fg='red')
 
         self.update_bots_and_scores(options, correct_answer)  # Aktualisieren Sie die Bots und deren Scores
