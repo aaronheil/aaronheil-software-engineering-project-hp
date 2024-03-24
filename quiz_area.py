@@ -51,7 +51,7 @@ class QuizApp:
             self.bot_config.bot_score_labels[name].pack(side='left', padx=10)
 
     def load_next_question(self):
-        if self.quiz_config.question_count < QuizConfig.NUM_QUESTIONS:
+        if self.quiz_config.question_count < self.quiz_config.NUM_QUESTIONS:
             question, options, correct_answer = choose_quiz()
             self.display_question(question, options, correct_answer)
         else:
