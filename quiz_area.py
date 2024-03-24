@@ -71,7 +71,7 @@ class QuizApp:
         if user_answer == correct_answer:
             #self.configure(bg='green')
             self.quiz_config.result_label.config(text="Richtige Antwort!", fg='green')
-            self.quiz_config.score += QuizConfig.POINTS_PER_ANSWER  # Erhöht die Punktzahl
+            self.quiz_config.score += self.quiz_config.POINTS_PER_ANSWER  # Erhöht die Punktzahl
         else:
             #self.configure(bg='red')
             self.quiz_config.result_label.config(text="Falsche Antwort.", fg='red')
@@ -79,7 +79,7 @@ class QuizApp:
         self.update_bots_and_scores(options, correct_answer)  # Aktualisieren Sie die Bots und deren Scores
 
         self.quiz_config.question_count += 1  # Erhöht die Anzahl der gestellten Fragen
-        if self.quiz_config.question_count < QuizConfig.NUM_QUESTIONS:
+        if self.quiz_config.question_count < self.quiz_config.NUM_QUESTIONS:
             self.quiz_config.quiz_frame.after(300, lambda: self.start_quiz(house_name=self.app_state.house,
                                                           username=username))  # Weitergabe des Benutzernamens
         else:
