@@ -54,8 +54,8 @@ class QuizConfig:
         self.question_count = 0  # Anzahl der bisher gestellten Fragen.
         self.in_tiebreaker_round = False  # Zeigt an, ob sich das Quiz in einer Entscheidungsrunde befindet.
         # UI-Elemente für das Quiz.
-        self.score_label = None  # Label für die Anzeige des Punktestandes.
-        self.result_label = None  # Label für die Anzeige von Ergebnissen.
+        self.user_score_label = None  # Label für die Anzeige des Punktestandes.
+        self.result_label = None  # Label für die Anzeige, ob Antwort richtig oder falsch.
         self.bot_scores_frame = None  # Frame für die Anzeige der Bot-Punktestände.
         self.quiz_frame = None  # Haupt-Frame für das Quiz.
         self.quiz_widget_frame = None  # Frame für Quiz-Widgets.

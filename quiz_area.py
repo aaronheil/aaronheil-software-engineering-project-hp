@@ -66,10 +66,24 @@ class QuizApp:
         question_label = tk.Label(self.master, text=question, bg='white', font=("Arial", 14, "bold"))
         question_label.pack(pady=(20, 10))
 
-        for option in options:
-            button = tk.Button(self.master, text=option, bg='white', font=("Arial", 14))
-            button.pack(pady=5)
-            # Ändern Sie hier, um das Button-Objekt und die Option zu übergeben
+        button_width = 80  # Erhöhte Breite für größere Buttons
+        button_height = 3  # Erhöhte Höhe für größere Buttons
+        font_size = 25  # Größere Schriftgröße für die Button-Texte
+
+        options_frame = tk.Frame(self.master)
+        options_frame.pack(pady=(10, 20))
+
+        # Anpassung der Frames für jede Zeile
+        row_frames = [tk.Frame(options_frame) for _ in range(2)]
+        for frame in row_frames:
+            frame.pack(pady=(5, 5), fill='x', expand=True)
+
+        for i, option in enumerate(options):
+            parent_frame = row_frames[0] if i < 2 else row_frames[1]
+            # Anpassen der Größe und Schriftgröße der Buttons
+            button = tk.Button(parent_frame, text=option, bg='white', font=("Times New Roman", font_size), width=button_width,
+                               height=button_height)
+            button.pack(side='left', padx=10, pady=5)
             button.bind('<Button-1>',
                         lambda event, b=button, o=option: self.check_answer(b, o, correct_answer, self.current_options,
                                                                             self.username))

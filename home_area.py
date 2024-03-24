@@ -340,7 +340,7 @@ class HomeAreaFrontend:
             messagebox.showinfo("Fehler", "Bitte erst ein Haus auswählen.")
             return
         self.app_state.house = house_name  # Verwende self.house statt global
-        print(f"{house_name} ausgewählt, Benutzer: {self.app_state.current_username}")
+        print(f"{house_name} ausgewählt, Username: {self.app_state.current_username}")
         self.switch_to_quiz_callback()
         # switch_frame und start_quiz müssen entsprechend angepasst werden
         """
