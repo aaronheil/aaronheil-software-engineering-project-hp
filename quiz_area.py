@@ -37,9 +37,7 @@ class QuizApp:
         # Lade die erste Frage
         self.load_next_question()
 
-        # Initialisierung result_label
-        self.quiz_config.result_label = tk.Label(self.master, text="", bg='#343a40', font=("Arial", 14))
-        self.quiz_config.result_label.pack(pady=(10, 20))
+
 
     def display_bot_scores(self):
         self.quiz_config.bot_scores_frame = tk.Frame(self.master, bg="lightgrey")
@@ -71,7 +69,7 @@ class QuizApp:
         font_size = 16  # Größere Schriftgröße für die Button-Texte
 
         options_frame = tk.Frame(self.master)
-        options_frame.pack(pady=(10, 20))
+        options_frame.place(relx=0.5, rely=0.5, anchor='center')
 
         # Anpassung der Frames für jede Zeile
         row_frames = [tk.Frame(options_frame) for _ in range(2)]
@@ -88,6 +86,9 @@ class QuizApp:
             button.bind('<Button-1>',
                         lambda event, b=button, o=option: self.check_answer(b, o, correct_answer, self.current_options,
                                                                             self.username))
+        # Initialisierung result_label
+        self.quiz_config.result_label = tk.Label(self.master, text="", bg='#343a40', font=("Arial", 14))
+        self.quiz_config.result_label.place(relx=0.5, rely=0.8, anchor='center')
 
     def check_answer(self, button, user_answer, correct_answer, options, username):
 
