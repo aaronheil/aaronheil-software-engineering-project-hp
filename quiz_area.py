@@ -42,7 +42,7 @@ class QuizApp:
     def display_bot_scores(self):
         self.quiz_config.bot_scores_frame = tk.Frame(self.master, bg="lightgrey")
         self.quiz_config.bot_scores_frame.pack(side='top', fill='x', pady=10)
-        header_label = tk.Label(self.quiz_config.bot_scores_frame, text="Häuser-Scores", bg="lightgrey",
+        header_label = tk.Label(self.quiz_config.bot_scores_frame, text="Houses Scores", bg="lightgrey",
                                 font=("Harry P", 30))
         header_label.pack()
 
@@ -62,8 +62,8 @@ class QuizApp:
             self.end_quiz()
 
     def display_question(self, question, options, correct_answer):
-        question_label = tk.Label(self.master, text=question, bg='white', font=("Times New Roman", 20, "bold"))
-        question_label.pack(pady=(20, 10))
+        question_label = tk.Label(self.master, text=question, bg='lightgrey', font=("Times New Roman", 20, "bold"))
+        question_label.place(relx=0.5, rely=0.3, anchor='center')
 
         button_width = 80  # Erhöhte Breite für größere Buttons
         button_height = 5  # Erhöhte Höhe für größere Buttons
