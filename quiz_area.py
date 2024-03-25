@@ -92,11 +92,11 @@ class QuizApp:
 
         if user_answer == correct_answer:
             button.configure(bg='green')
-            self.quiz_config.result_label.config(text="Richtige Antwort!", fg='green')
+            self.quiz_config.result_label.config(text="Richtige Antwort!", fg='green', font=("Harry P", 30))
             self.quiz_config.score += self.quiz_config.POINTS_PER_ANSWER  # Erhöht die Punktzahl
         else:
             button.configure(bg='red')
-            self.quiz_config.result_label.config(text="Falsche Antwort.", fg='red')
+            self.quiz_config.result_label.config(text="Falsche Antwort.", fg='red', font=("Harry P", 30))
 
         self.update_bots_and_scores(options, correct_answer)  # Aktualisieren Sie die Bots und deren Scores
 
