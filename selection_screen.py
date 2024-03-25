@@ -7,8 +7,8 @@ from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker
 from main import choose_quiz
 from main import get_db_session, Leaderboard, User
-from bots import HogwartsBot
-from bots import bots, update_bot_scores
+from bots_logic import HogwartsBot
+from bots_logic import bots, update_bot_scores
 import datetime
 from PIL import Image, ImageTk
 import pygame

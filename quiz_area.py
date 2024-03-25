@@ -3,7 +3,7 @@ from tkinter import messagebox
 import datetime
 from main import choose_quiz, get_db_session, Leaderboard, User
 from variables import QuizConfig, AppState, User, BotConfig
-from bots import bots, update_bot_scores
+from bots_logic import bots, update_bot_scores
 
 
 class QuizApp:
