@@ -51,7 +51,7 @@ class QuizApp:
         for name, bot in bots.items():
             self.bot_config.bot_score_labels[name] = tk.Label(self.quiz_config.bot_scores_frame,
                                                               text=f"{name}: {bot.score}", bg="lightgrey",
-                                                              font=("Arial", 19))
+                                                              font=("Harry P", 19))
 
             self.bot_config.bot_score_labels[name].pack(side='left', padx=10)
 
@@ -67,7 +67,7 @@ class QuizApp:
         question_label.pack(pady=(20, 10))
 
         button_width = 80  # Erhöhte Breite für größere Buttons
-        button_height = 3  # Erhöhte Höhe für größere Buttons
+        button_height = 4  # Erhöhte Höhe für größere Buttons
         font_size = 15  # Größere Schriftgröße für die Button-Texte
 
         options_frame = tk.Frame(self.master)
@@ -81,7 +81,8 @@ class QuizApp:
         for i, option in enumerate(options):
             parent_frame = row_frames[0] if i < 2 else row_frames[1]
             # Anpassen der Größe und Schriftgröße der Buttons
-            button = tk.Button(parent_frame, text=option, bg='white', font=("Times New Roman", font_size), width=button_width,
+            button = tk.Button(parent_frame, text=option, bg='white', font=("Times New Roman", font_size),
+                               width=button_width,
                                height=button_height)
             button.pack(side='left', padx=10, pady=5)
             button.bind('<Button-1>',
