@@ -68,7 +68,7 @@ class QuizApp:
 
         button_width = 80  # Erhöhte Breite für größere Buttons
         button_height = 3  # Erhöhte Höhe für größere Buttons
-        font_size = 25  # Größere Schriftgröße für die Button-Texte
+        font_size = 15  # Größere Schriftgröße für die Button-Texte
 
         options_frame = tk.Frame(self.master)
         options_frame.pack(pady=(10, 20))
@@ -98,7 +98,7 @@ class QuizApp:
             button.configure(bg='red')
             self.quiz_config.result_label.config(text="Falsche Antwort.", fg='red', font=("Harry P", 30))
 
-        self.update_bots_and_scores(options, correct_answer)  # Aktualisierung von Bots und deren Scores
+        self.update_bots_and_scores(options, correct_answer)  # Aktualisieren Sie die Bots und deren Scores
 
         self.quiz_config.question_count += 1  # Erhöht die Anzahl der gestellten Fragen
         if self.quiz_config.question_count < self.quiz_config.NUM_QUESTIONS:
