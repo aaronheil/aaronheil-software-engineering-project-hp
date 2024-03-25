@@ -23,6 +23,7 @@ class StartScreen:
         self.master.configure(bg='#343a40')
 
         # Ruft die Methode auf, um die Benutzeroberfläche zu initialisieren.
+
         self.init_ui()
 
     # Methode zur Initialisierung der Benutzeroberfläche.

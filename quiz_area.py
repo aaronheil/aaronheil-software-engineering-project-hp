@@ -98,7 +98,7 @@ class QuizApp:
             button.configure(bg='red')
             self.quiz_config.result_label.config(text="Falsche Antwort.", fg='red', font=("Harry P", 30))
 
-        self.update_bots_and_scores(options, correct_answer)  # Aktualisieren Sie die Bots und deren Scores
+        self.update_bots_and_scores(options, correct_answer)  # Aktualisierung von Bots und deren Scores
 
         self.quiz_config.question_count += 1  # Erhöht die Anzahl der gestellten Fragen
         if self.quiz_config.question_count < self.quiz_config.NUM_QUESTIONS:
@@ -123,6 +123,16 @@ class QuizApp:
                 else:
                     # Kein Unentschieden, Spiel endet
                     self.end_quiz(username)
+
+    def update_bots_and_scores(self, options, correct_answer):
+
+        # Aktualisieren Sie die Antworten und die Scores der Bots
+        for bot_house, bot in bots.items():
+            bot_choice = bot.choose_answer(options)
+            bot.update_score(bot_choice == correct_answer)
+
+            # Aktualisieren der Bots
+            self.bot_config.bot_score_labels[bot_house].config(text=f"{bot_house}: {bot.score}")
 
     def end_quiz(self):
         for widget in self.master.winfo_children():
