@@ -46,12 +46,13 @@ class QuizApp:
                                 font=("Harry P", 30))
         header_label.pack()
 
+
         for name, bot in bots.items():
             self.bot_config.bot_score_labels[name] = tk.Label(self.quiz_config.bot_scores_frame,
                                                               text=f"{name}: {bot.score}", bg="lightgrey",
-                                                              font=("Harry P", 19))
+                                                              font=("Harry P", 25))
 
-            self.bot_config.bot_score_labels[name].pack(side='left', padx=10)
+            self.bot_config.bot_score_labels[name].pack(side='left', padx=180)
 
     def load_next_question(self):
         if self.quiz_config.question_count < self.quiz_config.NUM_QUESTIONS:
