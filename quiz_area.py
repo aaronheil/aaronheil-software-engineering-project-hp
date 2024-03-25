@@ -45,7 +45,7 @@ class QuizApp:
         self.quiz_config.bot_scores_frame = tk.Frame(self.master, bg="lightgrey")
         self.quiz_config.bot_scores_frame.pack(side='top', fill='x', pady=10)
         header_label = tk.Label(self.quiz_config.bot_scores_frame, text="Häuser-Scores", bg="lightgrey",
-                                font=("Harry P", 20))
+                                font=("Harry P", 30))
         header_label.pack()
 
         for name, bot in bots.items():
@@ -63,15 +63,15 @@ class QuizApp:
             self.end_quiz()
 
     def display_question(self, question, options, correct_answer):
-        question_label = tk.Label(self.master, text=question, bg='white', font=("Arial", 14, "bold"))
+        question_label = tk.Label(self.master, text=question, bg='white', font=("Times New Roman", 20, "bold"))
         question_label.pack(pady=(20, 10))
 
         button_width = 80  # Erhöhte Breite für größere Buttons
-        button_height = 4  # Erhöhte Höhe für größere Buttons
-        font_size = 15  # Größere Schriftgröße für die Button-Texte
+        button_height = 5  # Erhöhte Höhe für größere Buttons
+        font_size = 16  # Größere Schriftgröße für die Button-Texte
 
         options_frame = tk.Frame(self.master)
-        options_frame.pack(pady=(10, 20))
+        options_frame.place(relx=0.5, rely=0.5, anchor='center')
 
         # Anpassung der Frames für jede Zeile
         row_frames = [tk.Frame(options_frame) for _ in range(2)]
@@ -81,7 +81,7 @@ class QuizApp:
         for i, option in enumerate(options):
             parent_frame = row_frames[0] if i < 2 else row_frames[1]
             # Anpassen der Größe und Schriftgröße der Buttons
-            button = tk.Button(parent_frame, text=option, bg='white', font=("Times New Roman", font_size),
+            button = tk.Button(parent_frame, text=option, bg='white', font=("Times New Roman", font_size, "bold"),
                                width=button_width,
                                height=button_height)
             button.pack(side='left', padx=10, pady=5)
@@ -97,7 +97,7 @@ class QuizApp:
             self.quiz_config.score += self.quiz_config.POINTS_PER_ANSWER  # Erhöht die Punktzahl
         else:
             button.configure(bg='red')
-            self.quiz_config.result_label.config(text="Falsche Antwort.", fg='red', font=("Harry P", 30))
+            self.quiz_config.result_label.config(text="Falsche Antwort!", fg='red', font=("Harry P", 30))
 
         self.update_bots_and_scores(options, correct_answer)  # Aktualisieren Sie die Bots und deren Scores
 
