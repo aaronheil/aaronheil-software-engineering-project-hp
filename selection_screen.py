@@ -54,7 +54,7 @@ class SelectionScreen:
             frame.grid(row=0, column=0, sticky='nsew')
 
         self.home_area = HomeAreaFrontend(self.master, self.home_frame, self.switch_to_quiz,
-                                          self.get_switch_frame_callback())
+                                          self.get_switch_frame_callback(), self)
 
         self.switch_to_home()
 
