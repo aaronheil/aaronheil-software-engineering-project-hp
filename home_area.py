@@ -8,6 +8,7 @@ from variables import User, Session, HomeAreaUI, UserInteraction, every_username
 import main
 from main import Leaderboard, Session, session
 from PIL import Image, ImageTk
+from quiz_area import QuizApp
 
 
 
@@ -250,6 +251,7 @@ class HomeAreaFrontend:
         self.switch_frame_callback = switch_frame_callback
         self.selection_screen_instance = selection_screen_instance
 
+
     def set_and_update_username(self):
         # Setzt den Benutzernamen und aktualisiert anschließend das Welcome-Label
         username = self.ui_manager.get_or_create_username()  # Diese Methode muss den Benutzernamen synchron zurückgeben
@@ -347,20 +349,21 @@ class HomeAreaFrontend:
                start_quiz(house_name, username)
        """
 
-    def switch_to_quiz(self):
-        if self.app_state.is_quiz_active:
-            messagebox.showinfo("Info", "Das Quiz läuft bereits.")
-            return
+    #def switch_to_quiz(self):
+        #if self.app_state.is_quiz_active:
+            #messagebox.showinfo("Info", "Das Quiz läuft bereits.")
+            #return
         # Die Methode switch_frame muss angepasst werden, um innerhalb der Klasse zu funktionieren
-        self.switch_frame_callback("quiz")
-        self.selection_screen_instance.update_active_button(self.selection_screen_instance.quiz_button)
+        #self.switch_frame_callback("quiz")
+        #self.selection_screen_instance.update_active_button(self.selection_screen_instance.quiz_button)
         # Überprüfe, ob ein Benutzername und ein Haus ausgewählt wurden
-        if self.app_state.current_username and self.app_state.house:
+        #if self.app_state.current_username and self.app_state.house:
             # Die Methode start_quiz muss angepasst werden, um innerhalb der Klasse zu funktionieren
-            self.start_quiz(self.app_state.house, self.app_state.current_username)
-        else:
-            messagebox.showinfo("Info", "Bitte wählen Sie einen Benutzer und ein Haus, bevor Sie das Quiz starten.")
-            self.switch_to_home()  # Stellt sicher, dass auch diese Methode entsprechend angepasst ist
+            #self.start_quiz(self.app_state.house, self.app_state.current_username)
+        #else:
+            #messagebox.showinfo("Info", "Bitte wählen Sie einen Benutzer und ein Haus, bevor Sie das Quiz starten.")
+            #self.switch_to_home()  # Stellt sicher, dass auch diese Methode entsprechend angepasst ist
+
 
     def show_dropdown(self):
         # Erstellt ein neues Fenster für das Dropdown-Menü

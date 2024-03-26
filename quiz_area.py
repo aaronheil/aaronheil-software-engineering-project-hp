@@ -29,9 +29,11 @@ class QuizApp:
         for widget in self.master.winfo_children():
             widget.destroy()
 
-        # Aktualisiere die Anzeige der Bot-Scores und entferne das ausgewählte Haus
-        if self.house in bots:
-            del bots[self.house]
+        # Entferne das ausgewählte Haus aus den Bots (falls erforderlich)
+        if self.app_state.house in self.bot_config.bots:
+            del self.bot_config.bots[self.house]
+
+        # Aktualisiere die Anzeige der Bot-Scores und füge das ausgewählte Haus mit dem Benutzernamen hinzu
         self.display_bot_scores()
 
         # Lade die erste Frage
@@ -47,12 +49,12 @@ class QuizApp:
         header_label.pack()
 
 
-        for name, bot in bots.items():
-            self.bot_config.bot_score_labels[name] = tk.Label(self.quiz_config.bot_scores_frame,
-                                                              text=f"{name}: {bot.score}", bg="lightgrey",
+        for house, bot in self.bot_config.bots.items():
+            self.bot_config.bot_score_labels[house] = tk.Label(self.quiz_config.bot_scores_frame,
+                                                              text=f"{house}: {bot.score}", bg="lightgrey",
                                                               font=("Harry P", 25))
 
-            self.bot_config.bot_score_labels[name].pack(side='left', padx=180)
+            self.bot_config.bot_score_labels[house].pack(side='left', padx=180)
 
     def load_next_question(self):
         if self.quiz_config.question_count < self.quiz_config.NUM_QUESTIONS:
