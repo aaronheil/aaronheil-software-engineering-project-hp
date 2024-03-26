@@ -53,7 +53,8 @@ class SelectionScreen:
         for frame in self.frames.values():
             frame.grid(row=0, column=0, sticky='nsew')
 
-        self.home_area = HomeAreaFrontend(self.master, self.home_frame, self.switch_to_quiz)
+        self.home_area = HomeAreaFrontend(self.master, self.home_frame, self.switch_to_quiz,
+                                          self.get_switch_frame_callback())
 
         self.switch_to_home()
 
@@ -81,6 +82,10 @@ class SelectionScreen:
         if frame:
             frame.tkraise()
             self.update_active_button(getattr(self, f"{frame_key}_button", None))
+
+    def get_switch_frame_callback(self):
+        # Gibt eine Funktion zurück, die das Frame wechselt
+        return self.switch_frame
 
     def switch_to_home(self):
         self.switch_frame("home")
@@ -149,7 +154,7 @@ def setup_quiz():
     quiz_widget_frame = tk.Frame(quiz_frame, bg='#343a40')
     quiz_widget_frame.pack(fill='both', expand=True)
 
-    # Hier kannst du weitere Widgets oder Anweisungen für das Quiz hinzufügen
+    # weitere Widgets oder Anweisungen für das Quiz hinzufügen
     print("Quiz-Setup ist bereit.")
 
 """

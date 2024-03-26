@@ -226,7 +226,7 @@ class MusicManager:
 
 
 class HomeAreaFrontend:
-    def __init__(self, master, home_frame, switch_to_quiz_callback):
+    def __init__(self, master, home_frame, switch_to_quiz_callback, switch_frame_callback):
         self.master = master
         self.home_frame = home_frame
         self.active_button = None
@@ -247,10 +247,7 @@ class HomeAreaFrontend:
         self.setup_ui()
         self.set_and_update_username()
         self.switch_to_quiz_callback = switch_to_quiz_callback
-
-
-
-
+        self.switch_frame_callback = switch_frame_callback
 
     def set_and_update_username(self):
         # Setzt den Benutzernamen und aktualisiert anschließend das Welcome-Label
@@ -354,7 +351,7 @@ class HomeAreaFrontend:
             messagebox.showinfo("Info", "Das Quiz läuft bereits.")
             return
         # Die Methode switch_frame muss angepasst werden, um innerhalb der Klasse zu funktionieren
-        self.switch_frame("quiz")
+        self.switch_frame_callback("quiz")
         self.update_active_button(self.quiz_button)
         # Überprüfe, ob ein Benutzername und ein Haus ausgewählt wurden
         if self.app_state.current_username and self.app_state.house:
