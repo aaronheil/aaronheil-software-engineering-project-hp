@@ -296,8 +296,8 @@ class HomeAreaFrontend:
                                       background='white', foreground='black')
 
         # Initialisierung von self.button_frame mit erweitertem Padding für mehr Zentrierung
-        self.button_frame = tk.Frame(self.home_frame, bg='#343a40')
-        self.button_frame.place(relx=0.5, rely=0.5, anchor='center')
+        self.home_area_ui.button_frame = tk.Frame(self.home_frame, bg='#343a40')
+        self.home_area_ui.button_frame.place(relx=0.5, rely=0.5, anchor='center')
 
         # Anpassen des Grid-Layouts im home_frame für Zentrierung
         self.home_frame.grid_rowconfigure(0, weight=1)  # Leerer Puffer oben
@@ -306,6 +306,8 @@ class HomeAreaFrontend:
         self.home_frame.grid_columnconfigure(0, weight=1)  # Leerer Puffer links
         self.home_frame.grid_columnconfigure(1, weight=2)  # Hauptinhalt
         self.home_frame.grid_columnconfigure(2, weight=1)  # Leerer Puffer rechts
+
+
 
         # Hausauswahl-Buttons erstellen und im button_frame positionieren mit grid()
         self.create_house_button(0, r"C:\Users\aaron\Desktop\HPQ_IU_Material\pictures\gryffindor.png",
@@ -320,7 +322,8 @@ class HomeAreaFrontend:
     # Funktion zum Erstellen und Platzieren der Buttons
     def create_house_button(self, column, image_path, house_name, size=(100, 125)):  # Size Parameter hinzugefügt
         image = self.load_and_resize_image(image_path, size)  # Verwenden des neuen Size Parameters
-        button = tk.Button(self.button_frame, image=image, command=lambda: self.on_house_select(house_name))
+        button = tk.Button(self.home_area_ui.button_frame, image=image,
+                           command=lambda: self.on_house_select(house_name, self.app_state.current_username))
         button.grid(row=0, column=column, sticky='nsew', padx=10, pady=10)
         button.image = image  # Referenz auf das Bild behalten, um GC zu verhindern
 
@@ -332,15 +335,16 @@ class HomeAreaFrontend:
 
 
 
-    def on_house_select(self, house_name):
+    def on_house_select(self, house_name, username):
         if not self.app_state.current_username:
             messagebox.showinfo("Fehler", "Bitte erst einen Benutzer auswählen.")
             return
         if not house_name:
             messagebox.showinfo("Fehler", "Bitte erst ein Haus auswählen.")
             return
-        self.app_state.house = house_name  # Verwende self.house statt global
-        print(f"{house_name} ausgewählt, Username: {self.app_state.current_username}")
+        self.app_state.house = house_name
+        self.app_state.current_username = username
+        print(f"{house_name} ausgewählt, Username: {username}")
         self.switch_to_quiz_callback()
         # switch_frame und start_quiz müssen entsprechend angepasst werden
         """
@@ -349,20 +353,22 @@ class HomeAreaFrontend:
                start_quiz(house_name, username)
        """
 
-    #def switch_to_quiz(self):
-        #if self.app_state.is_quiz_active:
-            #messagebox.showinfo("Info", "Das Quiz läuft bereits.")
-            #return
+    def switch_to_quiz(self):
+        if self.app_state.is_quiz_active:
+            messagebox.showinfo("Info", "Das Quiz läuft bereits.")
+            return
         # Die Methode switch_frame muss angepasst werden, um innerhalb der Klasse zu funktionieren
-        #self.switch_frame_callback("quiz")
-        #self.selection_screen_instance.update_active_button(self.selection_screen_instance.quiz_button)
+        self.switch_to_quiz_callback()
+        self.selection_screen_instance.update_active_button(self.selection_screen_instance.quiz_button)
+        self.selection_screen_instance.quiz_app = QuizApp(self.selection_screen_instance.quiz_frame,
+                                                          self.app_state.house, self.app_state.current_username)
         # Überprüfe, ob ein Benutzername und ein Haus ausgewählt wurden
-        #if self.app_state.current_username and self.app_state.house:
+        if self.app_state.current_username and self.app_state.house:
             # Die Methode start_quiz muss angepasst werden, um innerhalb der Klasse zu funktionieren
-            #self.start_quiz(self.app_state.house, self.app_state.current_username)
-        #else:
-            #messagebox.showinfo("Info", "Bitte wählen Sie einen Benutzer und ein Haus, bevor Sie das Quiz starten.")
-            #self.switch_to_home()  # Stellt sicher, dass auch diese Methode entsprechend angepasst ist
+            self.switch_to_quiz_callback(self.app_state.house, self.app_state.current_username)
+        else:
+            messagebox.showinfo("Info", "Bitte wählen Sie einen Benutzer und ein Haus, bevor Sie das Quiz starten.")
+            self.switch_to_home()  # Stellt sicher, dass auch diese Methode entsprechend angepasst ist
 
 
     def show_dropdown(self):

@@ -7,7 +7,7 @@ from bots_logic import bots, update_bot_scores
 
 
 class QuizApp:
-    def __init__(self, master, house_name=None, username=None):
+    def __init__(self, master, house_name, username):
         self.master = master
         self.house = house_name
         self.username = username
