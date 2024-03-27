@@ -5,7 +5,7 @@ from variables import AppState
 # from utils import set_background
 # from quiz_screen import open_house_window
 from selection_screen import SelectionScreen
-from home_area import HomeAreaFrontend
+from home_quiz_area import HomeAreaFrontend
 
 
 # Definition der Hauptklasse für den Startbildschirm der Anwendung.

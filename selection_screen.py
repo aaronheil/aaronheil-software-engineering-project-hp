@@ -12,11 +12,11 @@ from bots_logic import bots, update_bot_scores
 import datetime
 from PIL import Image, ImageTk
 import pygame
-import home_area
+import home_quiz_area
 from variables import AppState
-from home_area import HomeAreaFrontend
+from home_quiz_area import HomeAreaFrontend
 from statistics_area import LeaderboardView
-from quiz_area import QuizApp
+from home_quiz_area import QuizGame
 
 
 class SelectionScreen:
@@ -105,7 +105,7 @@ class SelectionScreen:
         username = self.app_state.current_username
         # Initialisiere die QuizApp nur, wenn sie noch nicht existiert oder neu initialisiert werden soll
         if not hasattr(self, 'quiz_app'):
-            self.quiz_app = QuizApp(self.quiz_frame, house_name, username)
+            self.quiz_app = QuizGame(self.quiz_frame, house_name, username)
 
 
     def switch_to_erfolge(self):
