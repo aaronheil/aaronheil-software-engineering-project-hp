@@ -372,6 +372,23 @@ class HomeAreaFrontend:
         self.home_area_ui.dropdown_list.bind('<Button-3>', self.ui_manager.on_right_click)  # Rechtsklick
         self.home_area_ui.dropdown_list.bind('<Return>', self.ui_manager.on_enter_pressed)  # Enter-Taste
 
+    def display_bot_scores(self):
+        # Überprüfen Sie, ob bot_scores_frame bereits existiert und leeren Sie ihn
+        if hasattr(self, 'bot_scores_frame'):
+            for widget in self.bot_scores_frame.winfo_children():
+                widget.destroy()
+        else:
+            self.bot_scores_frame = tk.Frame(self.master, bg="lightgrey")
+            self.bot_scores_frame.pack(side='top', fill='x', pady=10)
+
+        header_label = tk.Label(self.bot_scores_frame, text="Houses Scores", bg="lightgrey", font=("Harry P", 30))
+        header_label.pack()
+
+        for house, bot in self.bot_config.bots.items():
+            bot_score_label = tk.Label(self.bot_scores_frame, text=f"{house}: {bot.score}", bg="lightgrey",
+                                       font=("Harry P", 25))
+            bot_score_label.pack(side='left', padx=180)
+
     def on_house_select(self, house_name, username):
         if not self.app_state.current_username:
             messagebox.showinfo("Fehler", "Bitte erst einen Benutzer auswählen.")
@@ -379,7 +396,6 @@ class HomeAreaFrontend:
         if not house_name:
             messagebox.showinfo("Fehler", "Bitte erst ein Haus auswählen.")
             return
-
         self.app_state.house = house_name
         self.app_state.current_username = username
         print(f"{house_name} ausgewählt, Username: {username}")
@@ -388,7 +404,13 @@ class HomeAreaFrontend:
         if house_name in self.bot_config.bots:
             del self.bot_config.bots[house_name]
 
-        # Direkter Übergang zum Quiz ohne explizite Manipulation von bot_scores_frame
+        # Entferne bot_scores_frame aus dem Hauptbereich, falls vorhanden
+        # Diese Zeile sollte außerhalb des if-Blocks stehen, um sicherzustellen, dass sie immer ausgeführt wird
+        if hasattr(self, 'bot_scores_frame') and self.bot_scores_frame is not None:
+            self.bot_scores_frame.pack_forget()  # Oder self.bot_scores_frame.destroy() wenn das Widget nicht wiederverwendet wird
+
+        self.display_bot_scores()
+
         self.switch_to_quiz_callback()
         # switch_frame und start_quiz müssen entsprechend angepasst werden
         """
@@ -408,7 +430,7 @@ class QuizGame:
         self.house = house_name
         self.username = username
         self.current_options = []
-        #self.bot_scores_frame = None
+        self.bot_scores_frame = None
 
         # Instanz von QuizConfig aus variables.py
         self.quiz_config = QuizConfig()
@@ -440,22 +462,6 @@ class QuizGame:
         score_label = tk.Label(self.master, text=f"{self.app_state.house} ({self.app_state.current_username}): 0", bg="lightgrey",
                                font=("Harry P", 25))
         score_label.pack(side='top', fill='x', pady=10)
-
-    def display_bot_scores(self):
-        # Erstelle und konfiguriere bot_scores_frame
-        self.bot_scores_frame = tk.Frame(self.master, bg="lightgrey")
-        self.bot_scores_frame.pack(side='top', fill='x', pady=10)
-
-        header_label = tk.Label(self.bot_scores_frame, text="Houses Scores", bg="lightgrey", font=("Harry P", 30))
-        header_label.pack()
-
-        for house, bot in self.bot_config.bots.items():
-            bot_score_label = tk.Label(self.bot_scores_frame, text=f"{house}: {bot.score}", bg="lightgrey",
-                                       font=("Harry P", 25))
-            bot_score_label.pack(side='left', padx=180)
-
-
-    
 
     def load_next_question(self):
         if self.quiz_config.question_count < self.quiz_config.NUM_QUESTIONS:
