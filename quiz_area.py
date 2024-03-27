@@ -25,12 +25,18 @@ class QuizApp:
         self.setup_quiz_area()
 
     def setup_quiz_area(self):
+
+        if self.house:
+            house = house_name
+            user_house = house_name
+
+
         # Bereinige vorherige Inhalte des Quiz-Frames
         for widget in self.master.winfo_children():
             widget.destroy()
 
         # Entferne das ausgewählte Haus aus den Bots (falls erforderlich)
-        if self.app_state.house in self.bot_config.bots:
+        if self.house in self.bot_config.bots:
             del self.bot_config.bots[self.house]
 
         # Aktualisiere die Anzeige der Bot-Scores und füge das ausgewählte Haus mit dem Benutzernamen hinzu
@@ -38,6 +44,10 @@ class QuizApp:
 
         # Lade die erste Frage
         self.load_next_question()
+
+        score_label = tk.Label(self.master, text=f"{self.house} ({self.app_state.current_username}): 0", bg="lightgrey",
+                               font=("Harry P", 25))
+        score_label.pack(side='top', fill='x', pady=10)
 
 
 

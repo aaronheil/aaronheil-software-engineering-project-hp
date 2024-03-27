@@ -333,44 +333,6 @@ class HomeAreaFrontend:
         resized_image = original_image.resize(size, Image.Resampling.LANCZOS)  # Aktualisiert von Image.ANTIALIAS
         return ImageTk.PhotoImage(resized_image)
 
-
-
-    def on_house_select(self, house_name, username):
-        if not self.app_state.current_username:
-            messagebox.showinfo("Fehler", "Bitte erst einen Benutzer auswählen.")
-            return
-        if not house_name:
-            messagebox.showinfo("Fehler", "Bitte erst ein Haus auswählen.")
-            return
-        self.app_state.house = house_name
-        self.app_state.current_username = username
-        print(f"{house_name} ausgewählt, Username: {username}")
-        self.switch_to_quiz_callback()
-        # switch_frame und start_quiz müssen entsprechend angepasst werden
-        """
-               switch_frame(quiz_frame)
-               update_active_button(quiz_button)
-               start_quiz(house_name, username)
-       """
-
-    def switch_to_quiz(self):
-        if self.app_state.is_quiz_active:
-            messagebox.showinfo("Info", "Das Quiz läuft bereits.")
-            return
-        # Die Methode switch_frame muss angepasst werden, um innerhalb der Klasse zu funktionieren
-        self.switch_to_quiz_callback()
-        self.selection_screen_instance.update_active_button(self.selection_screen_instance.quiz_button)
-        self.selection_screen_instance.quiz_app = QuizApp(self.selection_screen_instance.quiz_frame,
-                                                          self.app_state.house, self.app_state.current_username)
-        # Überprüfe, ob ein Benutzername und ein Haus ausgewählt wurden
-        if self.app_state.current_username and self.app_state.house:
-            # Die Methode start_quiz muss angepasst werden, um innerhalb der Klasse zu funktionieren
-            self.switch_to_quiz_callback(self.app_state.house, self.app_state.current_username)
-        else:
-            messagebox.showinfo("Info", "Bitte wählen Sie einen Benutzer und ein Haus, bevor Sie das Quiz starten.")
-            self.switch_to_home()  # Stellt sicher, dass auch diese Methode entsprechend angepasst ist
-
-
     def show_dropdown(self):
         # Erstellt ein neues Fenster für das Dropdown-Menü
         self.dropdown_window = tk.Toplevel(self.master)
@@ -405,21 +367,28 @@ class HomeAreaFrontend:
         self.home_area_ui.dropdown_list.bind('<Return>', self.ui_manager.on_enter_pressed)  # Enter-Taste
 
 
-"""
-# Initialisiere die Listbox mit allen Benutzernamen
-#update_dropdown()
+
+    def on_house_select(self, house_name, username):
+        if not self.app_state.current_username:
+            messagebox.showinfo("Fehler", "Bitte erst einen Benutzer auswählen.")
+            return
+        if not house_name:
+            messagebox.showinfo("Fehler", "Bitte erst ein Haus auswählen.")
+            return
+        self.app_state.house = house_name
+        self.app_state.current_username = username
+        print(f"{house_name} ausgewählt, Username: {username}")
+        self.switch_to_quiz_callback()
+        # switch_frame und start_quiz müssen entsprechend angepasst werden
+        """
+               switch_frame(quiz_frame)
+               update_active_button(quiz_button)
+               start_quiz(house_name, username)
+       """
 
 
 
-    def update_active_button(new_active_button):
-        global active_button
-        # Setzen Sie alle Buttons auf normale Farbe zurück
-        for button in [home_button, quiz_button, erfolge_button, statistik_button]:
-            button.config(bg='SystemButtonFace')  # Setzen Sie die Standardfarbe zurück
-        # Setzen Sie die Farbe des aktiven Buttons
-        new_active_button.config(bg='lightgrey')  # Hervorheben des aktiven Buttons
-        active_button = new_active_button
-"""
+
 
 
 
