@@ -35,12 +35,12 @@ class LeaderboardView:
         for entry in leaderboard_data:
             user = session.query(main.User).filter_by(id=entry.user_id).first()
             # Formatieren des Datums mit 50 Leerzeichen am Anfang
-            played_on_formatted = " " * 45 + entry.played_on.strftime('%d. %B %Y')
+            played_on_formatted = " " * 25 + entry.played_on.strftime('%d. %B %Y')
             # Formatieren des Scores ohne "Punkte" und mit 50 Leerzeichen am Anfang
-            score_formatted = " " * 50 + (f"{int(entry.score)}" if entry.score.is_integer() else f"{entry.score}")
+            score_formatted = " " * 30 + (f"{int(entry.score)}" if entry.score.is_integer() else f"{entry.score}")
             # Einfügen der formatierten Werte mit zusätzlichen Leerzeichen am Anfang für Username und Haus
             self.leaderboard_table.insert('', 'end',
-                                          values=(" " * 50 + user.username, " " * 50 + entry.house, score_formatted,
+                                          values=(" " * 30 + user.username, " " * 30 + entry.house, score_formatted,
                                                   played_on_formatted))
 
         self.leaderboard_table.pack(expand=True, fill='both')

@@ -12,11 +12,11 @@ from bots_logic import bots, update_bot_scores
 import datetime
 from PIL import Image, ImageTk
 import pygame
-import home_quiz_area
+import home_area
 from variables import AppState
-from home_quiz_area import HomeAreaFrontend
+from home_area import HomeAreaFrontend
 from statistics_area import LeaderboardView
-from home_quiz_area import QuizGame
+from quiz_area import QuizApp
 
 
 class SelectionScreen:
@@ -54,9 +54,10 @@ class SelectionScreen:
             frame.grid(row=0, column=0, sticky='nsew')
 
         self.home_area = HomeAreaFrontend(self.master, self.home_frame, self.switch_to_quiz,
-                                          self.get_switch_frame_callback(), self)
+                                          self.get_switch_frame_callback(), self, self.app_state)
 
         self.switch_to_home()
+
 
     def setup_nav_buttons(self):
         self.home_button = tk.Button(self.nav_frame, text='⌂ Home', font=("Harry P", 40),
@@ -105,7 +106,7 @@ class SelectionScreen:
         username = self.app_state.current_username
         # Initialisiere die QuizApp nur, wenn sie noch nicht existiert oder neu initialisiert werden soll
         if not hasattr(self, 'quiz_app'):
-            self.quiz_app = QuizGame(self.quiz_frame, house_name, username)
+            self.quiz_app = QuizApp(self.quiz_frame, house_name, username, self.app_state)
 
 
     def switch_to_erfolge(self):
