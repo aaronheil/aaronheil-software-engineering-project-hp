@@ -59,7 +59,7 @@ class QuizConfig:
         self.bot_scores_frame = None  # Frame für die Anzeige der Bot-Punktestände.
         self.quiz_frame = None  # Haupt-Frame für das Quiz.
         self.quiz_widget_frame = None  # Frame für Quiz-Widgets.
-        self.user_score_label = None  # Label für die Anzeige des Benutzer-Punktestandes.
+
 
 
 # Definiert eine Klasse für die Bot-Konfiguration.

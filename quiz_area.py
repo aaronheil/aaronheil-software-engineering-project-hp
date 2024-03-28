@@ -46,9 +46,11 @@ class QuizApp:
         # Lade die erste Frage
         self.load_next_question()
 
-        score_label = tk.Label(self.master, text=f"{self.house} ({self.app_state.current_username}): 0", bg="lightgrey",
-                               font=("Harry P", 25))
-        score_label.pack(side='top', fill='x', pady=10)
+        self.quiz_config.user_score_label = tk.Label(self.master,
+                                                     text=f"{self.house} ({self.app_state.current_username}): {self.quiz_config.score} ",
+                                                     bg="lightgrey",
+                                                     font=("Harry P", 25))
+        self.quiz_config.user_score_label.pack(side='top', fill='x', pady=10)
 
 
 
@@ -122,6 +124,9 @@ class QuizApp:
             button.configure(bg='green')
             self.quiz_config.result_label.config(text="Richtige Antwort!", fg='green', font=("Harry P", 30))
             self.quiz_config.score += self.quiz_config.POINTS_PER_ANSWER  # Erhöht die Punktzahl
+            self.quiz_config.user_score_label.config(text=f"{self.house} ({self.app_state.current_username}): {self.quiz_config.score}")
+
+
         else:
             button.configure(bg='red')
             self.quiz_config.result_label.config(text="Falsche Antwort!", fg='red', font=("Harry P", 30))
