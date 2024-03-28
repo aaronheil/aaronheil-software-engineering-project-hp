@@ -156,22 +156,25 @@ class QuizApp:
         end_label = tk.Label(self.master, text=end_message, font=("Arial", 16), bg="#f5deb3")
         end_label.pack(pady=20)
 
-        # Zurück-Button könnte hier implementiert werden, um zum Hauptmenü zurückzukehren
+        # Aufruf von save_result(), um das Ergebnis zu speichern
+        self.save_result()
 
     def save_result(self):
         # Erfasse das aktuelle Datum und die Uhrzeit
         current_time = datetime.datetime.now()
 
+        # Verwende self.app_state.current_username anstatt self.username
         session = get_db_session()
-        user = session.query(User).filter_by(username=self.username).first()
+        user = session.query(User).filter_by(username=self.app_state.current_username).first()
 
         if not user:
-            user = User(username=self.username)
+            # Erstellt einen neuen User, wenn dieser noch nicht existiert, basierend auf dem aktuellen Benutzernamen aus app_state
+            user = User(username=self.app_state.current_username)
             session.add(user)
             session.commit()
 
         # Neuen Leaderboard-Eintrag erstellen
-        new_entry = Leaderboard(user_id=user.id, house=self.house, score=self.score, played_on=current_time)
+        new_entry = Leaderboard(user_id=user.id, house=self.house, score=self.quiz_config.score, played_on=current_time)
         session.add(new_entry)
         session.commit()
 
