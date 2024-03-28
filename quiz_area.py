@@ -65,15 +65,19 @@ class QuizApp:
                                 font=("Harry P", 30))
         header_label.pack()
 
-        # Stelle sicher, dass bot_score_labels leer ist oder neu initialisiert wird, um die aktuellen Scores zu speichern
+        # Erstelle einen Container für die Bot-Score-Labels
+        bot_scores_container = tk.Frame(self.quiz_config.bot_scores_frame, bg="lightgrey")
+        bot_scores_container.pack(pady=10)  # Packe den Container in der Mitte
+
         self.bot_config.bot_score_labels = {}
 
-        # Anzeigen der Scores für die verbleibenden Bots
+        # Anzeigen der Scores für die verbleibenden Bots im Container
         for house, bot in self.bot_config.bots.items():
-            self.bot_config.bot_score_labels[house] = tk.Label(self.quiz_config.bot_scores_frame,
+            self.bot_config.bot_score_labels[house] = tk.Label(bot_scores_container,
                                                                text=f"{house}: {bot.score}", bg="lightgrey",
                                                                font=("Harry P", 25))
             self.bot_config.bot_score_labels[house].pack(side='left', padx=10)
+
 
     def load_next_question(self):
         if self.quiz_config.question_count < self.quiz_config.NUM_QUESTIONS:
