@@ -100,10 +100,20 @@ class SelectionScreen:
         if self.app_state.is_quiz_active:
             messagebox.showinfo("Info", "Das Quiz läuft bereits.")
             return
-        self.app_state.is_quiz_active = False
-        self.switch_frame("quiz")
+
         house_name = self.app_state.house
         username = self.app_state.current_username
+
+        # Prüfe, ob ein Haus ausgewählt wurde
+        if not house_name:
+            messagebox.showinfo("Fehler", "Bitte erst ein Haus auswählen.")
+            self.switch_frame("home")  # Switch zurück zum Home Frame
+            return  # Beendet die Funktion, um zu verhindern, dass das Quiz gestartet wird
+
+        # Weiterer Code, um das Quiz zu starten...
+        self.app_state.is_quiz_active = True
+        self.switch_frame("quiz")
+
         # Initialisiere die QuizApp nur, wenn sie noch nicht existiert oder neu initialisiert werden soll
         if not hasattr(self, 'quiz_app'):
             self.quiz_app = QuizApp(self.quiz_frame, house_name, username, self.app_state)
