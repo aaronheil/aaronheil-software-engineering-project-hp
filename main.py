@@ -45,6 +45,7 @@ df.index.name = 'id'
 # Datenbanktabelle erstellen und Daten einfügen
 df.to_sql('zaubersprueche', con=engine, if_exists='replace', index=True)
 
+
 def choose_quiz():
     # Pseudozufallszahl für Frageauswahl generieren
     question_id = random.choice(df.index)

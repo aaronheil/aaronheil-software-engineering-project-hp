@@ -21,6 +21,7 @@ class QuizApp:
 
         # Instanz von AppState aus variables.py
         self.app_state = app_state
+        self.question_label = None
 
         self.setup_quiz_area()
 
@@ -36,6 +37,9 @@ class QuizApp:
         if self.house in self.bot_config.bots:
             del self.bot_config.bots[self.house]  # Entfernt das ausgewählte Haus aus den Bots
 
+        self.question_label = tk.Label(self.master, text="", bg='lightgrey', font=("Times New Roman", 20, "bold"))
+        self.question_label.place(relx=0.5, rely=0.3, anchor='center')
+
         # Aktualisiere die Anzeige der Bot-Scores ohne das ausgewählte Haus
         self.display_bot_scores()
 
@@ -45,6 +49,8 @@ class QuizApp:
         score_label = tk.Label(self.master, text=f"{self.house} ({self.app_state.current_username}): 0", bg="lightgrey",
                                font=("Harry P", 25))
         score_label.pack(side='top', fill='x', pady=10)
+
+
 
     def display_bot_scores(self):
         # Überprüfe, ob bot_scores_frame bereits existiert, bevor es zerstört wird
@@ -77,8 +83,8 @@ class QuizApp:
             self.end_quiz()
 
     def display_question(self, question, options, correct_answer):
-        question_label = tk.Label(self.master, text=question, bg='lightgrey', font=("Times New Roman", 20, "bold"))
-        question_label.place(relx=0.5, rely=0.3, anchor='center')
+        self.current_options = options
+        self.question_label.config(text=question)
 
         button_width = 80  # Erhöhte Breite für größere Buttons
         button_height = 5  # Erhöhte Höhe für größere Buttons
@@ -120,37 +126,17 @@ class QuizApp:
 
         self.quiz_config.question_count += 1  # Erhöht die Anzahl der gestellten Fragen
         if self.quiz_config.question_count < self.quiz_config.NUM_QUESTIONS:
-            self.quiz_config.quiz_frame.after(300, lambda: self.start_quiz(house_name=self.app_state.house,
-                                                          username=username))  # Weitergabe des Benutzernamens
+            # Verzögere das Laden der nächsten Frage
+            self.master.after(300, self.load_next_question)  # Entfernt die unerwarteten Argumente
         else:
-            self.end_quiz(username)  # Weitergabe des Benutzernamens
-
-        # Prüfe, ob alle Fragen beantwortet wurden oder ob wir uns in einem Tiebreaker befinden
-        if self.quiz_config.question_count < QuizConfig.NUM_QUESTIONS or QuizConfig.in_tiebreaker_round:
-            # Lade die nächste Frage
-            self.quiz_config.quiz_frame.after(300, lambda: self.start_quiz(house_name=self.app_state.house, username=username))
-        else:
-            # Überprüfe auf Unentschieden nur am Ende des normalen Spiels
-            if not self.quiz_config.in_tiebreaker_round:
-                max_bot_score = max(bot.score for bot in bots.values())
-                if self.quiz_config.score == max_bot_score:
-                    # Unentschieden detektiert, starte zusätzliche Runden
-                    in_tiebreaker_round = True
-                    question_count = 0  # Setze die Fragezahl zurück für die zusätzlichen Runden
-                    self.quiz_config.quiz_frame.after(300, lambda: self.start_quiz(house_name=self.app_state.house, username=username))
-                else:
-                    # Kein Unentschieden, Spiel endet
-                    self.end_quiz(username)
+            self.end_quiz()
 
     def update_bots_and_scores(self, options, correct_answer):
-
-        # Aktualisieren Sie die Antworten und die Scores der Bots
-        for bot_house, bot in bots.items():
-            bot_choice = bot.choose_answer(options)
-            bot.update_score(bot_choice == correct_answer)
-
-            # Aktualisieren der Bots
-            self.bot_config.bot_score_labels[bot_house].config(text=f"{bot_house}: {bot.score}")
+        for bot_house, bot in self.bot_config.bots.items():
+            if bot_house in self.bot_config.bot_score_labels:
+                bot_choice = bot.choose_answer(options)
+                bot.update_score(bot_choice == correct_answer)
+                self.bot_config.bot_score_labels[bot_house].config(text=f"{bot_house}: {bot.score}")
 
     def end_quiz(self):
         for widget in self.master.winfo_children():
@@ -181,3 +167,26 @@ class QuizApp:
         session.commit()
 
         messagebox.showinfo('Erfolg', 'Dein Ergebnis wurde gespeichert.')
+
+
+
+"""
+
+# Prüfe, ob alle Fragen beantwortet wurden oder ob wir uns in einem Tiebreaker befinden
+        if self.quiz_config.question_count < QuizConfig.NUM_QUESTIONS or QuizConfig.in_tiebreaker_round:
+            # Lade die nächste Frage
+            self.quiz_config.quiz_frame.after(300, lambda: self.load_next_question)
+        else:
+            # Überprüfe auf Unentschieden nur am Ende des normalen Spiels
+            if not self.quiz_config.in_tiebreaker_round:
+                max_bot_score = max(bot.score for bot in bots.values())
+                if self.quiz_config.score == max_bot_score:
+                    # Unentschieden detektiert, starte zusätzliche Runden
+                    in_tiebreaker_round = True
+                    self.quiz_config.question_count = 0  # Setze die Fragezahl zurück für die zusätzlichen Runden
+                    self.quiz_config.quiz_frame.after(300, lambda: self.start_quiz(house_name=self.app_state.house, username=username))
+                else:
+                    # Kein Unentschieden, Spiel endet
+                    self.end_quiz(username)
+                    
+"""

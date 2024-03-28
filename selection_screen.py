@@ -110,8 +110,8 @@ class SelectionScreen:
             self.switch_frame("home")  # Switch zurück zum Home Frame
             return  # Beendet die Funktion, um zu verhindern, dass das Quiz gestartet wird
 
-        # Weiterer Code, um das Quiz zu starten...
-        self.app_state.is_quiz_active = True
+        # Weiterer Code, um das Quiz zu starten.
+        self.app_state.is_quiz_active = False
         self.switch_frame("quiz")
 
         # Initialisiere die QuizApp nur, wenn sie noch nicht existiert oder neu initialisiert werden soll

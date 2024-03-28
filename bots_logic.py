@@ -1,4 +1,5 @@
 import random
+#from main import get_random_options
 
 # Definieren Sie eine Konstante für die Punktzahl pro richtiger Antwort
 POINTS_PER_ANSWER = 10
