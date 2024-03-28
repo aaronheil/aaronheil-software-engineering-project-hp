@@ -151,7 +151,7 @@ class QuizApp:
         for widget in self.master.winfo_children():
             widget.destroy()
 
-        end_message = f"Quiz beendet. Deine Punktzahl: {self.score}."
+        end_message = f"Quiz beendet. Deine Punktzahl: {self.quiz_config.score}."
         messagebox.showinfo("Quiz Ende", end_message)
         end_label = tk.Label(self.master, text=end_message, font=("Arial", 16), bg="#f5deb3")
         end_label.pack(pady=20)
