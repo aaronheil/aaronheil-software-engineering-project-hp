@@ -163,7 +163,7 @@ class QuizApp:
         # Erfasse das aktuelle Datum und die Uhrzeit
         current_time = datetime.datetime.now()
 
-        # Verwende self.app_state.current_username anstatt self.username
+
         session = get_db_session()
         user = session.query(User).filter_by(username=self.app_state.current_username).first()
 
@@ -177,8 +177,7 @@ class QuizApp:
         new_entry = Leaderboard(user_id=user.id, house=self.house, score=self.quiz_config.score, played_on=current_time)
         session.add(new_entry)
         session.commit()
-
-        messagebox.showinfo('Erfolg', 'Dein Ergebnis wurde gespeichert.')
+        print(f"User ID: {user.id}, erreichte Punktzahl: {self.quiz_config.score}")
 
 
 
