@@ -21,7 +21,7 @@ class User(Base):
 class Leaderboard(Base):
     __tablename__ = 'leaderboard'
     id = Column(Integer, primary_key=True)
-    user_id = Column(Integer, ForeignKey('users.id'))
+    user_id = Column(Integer, ForeignKey('users.id')) # hier handelt es sich um die PLayer_ID nicht User_ID
     user = relationship("User", back_populates="leaderboard_entries")
     house = Column(String)
     score = Column(Float)

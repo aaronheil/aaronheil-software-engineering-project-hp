@@ -148,16 +148,42 @@ class QuizApp:
                 self.bot_config.bot_score_labels[bot_house].config(text=f"{bot_house}: {bot.score}")
 
     def end_quiz(self):
-        for widget in self.master.winfo_children():
-            widget.destroy()
+        max_bot_score = max(bot.score for bot in self.bot_config.bots.values())
+        player_score = self.quiz_config.score
+        if self.quiz_config.in_tiebreaker_round:
+            if player_score > max_bot_score:
+                self.quiz_config.in_tiebreaker_round = False
+                messagebox.showinfo("Spielende", f"Herzlichen Glückwunsch {self.app_state.current_username}, du hast gewonnen!")
+            elif player_score == max_bot_score:
+                self.quiz_config.in_tiebreaker_round = True
+                self.quiz_config.question_count = 0
+                messagebox.showinfo("Unentschieden",
+                                    "Das Spiel ist unentschieden, wir starten zusätzliche Runden!")
+                self.master.after(300, self.load_next_question)
+            else:
+                self.quiz_config.in_tiebreaker_round = False
+                winning_bot = max(self.bot_config.bots.items(), key=lambda item: item[1].score)[0]
+                messagebox.showinfo("Spielende",
+                                    f"{winning_bot} hat gewonnen. Viel Glück beim nächsten Mal, {self.app_state.current_username}!")
+        elif not self.quiz_config.in_tiebreaker_round and self.quiz_config.question_count == QuizConfig.NUM_QUESTIONS:
+            if player_score > max_bot_score:
+                messagebox.showinfo("Spielende", f"Herzlichen Glückwunsch {self.app_state.current_username}, du hast gewonnen!")
+            elif player_score == max_bot_score:
+                self.quiz_config.in_tiebreaker_round = True
+                self.quiz_config.question_count = 0
+                messagebox.showinfo("Unentschieden",
+                                    "Das Spiel ist unentschieden, wir starten zusätzliche Runden!")
+                self.master.after(300, self.load_next_question)
+            else:
+                winning_bot = max(self.bot_config.bots.items(), key=lambda item: item[1].score)[0]
+                messagebox.showinfo("Spielende",
+                                    f"{winning_bot} hat gewonnen. Viel Glück beim nächsten Mal, {self.app_state.current_username}!")
 
-        end_message = f"Quiz beendet. Deine Punktzahl: {self.quiz_config.score}."
-        messagebox.showinfo("Quiz Ende", end_message)
-        end_label = tk.Label(self.master, text=end_message, font=("Arial", 16), bg="#f5deb3")
-        end_label.pack(pady=20)
-
-        # Aufruf von save_result(), um das Ergebnis zu speichern
+            # Aufruf von save_result(), um das Ergebnis zu speichern
         self.save_result()
+
+            # Stelle sicher, dass das Quiz für den nächsten Start zurückgesetzt wird
+            #self.setup_quiz_area()
 
     def save_result(self):
         # Erfasse das aktuelle Datum und die Uhrzeit
@@ -181,23 +207,4 @@ class QuizApp:
 
 
 
-"""
 
-# Prüfe, ob alle Fragen beantwortet wurden oder ob wir uns in einem Tiebreaker befinden
-        if self.quiz_config.question_count < QuizConfig.NUM_QUESTIONS or QuizConfig.in_tiebreaker_round:
-            # Lade die nächste Frage
-            self.quiz_config.quiz_frame.after(300, lambda: self.load_next_question)
-        else:
-            # Überprüfe auf Unentschieden nur am Ende des normalen Spiels
-            if not self.quiz_config.in_tiebreaker_round:
-                max_bot_score = max(bot.score for bot in bots.values())
-                if self.quiz_config.score == max_bot_score:
-                    # Unentschieden detektiert, starte zusätzliche Runden
-                    in_tiebreaker_round = True
-                    self.quiz_config.question_count = 0  # Setze die Fragezahl zurück für die zusätzlichen Runden
-                    self.quiz_config.quiz_frame.after(300, lambda: self.start_quiz(house_name=self.app_state.house, username=username))
-                else:
-                    # Kein Unentschieden, Spiel endet
-                    self.end_quiz(username)
-                    
-"""

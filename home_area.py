@@ -265,22 +265,29 @@ class HomeAreaFrontend:
         welcome_text = f"Hallo {self.app_state.current_username}"
         self.home_area_ui.welcome_label.config(text=welcome_text)
 
-
     def setup_ui(self):
-        # Erstellen des Top-Frames für Begrüßung und Aktionen-Button
         self.home_area_ui.top_frame = tk.Frame(self.home_frame, bg='#343a40')
         self.home_area_ui.top_frame.grid(row=0, column=0, sticky='nsew', padx=20, pady=10)
-        self.home_area_ui.welcome_label = tk.Label(self.home_area_ui.top_frame, text="Hallo",
-                                      font=("Harry P", 30),
-                                      relief=tk.RAISED)
-        self.home_area_ui.welcome_label.grid(row=0, column=0, sticky='w', padx=10, pady=10)
 
-        # Aktionen-Menübutton
+        # Erhöhen Sie das Gewicht der Spalten auf der linken Seite, um Leerraum zu schaffen
+        for i in range(30):  # Nehmen wir an, Sie haben insgesamt 10 Spalten
+            if i < 27:  # Für die ersten 8 Spalten (mehr Leerraum links)
+                self.home_area_ui.top_frame.grid_columnconfigure(i, weight=3)
+            else:  # Die letzten 2 Spalten haben weniger Gewicht, sind also näher an den Widgets
+                self.home_area_ui.top_frame.grid_columnconfigure(i, weight=1)
+
+        # Positionieren Sie jetzt die Widgets weiter rechts durch Anpassung ihrer Spaltenposition
+        self.home_area_ui.welcome_label = tk.Label(self.home_area_ui.top_frame, text="Hallo",
+                                                   font=("Harry P", 30), relief=tk.RAISED)
+        self.home_area_ui.welcome_label.grid(row=0, column=28, padx=10,
+                                             pady=10)  # Verschieben Sie zu einer höheren Spaltennummer
+
         self.home_area_ui.actions_button = tk.Menubutton(self.home_area_ui.top_frame, text="Aktionen",
                                                          font=("Harry P", 30), relief=tk.RAISED, width=20)
         self.actions_menu = tk.Menu(self.home_area_ui.actions_button, tearoff=0)
         self.home_area_ui.actions_button["menu"] = self.actions_menu
-        self.home_area_ui.actions_button.grid(row=0, column=1, sticky='w', padx=10, pady=10)
+        self.home_area_ui.actions_button.grid(row=0, column=30, padx=10,
+                                              pady=10)  # Ebenfalls zu einer höheren Spaltennummer verschieben
 
         # Unterbuttons zum Menubutton hinzufügen
         self.actions_menu.add_command(label="Neuen User anlegen",
