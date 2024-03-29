@@ -27,7 +27,7 @@ class LeaderboardView:
         columns = ('user', 'house', 'score', 'played_on')
         self.leaderboard_table = ttk.Treeview(self.tab, columns=columns, show='headings')
 
-        self.leaderboard_table.heading('user', text='User')
+        self.leaderboard_table.heading('user', text='Player')
         self.leaderboard_table.heading('house', text='Haus')
         self.leaderboard_table.heading('score', text='Punktzahl')
         self.leaderboard_table.heading('played_on', text='Gespielt am')
