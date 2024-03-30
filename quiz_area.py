@@ -6,7 +6,7 @@ from variables import QuizConfig, AppState, User, BotConfig
 
 
 class QuizApp:
-    def __init__(self, master, house_name, username, app_state):
+    def __init__(self, master, house_name, username, app_state, _selection_screen=None):
         self.master = master
         self.house = house_name
         self.username = username
@@ -21,10 +21,10 @@ class QuizApp:
         # Instanz von AppState aus variables.py
         self.app_state = app_state
         self.question_label = None
-        self.restart_quiz = None
         self.asked_questions_ids = set()  # Hinzufügen einer Instanzvariable zur Speicherung der IDs gestellter Fragen
 
         self.setup_quiz_area()
+        self.selection_screen = _selection_screen
 
         print(f"QuizApp initialisiert mit Haus: {self.house}, Benutzername: {self.username}")
 
@@ -150,6 +150,23 @@ class QuizApp:
                 bot.update_score(bot_choice == correct_answer)
                 self.bot_config.bot_score_labels[bot_house].config(text=f"{bot_house}: {bot.score}")
 
+    def restart_quiz(self):
+        # Reset der internen Zustände
+        self.quiz_config.score = 0
+        self.quiz_config.question_count = 0
+        self.quiz_config.in_tiebreaker_round = False
+        self.asked_questions_ids = set()  # Reset der bereits gestellten Fragen IDs
+
+        # Reset der Bots' Scores
+        for bot in self.bot_config.bots.values():
+            bot.reset_bot_scores()
+
+        # UI zurücksetzen
+        self.setup_quiz_area()
+
+        # Erneutes Laden der ersten Frage
+        self.load_next_question()
+
     def end_quiz(self):
         def show_restart_button():
             # Entfernt alle Widgets aus dem Quiz-Bereich
@@ -160,7 +177,8 @@ class QuizApp:
             restart_button = tk.Button(self.master, text='\U0001F501 Neue Quiz-Session starten.',
                                        font=("Harry P", 25, "bold"), bg="lightgrey",
                                        command=self.restart_quiz)
-            restart_button.pack(pady=20)
+            restart_button.config(command=lambda: self.selection_screen.restart_quiz_from_button())
+            restart_button.place(relx=0.5, rely=0.5, anchor='center')
 
         def handle_game_end(message):
             # Zeigt die Spielende-Nachricht

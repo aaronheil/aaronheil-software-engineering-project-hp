@@ -19,8 +19,8 @@ class HogwartsBot:
         if is_correct:
             self.score += POINTS_PER_ANSWER
 
-    def reset_score(self):
-        """Setzt den Punktestand des Bots zurück."""
+    def reset_bot_scores(self):
+        """Setzt den Punktestand der Bots zurück."""
         self.score = 0
 
 

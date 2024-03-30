@@ -103,7 +103,21 @@ class SelectionScreen:
 
         # Initialisiere die QuizApp nur, wenn sie noch nicht existiert oder neu initialisiert werden soll
         if not hasattr(self, 'quiz_app'):
-            self.quiz_app = QuizApp(self.quiz_frame, house_name, username, self.app_state)
+            self.quiz_app = QuizApp(self.quiz_frame, house_name, username, self.app_state, _selection_screen=self)
+
+    def restart_quiz_from_button(self):
+        # Überprüfen, ob `self.quiz_app` existiert und eine Instanz von QuizApp ist
+        if self.quiz_app is None or not isinstance(self.quiz_app, QuizApp):
+            # Reinitialisiere die QuizApp Instanz
+            house_name = self.house  # Stellen Sie sicher, dass dies der richtige Weg ist, das Haus zu bekommen
+            username = self.app_state.current_username
+            self.quiz_app = QuizApp(self.quiz_frame, house_name, username, self.app_state, _selection_screen=self)
+
+        # Sicherstellen, dass self.quiz_app nicht None ist und dann restart_quiz aufrufen
+        if self.quiz_app:
+            self.quiz_app.restart_quiz()
+        else:
+            print("Fehler: QuizApp Instanz konnte nicht initialisiert werden.")
 
 
     def switch_to_erfolge(self):
