@@ -21,6 +21,7 @@ class QuizApp:
         # Instanz von AppState aus variables.py
         self.app_state = app_state
         self.question_label = None
+        self.restart_quiz = None
         self.asked_questions_ids = set()  # Hinzufügen einer Instanzvariable zur Speicherung der IDs gestellter Fragen
 
         self.setup_quiz_area()
@@ -150,10 +151,22 @@ class QuizApp:
                 self.bot_config.bot_score_labels[bot_house].config(text=f"{bot_house}: {bot.score}")
 
     def end_quiz(self):
-        def clear_quiz_widgets():
+        def show_restart_button():
             # Entfernt alle Widgets aus dem Quiz-Bereich
             for widget in self.master.winfo_children():
                 widget.destroy()
+
+            # Zeigt den Button zum Neustarten des Quiz
+            restart_button = tk.Button(self.master, text='\U0001F501 Neue Quiz-Session starten.',
+                                       font=("Harry P", 25, "bold"), bg="lightgrey",
+                                       command=self.restart_quiz)
+            restart_button.pack(pady=20)
+
+        def handle_game_end(message):
+            # Zeigt die Spielende-Nachricht
+            messagebox.showinfo("Spielende", message)
+            # Fügt den Neustart-Button hinzu nachdem die Nachrichtenbox geschlossen wurde
+            show_restart_button()
 
         max_bot_score = max(bot.score for bot in self.bot_config.bots.values())
         player_score = self.quiz_config.score
@@ -161,10 +174,9 @@ class QuizApp:
         if self.quiz_config.in_tiebreaker_round:
             if player_score > max_bot_score:
                 self.quiz_config.in_tiebreaker_round = False
-                messagebox.showinfo("Spielende",
-                                    f"Herzlichen Glückwunsch {self.app_state.current_username}, du hast gewonnen!")
-                clear_quiz_widgets()
+                handle_game_end(f"Herzlichen Glückwunsch {self.app_state.current_username}, du hast gewonnen!")
             elif player_score == max_bot_score:
+                # Wenn Unentschieden, direkt die nächste Frage laden, ohne Widgets zu entfernen
                 self.quiz_config.in_tiebreaker_round = True
                 self.quiz_config.question_count = 0
                 messagebox.showinfo("Unentschieden", "Das Spiel ist unentschieden, wir starten zusätzliche Runden!")
@@ -173,14 +185,12 @@ class QuizApp:
             else:
                 self.quiz_config.in_tiebreaker_round = False
                 winning_bot = max(self.bot_config.bots.items(), key=lambda item: item[1].score)[0]
-                messagebox.showinfo("Spielende",
-                                    f"{winning_bot} hat gewonnen. Viel Glück beim nächsten Mal, {self.app_state.current_username}!")
-                clear_quiz_widgets()
+                handle_game_end(
+                    f"{winning_bot} hat gewonnen. Viel Glück beim nächsten Mal, {self.app_state.current_username}!")
         elif not self.quiz_config.in_tiebreaker_round and self.quiz_config.question_count == QuizConfig.NUM_QUESTIONS:
+            # Analog für den Fall, dass der Spieler oder der Bot gewinnt, ohne in einer Tiebreaker-Runde zu sein
             if player_score > max_bot_score:
-                messagebox.showinfo("Spielende",
-                                    f"Herzlichen Glückwunsch {self.app_state.current_username}, du hast gewonnen!")
-                clear_quiz_widgets()
+                handle_game_end(f"Herzlichen Glückwunsch {self.app_state.current_username}, du hast gewonnen!")
             elif player_score == max_bot_score:
                 self.quiz_config.in_tiebreaker_round = True
                 self.quiz_config.question_count = 0
@@ -189,9 +199,8 @@ class QuizApp:
                 return
             else:
                 winning_bot = max(self.bot_config.bots.items(), key=lambda item: item[1].score)[0]
-                messagebox.showinfo("Spielende",
-                                    f"{winning_bot} hat gewonnen. Viel Glück beim nächsten Mal, {self.app_state.current_username}!")
-                clear_quiz_widgets()
+                handle_game_end(
+                    f"{winning_bot} hat gewonnen. Viel Glück beim nächsten Mal, {self.app_state.current_username}!")
 
         # Aufruf von save_result(), um das Ergebnis zu speichern
         self.save_result()
