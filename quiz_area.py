@@ -21,6 +21,7 @@ class QuizApp:
         # Instanz von AppState aus variables.py
         self.app_state = app_state
         self.question_label = None
+        self.asked_questions_ids = set()  # Hinzufügen einer Instanzvariable zur Speicherung der IDs gestellter Fragen
 
         self.setup_quiz_area()
 
@@ -79,10 +80,10 @@ class QuizApp:
                                                                font=("Harry P", 25))
             self.bot_config.bot_score_labels[house].pack(side='left', padx=10)
 
-
     def load_next_question(self):
         if self.quiz_config.question_count < self.quiz_config.NUM_QUESTIONS:
-            question, options, correct_answer = choose_quiz()
+            question, options, correct_answer, question_id = choose_quiz(self.asked_questions_ids)
+            self.asked_questions_ids.add(question_id)
             self.display_question(question, options, correct_answer)
         else:
             self.end_quiz()

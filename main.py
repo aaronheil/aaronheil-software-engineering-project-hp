@@ -45,9 +45,12 @@ df.index.name = 'id'
 df.to_sql('zaubersprueche', con=engine, if_exists='replace', index=True)
 
 
-def choose_quiz():
-    # Pseudozufallszahl für Frageauswahl generieren
-    question_id = random.choice(df.index)
+def choose_quiz(asked_question_ids=None):
+    if asked_question_ids is None:
+        asked_question_ids = set()
+    # Stelle sicher, dass bereits gestellte Fragen ausgeschlossen werden
+    available_questions = set(df.index) - asked_question_ids
+    question_id = random.choice(list(available_questions))
 
     # Frage und mögliche Antworten aus der Datenbank abrufen
     query = text(f"SELECT `Zauberspruch / Fluch`, `Wirkung` FROM zaubersprueche WHERE id = {question_id}")
@@ -56,7 +59,9 @@ def choose_quiz():
     # Frage und Antworten zurückgeben
     options = [result[1]] + get_random_options(question_id)
     random.shuffle(options)
-    return f"Welche Wirkung hat der Zauberspruch / Fluch \"{result[0]}\"?", options, result[1]
+
+    # Gibt zusätzlich die Frage-ID zurück
+    return f"Welche Wirkung hat der Zauberspruch / Fluch \"{result[0]}\"?", options, result[1], question_id
 
 
 def get_random_options(question_id):
