@@ -1,5 +1,5 @@
 import random
-#from main import get_random_options
+
 
 # Definieren Sie eine Konstante für die Punktzahl pro richtiger Antwort
 POINTS_PER_ANSWER = 10
@@ -33,9 +33,4 @@ bots = {
 }
 
 
-def update_bot_scores(bots, current_house, options, correct_answer, points_per_answer):
-    for bot_house, bot in bots.items():
-        if bot_house != current_house:
-            bot_choice = bot.choose_answer(options)
-            is_correct = bot_choice == correct_answer
-            bot.update_score(is_correct, points_per_answer)
+

@@ -1,5 +1,4 @@
 import random
-import sqlalchemy as db
 from sqlalchemy import create_engine, text
 from sqlalchemy.orm import sessionmaker, relationship
 from sqlalchemy.ext.declarative import declarative_base

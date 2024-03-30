@@ -3,7 +3,6 @@ from tkinter import messagebox
 import datetime
 from main import choose_quiz, get_db_session, Leaderboard, User
 from variables import QuizConfig, AppState, User, BotConfig
-from bots_logic import bots, update_bot_scores
 
 
 class QuizApp:
@@ -123,20 +122,22 @@ class QuizApp:
         if user_answer == correct_answer:
             button.configure(bg='green')
             self.quiz_config.result_label.config(text="Richtige Antwort!", fg='green', font=("Harry P", 30))
-            self.quiz_config.score += self.quiz_config.POINTS_PER_ANSWER  # Erhöht die Punktzahl
-            self.quiz_config.user_score_label.config(text=f"{self.house} ({self.app_state.current_username}): {self.quiz_config.score}")
-
-
+            self.quiz_config.score += self.quiz_config.POINTS_PER_ANSWER
+            self.quiz_config.user_score_label.config(
+                text=f"{self.house} ({self.app_state.current_username}): {self.quiz_config.score}")
         else:
             button.configure(bg='red')
             self.quiz_config.result_label.config(text="Falsche Antwort!", fg='red', font=("Harry P", 30))
 
-        self.update_bots_and_scores(options, correct_answer)  # Aktualisieren Sie die Bots und deren Scores
+        # Verzögere das Entfernen des Textes im result_label um 1 Sekunde (1000 Millisekunden)
+        self.master.after(300, lambda: self.quiz_config.result_label.config(text=""))
 
-        self.quiz_config.question_count += 1  # Erhöht die Anzahl der gestellten Fragen
+        self.update_bots_and_scores(options, correct_answer)
+
+        self.quiz_config.question_count += 1
         if self.quiz_config.question_count < self.quiz_config.NUM_QUESTIONS:
             # Verzögere das Laden der nächsten Frage
-            self.master.after(300, self.load_next_question)  # Entfernt die unerwarteten Argumente
+            self.master.after(300, self.load_next_question)
         else:
             self.end_quiz()
 
@@ -148,42 +149,51 @@ class QuizApp:
                 self.bot_config.bot_score_labels[bot_house].config(text=f"{bot_house}: {bot.score}")
 
     def end_quiz(self):
+        def clear_quiz_widgets():
+            # Entfernt alle Widgets aus dem Quiz-Bereich
+            for widget in self.master.winfo_children():
+                widget.destroy()
+
         max_bot_score = max(bot.score for bot in self.bot_config.bots.values())
         player_score = self.quiz_config.score
+
         if self.quiz_config.in_tiebreaker_round:
             if player_score > max_bot_score:
                 self.quiz_config.in_tiebreaker_round = False
-                messagebox.showinfo("Spielende", f"Herzlichen Glückwunsch {self.app_state.current_username}, du hast gewonnen!")
+                messagebox.showinfo("Spielende",
+                                    f"Herzlichen Glückwunsch {self.app_state.current_username}, du hast gewonnen!")
+                clear_quiz_widgets()
             elif player_score == max_bot_score:
                 self.quiz_config.in_tiebreaker_round = True
                 self.quiz_config.question_count = 0
-                messagebox.showinfo("Unentschieden",
-                                    "Das Spiel ist unentschieden, wir starten zusätzliche Runden!")
+                messagebox.showinfo("Unentschieden", "Das Spiel ist unentschieden, wir starten zusätzliche Runden!")
                 self.master.after(300, self.load_next_question)
+                return
             else:
                 self.quiz_config.in_tiebreaker_round = False
                 winning_bot = max(self.bot_config.bots.items(), key=lambda item: item[1].score)[0]
                 messagebox.showinfo("Spielende",
                                     f"{winning_bot} hat gewonnen. Viel Glück beim nächsten Mal, {self.app_state.current_username}!")
+                clear_quiz_widgets()
         elif not self.quiz_config.in_tiebreaker_round and self.quiz_config.question_count == QuizConfig.NUM_QUESTIONS:
             if player_score > max_bot_score:
-                messagebox.showinfo("Spielende", f"Herzlichen Glückwunsch {self.app_state.current_username}, du hast gewonnen!")
+                messagebox.showinfo("Spielende",
+                                    f"Herzlichen Glückwunsch {self.app_state.current_username}, du hast gewonnen!")
+                clear_quiz_widgets()
             elif player_score == max_bot_score:
                 self.quiz_config.in_tiebreaker_round = True
                 self.quiz_config.question_count = 0
-                messagebox.showinfo("Unentschieden",
-                                    "Das Spiel ist unentschieden, wir starten zusätzliche Runden!")
+                messagebox.showinfo("Unentschieden", "Das Spiel ist unentschieden, wir starten zusätzliche Runden!")
                 self.master.after(300, self.load_next_question)
+                return
             else:
                 winning_bot = max(self.bot_config.bots.items(), key=lambda item: item[1].score)[0]
                 messagebox.showinfo("Spielende",
                                     f"{winning_bot} hat gewonnen. Viel Glück beim nächsten Mal, {self.app_state.current_username}!")
+                clear_quiz_widgets()
 
-            # Aufruf von save_result(), um das Ergebnis zu speichern
+        # Aufruf von save_result(), um das Ergebnis zu speichern
         self.save_result()
-
-            # Stelle sicher, dass das Quiz für den nächsten Start zurückgesetzt wird
-            #self.setup_quiz_area()
 
     def save_result(self):
         # Erfasse das aktuelle Datum und die Uhrzeit

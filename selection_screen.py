@@ -1,18 +1,5 @@
 import tkinter as tk
-from tkinter import ttk
-from tkinter import simpledialog
 from tkinter import messagebox
-from sqlalchemy import create_engine, Column, String, Integer
-from sqlalchemy.ext.declarative import declarative_base
-from sqlalchemy.orm import sessionmaker
-from main import choose_quiz
-from main import get_db_session, Leaderboard, User
-from bots_logic import HogwartsBot
-from bots_logic import bots, update_bot_scores
-import datetime
-from PIL import Image, ImageTk
-import pygame
-import home_area
 from variables import AppState
 from home_area import HomeAreaFrontend
 from statistics_area import LeaderboardView

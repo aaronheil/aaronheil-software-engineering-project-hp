@@ -1,15 +1,11 @@
 import tkinter as tk
 from tkinter import simpledialog, messagebox, ttk
-
 import selection_screen
-
 import pygame
 from variables import User, Session, HomeAreaUI, UserInteraction, every_username_session, AppState
 import main
 from main import Leaderboard, Session, session
 from PIL import Image, ImageTk
-from quiz_area import QuizApp
-
 
 
 # Backend-Logik
@@ -72,7 +68,8 @@ class UsernameManager:
         Returns:
             Eine Liste der neuesten Benutzernamen.
         """
-        return [user.username for user in every_username_session.query(User.username).order_by(User.id.desc()).limit(limit)]
+        return [user.username for user in
+                every_username_session.query(User.username).order_by(User.id.desc()).limit(limit)]
 
     @staticmethod
     def search_username(search_term):
@@ -89,7 +86,8 @@ class UsernameManager:
 
 
 class UserInterfaceManager:
-    def __init__(self, session, home_area_ui, home_frame, app_state, username_manager, user_interaction, home_area_frontend):
+    def __init__(self, session, home_area_ui, home_frame, app_state, username_manager, user_interaction,
+                 home_area_frontend):
         self.session = session
         self.home_frame = home_frame
         self.app_state = app_state  # Speichert die AppState-Instanz als Attribut
@@ -98,7 +96,6 @@ class UserInterfaceManager:
         self.user_interaction = user_interaction
         self.search_var = tk.StringVar()
         self.home_area_frontend = home_area_frontend
-
 
     def on_name_submit(self):
         username = self.user_interaction.dropdown_var.get()
@@ -179,8 +176,7 @@ class UserInterfaceManager:
         else:
             tk.messagebox.showwarning("Warnung", "Kein Benutzer ausgewählt.")
 
-
-# Funktionen zum Handling bei Anlage eines neuen Benutzernamens
+    # Funktionen zum Handling bei Anlage eines neuen Benutzernamens
 
     def create_new_user_window(self, home_frame):
         """ Öffnet ein kleines neues Fenster zur Eingabe des neuen Benutzernamens"""
@@ -211,6 +207,7 @@ class UserInterfaceManager:
 
 class MusicManager:
     """ Logik zum Musik ein- und ausschalten"""
+
     def __init__(self, app_state):
         self.app_state = app_state
 
@@ -225,14 +222,14 @@ class MusicManager:
 # Frontend-Logik
 
 
-
 class HomeAreaFrontend:
-    def __init__(self, master, home_frame, switch_to_quiz_callback, switch_frame_callback, selection_screen_instance, app_state):
+    def __init__(self, master, home_frame, switch_to_quiz_callback, switch_frame_callback, selection_screen_instance,
+                 app_state):
         self.master = master
         self.home_frame = home_frame
         self.active_button = None
         self.home_area_ui = HomeAreaUI()
-        #self.app_state = AppState()  # AppState Instanz erstellen
+        # self.app_state = AppState()  # AppState Instanz erstellen
         self.app_state = app_state
         self.user = User()
         self.music_manager = MusicManager(self.app_state)
@@ -252,7 +249,6 @@ class HomeAreaFrontend:
         self.switch_frame_callback = switch_frame_callback
         self.selection_screen_instance = selection_screen_instance
         self.app_state = app_state
-
 
     def set_and_update_username(self):
         # Setzt den Benutzernamen und aktualisiert anschließend das Welcome-Label
@@ -316,8 +312,6 @@ class HomeAreaFrontend:
         self.home_frame.grid_columnconfigure(1, weight=2)  # Hauptinhalt
         self.home_frame.grid_columnconfigure(2, weight=1)  # Leerer Puffer rechts
 
-
-
         # Hausauswahl-Buttons erstellen und im button_frame positionieren mit grid()
         self.create_house_button(0, r"C:\Users\aaron\Desktop\HPQ_IU_Material\pictures\gryffindor.png",
                                  'Gryffindor', size=(400, 500))
@@ -375,8 +369,6 @@ class HomeAreaFrontend:
         self.home_area_ui.dropdown_list.bind('<Button-3>', self.ui_manager.on_right_click)  # Rechtsklick
         self.home_area_ui.dropdown_list.bind('<Return>', self.ui_manager.on_enter_pressed)  # Enter-Taste
 
-
-
     def on_house_select(self, house_name, username):
         if not self.app_state.current_username:
             messagebox.showinfo("Fehler", "Bitte erst einen Benutzer auswählen.")
@@ -394,11 +386,3 @@ class HomeAreaFrontend:
                update_active_button(quiz_button)
                start_quiz(house_name, username)
        """
-
-
-
-
-
-
-
-

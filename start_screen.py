@@ -2,10 +2,7 @@ import tkinter as tk
 import pygame
 from tkinter import PhotoImage
 from variables import AppState
-# from utils import set_background
-# from quiz_screen import open_house_window
 from selection_screen import SelectionScreen
-from home_area import HomeAreaFrontend
 
 
 # Definition der Hauptklasse für den Startbildschirm der Anwendung.
@@ -74,20 +71,20 @@ class StartScreen:
         # Startet die Tkinter-Ereignisschleife für das neue Fenster
         selection_window.mainloop()
 
+
 # Hauptfunktion, die beim Starten des Skripts ausgeführt wird.
+
 def main():
     # Erstellt das Hauptfenster.
     root = tk.Tk()
     root.title("Start-Fenster")
-    app_state = AppState() # AppState Instanz-Erstellung
+    app_state = AppState()  # AppState Instanz-Erstellung
     # Erstellt eine Instanz der StartScreen-Klasse.
     app = StartScreen(root, app_state)
     # Startet die Tkinter-Ereignisschleife.
     root.mainloop()
 
+
 # Überprüft, ob das Skript direkt ausgeführt wird und nicht importiert.
 if __name__ == "__main__":
     main()
-
-
-
