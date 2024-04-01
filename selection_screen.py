@@ -4,6 +4,7 @@ from variables import AppState
 from home_area import HomeAreaFrontend
 from statistics_area import LeaderboardView
 from quiz_area import QuizApp
+from success_area import SuccessArea
 
 
 class SelectionScreen:
@@ -44,6 +45,7 @@ class SelectionScreen:
                                           self.get_switch_frame_callback(), self, self.app_state)
 
         self.switch_to_home()
+        self.success_area = SuccessArea(self.erfolge_frame)
 
 
     def setup_nav_buttons(self):

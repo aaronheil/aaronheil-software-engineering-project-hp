@@ -5,6 +5,7 @@ from variables import AppState
 from selection_screen import SelectionScreen
 
 
+
 # Definition der Hauptklasse für den Startbildschirm der Anwendung.
 class StartScreen:
     # Initialisierungsmethode, die beim Erstellen einer Instanz der Klasse aufgerufen wird.
@@ -18,10 +19,9 @@ class StartScreen:
         self.master.attributes("-fullscreen", True)
         # Setzt die Hintergrundfarbe des Fensters auf dunkelgrau.
         self.master.configure(bg='#343a40')
-
         # Ruft die Methode auf, um die Benutzeroberfläche zu initialisieren.
-
         self.init_ui()
+
 
     # Methode zur Initialisierung der Benutzeroberfläche.
     def init_ui(self):

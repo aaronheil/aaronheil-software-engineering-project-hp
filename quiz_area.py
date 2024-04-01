@@ -175,7 +175,7 @@ class QuizApp:
 
             # Zeigt den Button zum Neustarten des Quiz
             restart_button = tk.Button(self.master, text='\U0001F501 Neue Quiz-Session starten.',
-                                       font=("Harry P", 50, "bold"), bg="lightgrey",
+                                       font=("Harry P", 35, "bold"), bg="lightgrey",
                                        command=self.restart_quiz)
             restart_button.config(command=lambda: self.selection_screen.restart_quiz_from_button())
             restart_button.place(relx=0.5, rely=0.5, anchor='center')
