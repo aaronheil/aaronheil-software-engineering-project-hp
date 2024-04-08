@@ -5,7 +5,7 @@ from home_area import HomeAreaFrontend
 from statistics_area import LeaderboardView
 from quiz_area import QuizApp
 from success_area import SuccessArea
-
+from main import load_user_progress, save_user_progress
 
 class SelectionScreen:
     def __init__(self, master):
@@ -45,7 +45,7 @@ class SelectionScreen:
                                           self.get_switch_frame_callback(), self, self.app_state)
 
         self.switch_to_home()
-        self.success_area = SuccessArea(self.erfolge_frame)
+        self.success_area = SuccessArea(self.erfolge_frame, self.app_state.current_username)
 
 
     def setup_nav_buttons(self):
@@ -105,7 +105,8 @@ class SelectionScreen:
 
         # Initialisiere die QuizApp nur, wenn sie noch nicht existiert oder neu initialisiert werden soll
         if not hasattr(self, 'quiz_app'):
-            self.quiz_app = QuizApp(self.quiz_frame, house_name, username, self.app_state, _selection_screen=self)
+            self.quiz_app = QuizApp(self.quiz_frame, house_name, username, self.app_state, _selection_screen=self,
+                                    success_area=self.success_area)
 
     def restart_quiz_from_button(self):
         # Überprüfen, ob `self.quiz_app` existiert und eine Instanz von QuizApp ist
@@ -113,7 +114,8 @@ class SelectionScreen:
             # Reinitialisiere die QuizApp Instanz
             house_name = self.house  # Stellen Sie sicher, dass dies der richtige Weg ist, das Haus zu bekommen
             username = self.app_state.current_username
-            self.quiz_app = QuizApp(self.quiz_frame, house_name, username, self.app_state, _selection_screen=self)
+            self.quiz_app = QuizApp(self.quiz_frame, house_name, username, self.app_state, _selection_screen=self,
+                                    success_area=self.success_area)
 
         # Sicherstellen, dass self.quiz_app nicht None ist und dann restart_quiz aufrufen
         if self.quiz_app:

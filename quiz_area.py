@@ -1,12 +1,12 @@
 import tkinter as tk
 from tkinter import messagebox
 import datetime
-from main import choose_quiz, get_db_session, Leaderboard, User
+from main import choose_quiz, get_db_session, save_user_progress, load_user_progress, Leaderboard, User
 from variables import QuizConfig, AppState, User, BotConfig
 
 
 class QuizApp:
-    def __init__(self, master, house_name, username, app_state, _selection_screen=None):
+    def __init__(self, master, house_name, username, app_state, success_area, _selection_screen=None):
         self.master = master
         self.house = house_name
         self.username = username
@@ -17,6 +17,7 @@ class QuizApp:
 
         # Instanz von BotConfig aus variables.py
         self.bot_config = BotConfig()
+        self.success_area = success_area
 
         # Instanz von AppState aus variables.py
         self.app_state = app_state
@@ -192,7 +193,10 @@ class QuizApp:
         if self.quiz_config.in_tiebreaker_round:
             if player_score > max_bot_score:
                 self.quiz_config.in_tiebreaker_round = False
-                handle_game_end(f"Herzlichen Glückwunsch {self.app_state.current_username}, du hast gewonnen!")
+                self.user_won_quiz()
+                handle_game_end(f"Herzlichen Glückwunsch {self.app_state.current_username},"
+                                f" du hast gewonnen und ein Erfolgs-Bild freigeschaltet!")
+                self.selection_screen.switch_to_erfolge()
             elif player_score == max_bot_score:
                 # Wenn Unentschieden, direkt die nächste Frage laden, ohne Widgets zu entfernen
                 self.quiz_config.in_tiebreaker_round = True
@@ -208,7 +212,10 @@ class QuizApp:
         elif not self.quiz_config.in_tiebreaker_round and self.quiz_config.question_count == QuizConfig.NUM_QUESTIONS:
             # Analog für den Fall, dass der Spieler oder der Bot gewinnt, ohne in einer Tiebreaker-Runde zu sein
             if player_score > max_bot_score:
-                handle_game_end(f"Herzlichen Glückwunsch {self.app_state.current_username}, du hast gewonnen!")
+                self.user_won_quiz()
+                handle_game_end(f"Herzlichen Glückwunsch {self.app_state.current_username},"
+                                f" du hast gewonnen und ein Erfolgs-Bild freigeschaltet!")
+                self.selection_screen.switch_to_erfolge()
             elif player_score == max_bot_score:
                 self.quiz_config.in_tiebreaker_round = True
                 self.quiz_config.question_count = 0
@@ -222,6 +229,20 @@ class QuizApp:
 
         # Aufruf von save_result(), um das Ergebnis zu speichern
         self.save_result()
+
+    def user_won_quiz(self):
+        # Lade den aktuellen Fortschritt des Benutzers
+        unlocked_images = load_user_progress(self.app_state.current_username)
+
+        # Aktualisiere den Fortschritt um 1, da der User gewonnen hat
+        unlocked_images += 1
+
+        # Speichern des aktualisierten Fortschritts
+        save_user_progress(self.app_state.current_username, unlocked_images)
+
+        self.success_area.update_unlocked_images()
+
+
 
     def save_result(self):
         # Erfasse das aktuelle Datum und die Uhrzeit

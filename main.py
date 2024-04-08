@@ -13,18 +13,28 @@ Base = declarative_base()
 class User(Base):
     __tablename__ = 'users'
     id = Column(Integer, primary_key=True)
-    username = Column(String)
-    leaderboard_entries = relationship("Leaderboard", order_by="Leaderboard.id", back_populates="user")
+    username = Column(String, unique=True)
+    leaderboard_entries = relationship("Leaderboard", back_populates="user")
+    progress = relationship("UserProgress", back_populates="user", uselist=False)
 
 # Leaderboard-Modell
 class Leaderboard(Base):
     __tablename__ = 'leaderboard'
     id = Column(Integer, primary_key=True)
-    user_id = Column(Integer, ForeignKey('users.id')) # hier handelt es sich um die PLayer_ID nicht User_ID
+    user_id = Column(Integer, ForeignKey('users.id'))  # hier handelt es sich um die PLayer_ID nicht User_ID
     user = relationship("User", back_populates="leaderboard_entries")
     house = Column(String)
     score = Column(Float)
     played_on = Column(DateTime, default=datetime.datetime.utcnow)
+
+
+class UserProgress(Base):
+    __tablename__ = 'user_progress'
+    id = Column(Integer, primary_key=True)
+    user_id = Column(Integer, ForeignKey('users.id'), unique=True)
+    unlocked_images = Column(Integer, default=0)
+    user = relationship("User", back_populates="progress")
+
 
 # Datenbankverbindung initialisieren
 engine = create_engine('sqlite:///data.db', echo=False)
@@ -75,3 +85,31 @@ def get_random_options(question_id):
 
     # Antworten zurückgeben
     return [result[0] for result in results]
+
+
+def save_user_progress(username, unlocked_images):
+    db_session = get_db_session()  # Umbenannt, um Namenskonflikte zu vermeiden
+    user = db_session.query(User).filter_by(username=username).first()
+
+    if user:
+        if user.progress:
+            user.progress.unlocked_images = unlocked_images
+        else:
+            db_session.add(UserProgress(user_id=user.id, unlocked_images=unlocked_images))
+        db_session.commit()
+    else:
+        print(f"Benutzer {username} nicht gefunden.")
+    db_session.close()  # Schließe die Session nach Gebrauch
+
+def load_user_progress(username):
+    db_session = get_db_session()  # Umbenannt, um Namenskonflikte zu vermeiden
+    user = db_session.query(User).filter_by(username=username).first()
+
+    if user and user.progress:
+        unlocked_images = user.progress.unlocked_images
+    else:
+        unlocked_images = 0
+    db_session.close()  # Schließe die Session nach Gebrauch
+    return unlocked_images
+
+
