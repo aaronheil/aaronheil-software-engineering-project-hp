@@ -9,7 +9,7 @@ class SuccessArea:
         self.username = username
         self.unlocked_images = load_user_progress(self.username)
         self.parent_frame = parent_frame
-        # Bildpfade
+        # Bildpfade im Erfolge-Frame
         self.image_paths = [
             r"C:\Users\aaron\Desktop\HPQ_IU_Material\pictures\success_area\1_gleis_neundreiviertel.png",
             r"C:\Users\aaron\Desktop\HPQ_IU_Material\pictures\success_area\2_believe.png",
