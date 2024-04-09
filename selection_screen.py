@@ -123,6 +123,13 @@ class SelectionScreen:
         else:
             print("Fehler: QuizApp Instanz konnte nicht initialisiert werden.")
 
+    def update_success_area_for_new_user(self, new_username):
+        # Aktualisiere den aktuellen Benutzernamen im AppState
+        self.app_state.current_username = new_username
+        # Rufe die Aktualisierungsmethode in SuccessArea auf, falls diese existiert
+        if hasattr(self, 'success_area'):
+            self.success_area.refresh_for_new_user(new_username)
+
 
     def switch_to_erfolge(self):
         self.switch_frame("erfolge")

@@ -87,7 +87,7 @@ class UsernameManager:
 
 class UserInterfaceManager:
     def __init__(self, session, home_area_ui, home_frame, app_state, username_manager, user_interaction,
-                 home_area_frontend):
+                 home_area_frontend, selection_screen_instance):
         self.session = session
         self.home_frame = home_frame
         self.app_state = app_state  # Speichert die AppState-Instanz als Attribut
@@ -96,6 +96,7 @@ class UserInterfaceManager:
         self.user_interaction = user_interaction
         self.search_var = tk.StringVar()
         self.home_area_frontend = home_area_frontend
+        self.selection_screen_instance = selection_screen_instance
 
     def on_name_submit(self):
         username = self.user_interaction.dropdown_var.get()
@@ -107,7 +108,8 @@ class UserInterfaceManager:
     def update_ui_with_new_username(self, username):
         self.app_state.current_username = username
         self.home_area_frontend.update_welcome_label()
-        # z.B. für Welcome Label etc.
+        print(f"Ausgewählter Benutzer: {username}")
+        self.selection_screen_instance.update_success_area_for_new_user(username)
 
     def get_all_usernames(self):
         return every_username_session.query(User.username).all()
@@ -225,6 +227,7 @@ class MusicManager:
 class HomeAreaFrontend:
     def __init__(self, master, home_frame, switch_to_quiz_callback, switch_frame_callback, selection_screen_instance,
                  app_state):
+        self.selection_screen_instance = selection_screen_instance
         self.master = master
         self.home_frame = home_frame
         self.active_button = None
@@ -242,12 +245,12 @@ class HomeAreaFrontend:
                                                user_interaction=self.user_interaction,
                                                home_area_ui=self.home_area_ui,
                                                home_area_frontend=self,
+                                               selection_screen_instance=self.selection_screen_instance,
                                                )
         self.setup_ui()
         self.set_and_update_username()
         self.switch_to_quiz_callback = switch_to_quiz_callback
         self.switch_frame_callback = switch_frame_callback
-        self.selection_screen_instance = selection_screen_instance
         self.app_state = app_state
 
     def set_and_update_username(self):

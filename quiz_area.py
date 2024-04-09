@@ -241,6 +241,7 @@ class QuizApp:
         save_user_progress(self.app_state.current_username, unlocked_images)
 
         self.success_area.update_unlocked_images()
+        self.success_area.refresh_images()
 
 
 
