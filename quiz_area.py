@@ -266,7 +266,7 @@ class QuizApp:
         new_entry = Leaderboard(user_id=user.id, house=self.house, score=self.quiz_config.score, played_on=current_time)
         session.add(new_entry)
         session.commit()
-        print(f"Player ID: {user.id}, erreichte Punktzahl: {self.quiz_config.score}")
+        print(f"User ID: {user.id}, erreichte Punktzahl: {self.quiz_config.score}")
 
 
 
