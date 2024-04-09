@@ -4,7 +4,7 @@ import selection_screen
 import pygame
 from variables import User, Session, HomeAreaUI, UserInteraction, every_username_session, AppState
 import main
-from main import Leaderboard, Session, session
+from main import Leaderboard, Session, session, UserProgress, get_db_session
 from PIL import Image, ImageTk
 
 
@@ -54,6 +54,11 @@ class UsernameManager:
             new_user = User(username=username)
             every_username_session.add(new_user)
             every_username_session.commit()
+
+            # Erstelle auch einen Eintrag in der user_progress Tabelle
+            user_progress = UserProgress(user_id=new_user.id, unlocked_images=0)
+            session.add(user_progress)
+            session.commit()
             return True
         return False
 

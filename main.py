@@ -88,18 +88,22 @@ def get_random_options(question_id):
 
 
 def save_user_progress(username, unlocked_images):
-    db_session = get_db_session()  # Umbenannt, um Namenskonflikte zu vermeiden
+    db_session = get_db_session()
     user = db_session.query(User).filter_by(username=username).first()
 
     if user:
+        # Überprüfe, ob der User bereits Fortschritte gemacht hat
         if user.progress:
+            # Update vorhandenen Fortschritt
             user.progress.unlocked_images = unlocked_images
         else:
-            db_session.add(UserProgress(user_id=user.id, unlocked_images=unlocked_images))
+            # Neuer Fortschrittseintrag, setze unlocked_images auf 1, wenn der Benutzer beim ersten Mal gewinnt
+            new_unlocked_images = 1 if unlocked_images > 0 else 0
+            db_session.add(UserProgress(user_id=user.id, unlocked_images=new_unlocked_images))
         db_session.commit()
     else:
         print(f"Benutzer {username} nicht gefunden.")
-    db_session.close()  # Schließe die Session nach Gebrauch
+    db_session.close()
 
 def load_user_progress(username):
     db_session = get_db_session()  # Umbenannt, um Namenskonflikte zu vermeiden
@@ -111,5 +115,34 @@ def load_user_progress(username):
         unlocked_images = 0
     db_session.close()  # Schließe die Session nach Gebrauch
     return unlocked_images
+
+
+def update_user_progress_on_win(username):
+    db_session = get_db_session()
+
+    # Prüfen, ob der Benutzer existiert
+    user = db_session.query(User).filter_by(username=username).first()
+
+    # Wenn der Benutzer nicht existiert, erstelle einen neuen Benutzer
+    if not user:
+        user = User(username=username)
+        db_session.add(user)
+        # Committe hier, um sicherzustellen, dass der Benutzer in der DB ist und eine ID hat
+        db_session.commit()
+
+    # Nach dem Commit sollte user.id korrekt gesetzt sein.
+    # Überprüfen, ob ein UserProgress Eintrag existiert
+    user_progress = db_session.query(UserProgress).filter_by(user_id=user.id).first()
+
+    if user_progress:
+        # Fortschritt um 1 erhöhen, wenn der Benutzer gewonnen hat
+        user_progress.unlocked_images += 1
+    else:
+        # Erstellen eines UserProgress Eintrags, wenn dieser nicht existiert
+        user_progress = UserProgress(user_id=user.id, unlocked_images=1)
+        db_session.add(user_progress)
+
+    # Schließlich committe die Änderungen
+    db_session.commit()
 
 

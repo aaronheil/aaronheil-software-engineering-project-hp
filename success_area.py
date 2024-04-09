@@ -80,26 +80,42 @@ class SuccessArea:
                     self.image_labels.append(new_label)
                 new_label.image = photo
 
+    def create_image_label(self, index, image):
+        """Erstellt ein neues Label mit einem Bild und platziert es entsprechend seinem Index."""
+        # Berechne die Position basierend auf dem Index
+        row = index // 5
+        column = index % 5
+
+        label = tk.Label(self.labels_container, image=image, borderwidth=5, relief='solid')
+        label.grid(row=row, column=column, padx=5, pady=5)
+        label.image = image  # Speichere eine Referenz auf das Bild
+
+        # Ersetze das alte Label in der Liste oder füge das neue hinzu
+        if index < len(self.image_labels):
+            self.image_labels[index] = label
+        else:
+            self.image_labels.append(label)
+
+        return label
+
     def update_unlocked_images(self):
         self.unlocked_images = load_user_progress(self.username)
-        # Stelle sicher, dass self.images mindestens so viele Elemente enthält wie self.image_labels
         while len(self.images) < len(self.image_labels):
-            self.images.append(self.placeholder_image)  # Füge Platzhalterbilder hinzu, falls nötig
+            self.images.append(self.placeholder_image)
 
-        for i, label in enumerate(self.image_labels):
-            if label.winfo_exists():
-                if i < self.unlocked_images:
-                    if i < len(self.images):
-                        # Aktualisiere das Bild, wenn das Label existiert, der Benutzer genügend Fortschritte gemacht hat, und der Index gültig ist
-                        label.config(image=self.images[i])
-                        label.image = self.images[i]
-                    else:
-                        print(f"Fehler: Kein Bild für Index {i} in der images Liste.")
-                else:
-                    label.config(image=self.placeholder_image)
-                    label.image = self.placeholder_image
+        for i in range(max(len(self.image_labels), self.unlocked_images)):
+            if i < len(self.image_labels) and not self.image_labels[i].winfo_exists():
+                # Das Label existiert nicht mehr; erstelle es neu
+                image = self.images[i] if i < len(self.images) else self.placeholder_image
+                self.create_image_label(i, image)
+            elif i < len(self.image_labels):
+                # Das Label existiert; aktualisiere einfach das Bild
+                self.image_labels[i].config(image=self.images[i])
+                self.image_labels[i].image = self.images[i]
             else:
-                print(f"Label existiert nicht mehr und kann nicht aktualisiert werden.")
+                # Es gibt noch kein Label für diesen Index; erstelle es neu
+                image = self.images[i] if i < len(self.images) else self.placeholder_image
+                self.create_image_label(i, image)
 
     def refresh_images(self):
         # Aktualisiere self.images basierend auf dem neuen Fortschritt

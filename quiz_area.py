@@ -1,7 +1,8 @@
 import tkinter as tk
 from tkinter import messagebox
 import datetime
-from main import choose_quiz, get_db_session, save_user_progress, load_user_progress, Leaderboard, User
+from main import (choose_quiz, get_db_session, save_user_progress, load_user_progress, Leaderboard, User,
+                  update_user_progress_on_win)
 from variables import QuizConfig, AppState, User, BotConfig
 
 
@@ -231,11 +232,13 @@ class QuizApp:
         self.save_result()
 
     def user_won_quiz(self):
+
+        update_user_progress_on_win(self.app_state.current_username)
         # Lade den aktuellen Fortschritt des Benutzers
         unlocked_images = load_user_progress(self.app_state.current_username)
 
         # Aktualisiere den Fortschritt um 1, da der User gewonnen hat
-        unlocked_images += 1
+        #unlocked_images += 1
 
         # Speichern des aktualisierten Fortschritts
         save_user_progress(self.app_state.current_username, unlocked_images)
