@@ -389,9 +389,4 @@ class HomeAreaFrontend:
         self.app_state.current_username = username
         print(f"{house_name} ausgewählt, Username: {username}")
         self.switch_to_quiz_callback()
-        # switch_frame und start_quiz müssen entsprechend angepasst werden
-        """
-               switch_frame(quiz_frame)
-               update_active_button(quiz_button)
-               start_quiz(house_name, username)
-       """
+

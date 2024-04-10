@@ -150,4 +150,6 @@ class SuccessArea:
 
             # Bilder basierend auf dem neuen Benutzer neu laden
             self.load_and_display_images()
+            print(f"Erwartete Label-Anzahl: {len(self.image_paths)}")
+            print(f"Tatsächliche Label-Anzahl nach Erstellung: {len(self.labels_container.winfo_children())}")
 
