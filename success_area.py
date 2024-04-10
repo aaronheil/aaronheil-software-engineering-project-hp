@@ -6,6 +6,7 @@ from main import load_user_progress, save_user_progress
 
 class SuccessArea:
     def __init__(self, parent_frame, username):
+        self.labels_container = None
         self.username = username
         self.unlocked_images = load_user_progress(self.username)
         self.parent_frame = parent_frame
@@ -40,10 +41,10 @@ class SuccessArea:
 
         self.placeholder_image = self.create_placeholder_image(self.target_size)
 
-        # Verwende grid innerhalb des neuen Containers für die Labels.
-        for i in range(10):  # Für jedes Bild
-            row = i // 5
-            column = i % 5
+        # Anpassung, um sicherzustellen, dass nur zwei Zeilen erstellt werden
+        for i in range(len(self.image_paths)):  # Nutze die Länge von image_paths, um die Labels zu limitieren
+            row = i // 5  # Berechne die Zeile (0 oder 1)
+            column = i % 5  # Berechne die Spalte (0 bis 4)
             label = tk.Label(self.labels_container, image=self.placeholder_image, borderwidth=5, relief='solid')
             label.grid(row=row, column=column, padx=5, pady=5)
             self.image_labels.append(label)
@@ -134,16 +135,19 @@ class SuccessArea:
 
     def refresh_for_new_user(self, new_username):
         if self.username != new_username:
+            # Benutzernamen und Fortschritt aktualisieren
             self.username = new_username
             self.unlocked_images = load_user_progress(self.username)
 
-            # Leere die images-Liste vor dem Neuladen der Bilder
-            self.images.clear()
-
-            # Zerstöre existierende Widgets im parent_frame und lade die Bilder neu
-            for widget in self.parent_frame.winfo_children():
+            # Vorhandene Widgets im parent_frame entfernen
+            for widget in self.labels_container.winfo_children():
                 widget.destroy()
+
+            # Den Container selbst neu erstellen, um sicherzustellen, dass alles zurückgesetzt wird
+            self.labels_container.destroy()
+            self.labels_container = tk.Frame(self.parent_frame)
+            self.labels_container.pack(expand=True)
+
+            # Bilder basierend auf dem neuen Benutzer neu laden
             self.load_and_display_images()
-        else:
-            print(f"Kein Benutzerwechsel: {new_username} ist bereits der aktuelle Benutzer.")
 

@@ -126,7 +126,8 @@ class UserInterfaceManager:
             user = session.query(User).filter_by(id=latest_entry.user_id).first()
             if user:
                 return user.username
-        username = simpledialog.askstring("Benutzername", "Wie lautet Ihr Name?")
+        username = simpledialog.askstring("Gleis 9¾", "Wie lautet Ihr Name?"
+                                                      "                               ")
         if username and not UsernameManager.is_username_existing(username):
             self.username_manager.add_username(username)
         return username if username else "Unbekannter Benutzer"
@@ -208,7 +209,7 @@ class UserInterfaceManager:
             else:
                 tk.messagebox.showwarning("Warnung", "Benutzername darf nicht leer sein!")
 
-        submit_button = tk.Button(new_user_window, text="Submit", command=submit_new_username)
+        submit_button = tk.Button(new_user_window, text="Bestätigen", command=submit_new_username)
         submit_button.pack(pady=20)
 
 

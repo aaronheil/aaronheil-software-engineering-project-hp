@@ -161,35 +161,6 @@ if __name__ == "__main__":
 
 
 
-"""
-def setup_quiz():
-    global quiz_frame, quiz_widget_frame, is_quiz_active, score, question_count
-
-    # Markiere das Quiz als nicht aktiv
-    is_quiz_active = False
-
-    # Setze den Score und den Fragezähler zurück
-    score = 0
-    question_count = 0
-
-    # Entferne alle Widgets im quiz_frame
-    for widget in quiz_frame.winfo_children():
-        widget.destroy()
-
-    # Erstelle den quiz_widget_frame neu
-    quiz_widget_frame = tk.Frame(quiz_frame, bg='#343a40')
-    quiz_widget_frame.pack(fill='both', expand=True)
-
-    # weitere Widgets oder Anweisungen für das Quiz hinzufügen
-    print("Quiz-Setup ist bereit.")
-
-"""
-
-
-
-
-
-
 
 
 
