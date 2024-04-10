@@ -86,10 +86,6 @@ class SelectionScreen:
         self.switch_to_quiz()
 
     def switch_to_quiz(self):
-        if self.app_state.is_quiz_active:
-            messagebox.showinfo("Info", "Das Quiz läuft bereits.")
-            return
-
         house_name = self.app_state.house
         username = self.app_state.current_username
 
