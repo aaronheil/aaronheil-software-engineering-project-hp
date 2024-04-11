@@ -5,13 +5,12 @@ from home_area import HomeAreaFrontend
 from statistics_area import LeaderboardView
 from quiz_area import QuizApp
 from success_area import SuccessArea
-from main import load_user_progress, save_user_progress
+
 
 class SelectionScreen:
     def __init__(self, master):
         self.master = master
         self.app_state = AppState()
-        #self.app_state.current_username = "NeuerBenutzername"  # Beispiel für eine Benutzervariable
         self.is_quiz_active = False  # Beispielstatus für das Quiz
         self.house = None  # Beispiel für eine Hausvariable
         self.active_button = None  # Speichert den aktuell aktiven Button
