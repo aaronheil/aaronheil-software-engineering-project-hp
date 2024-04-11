@@ -1,10 +1,10 @@
 import tkinter as tk
-from tkinter import simpledialog, messagebox, ttk
+from tkinter import simpledialog, messagebox
 import selection_screen
 import pygame
 from variables import User, Session, HomeAreaUI, UserInteraction, every_username_session, AppState
 import main
-from main import Leaderboard, Session, session, UserProgress, get_db_session
+from main import Session, session, UserProgress
 from PIL import Image, ImageTk
 
 
