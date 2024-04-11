@@ -5,10 +5,9 @@ from variables import AppState
 from selection_screen import SelectionScreen
 
 
-
 # Definition der Hauptklasse für den Startbildschirm der Anwendung.
 class StartScreen:
-    # Initialisierungsmethode, die beim Erstellen einer Instanz der Klasse aufgerufen wird.
+
     def __init__(self, master, app_state):
         # Speichert das übergeordnete Tkinter-Widget (in der Regel ein Tk-Fenster).
         self.master = master
@@ -21,7 +20,6 @@ class StartScreen:
         self.master.configure(bg='#343a40')
         # Ruft die Methode auf, um die Benutzeroberfläche zu initialisieren.
         self.init_ui()
-
 
     # Methode zur Initialisierung der Benutzeroberfläche.
     def init_ui(self):
