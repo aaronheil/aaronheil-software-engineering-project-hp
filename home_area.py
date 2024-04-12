@@ -55,7 +55,7 @@ class UsernameManager:
             every_username_session.add(new_user)
             every_username_session.commit()
 
-            # Erstelle auch einen Eintrag in der user_progress Tabelle
+            # Es wird auch einen Eintrag in der user_progress Tabelle erstellt
             user_progress = UserProgress(user_id=new_user.id, unlocked_images=0)
             session.add(user_progress)
             session.commit()
@@ -238,7 +238,6 @@ class HomeAreaFrontend:
         self.home_frame = home_frame
         self.active_button = None
         self.home_area_ui = HomeAreaUI()
-        # self.app_state = AppState()  # AppState Instanz erstellen
         self.app_state = app_state
         self.user = User()
         self.music_manager = MusicManager(self.app_state)
