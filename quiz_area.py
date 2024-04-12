@@ -3,7 +3,7 @@ from tkinter import messagebox
 import datetime
 from main import (choose_quiz, get_db_session, save_user_progress, load_user_progress, Leaderboard, User,
                   update_user_progress_on_win)
-from variables import QuizConfig, AppState, User, BotConfig
+from variables import QuizConfig, User, BotConfig
 
 
 class QuizApp:
@@ -54,8 +54,6 @@ class QuizApp:
                                                      bg="lightgrey",
                                                      font=("Harry P", 25))
         self.quiz_config.user_score_label.pack(side='top', fill='x', pady=10)
-
-
 
     def display_bot_scores(self):
         # Überprüfe, ob bot_scores_frame bereits existiert, bevor es zerstört wird
@@ -237,27 +235,20 @@ class QuizApp:
         # Lade den aktuellen Fortschritt des Benutzers
         unlocked_images = load_user_progress(self.app_state.current_username)
 
-        # Aktualisiere den Fortschritt um 1, da der User gewonnen hat
-        #unlocked_images += 1
-
         # Speichern des aktualisierten Fortschritts
         save_user_progress(self.app_state.current_username, unlocked_images)
 
         self.success_area.update_unlocked_images()
         self.success_area.refresh_images()
 
-
-
     def save_result(self):
         # Erfasse das aktuelle Datum und die Uhrzeit
         current_time = datetime.datetime.now()
-
 
         session = get_db_session()
         user = session.query(User).filter_by(username=self.app_state.current_username).first()
 
         if not user:
-            # Erstellt einen neuen User, wenn dieser noch nicht existiert, basierend auf dem aktuellen Benutzernamen aus app_state
             user = User(username=self.app_state.current_username)
             session.add(user)
             session.commit()
@@ -267,7 +258,3 @@ class QuizApp:
         session.add(new_entry)
         session.commit()
         print(f"User ID: {user.id}, erreichte Punktzahl: {self.quiz_config.score}")
-
-
-
-

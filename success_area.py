@@ -3,8 +3,8 @@ from PIL import Image, ImageTk
 from main import load_user_progress, save_user_progress
 
 
-
 class SuccessArea:
+
     def __init__(self, parent_frame, username):
         self.labels_container = None
         self.username = username
@@ -152,4 +152,3 @@ class SuccessArea:
             self.load_and_display_images()
             print(f"Erwartete Label-Anzahl: {len(self.image_paths)}")
             print(f"Tatsächliche Label-Anzahl nach Erstellung: {len(self.labels_container.winfo_children())}")
-
