@@ -32,7 +32,7 @@ class QuizApp:
 
     def setup_quiz_area(self):
 
-        # Bereinige vorherige Inhalte des Quiz-Frames
+        # Bereinigt vorherige Inhalte des Quiz-Frames
         for widget in self.master.winfo_children():
             widget.destroy()
 
@@ -43,7 +43,7 @@ class QuizApp:
         self.question_label = tk.Label(self.master, text="", bg='lightgrey', font=("Times New Roman", 20, "bold"))
         self.question_label.place(relx=0.5, rely=0.3, anchor='center')
 
-        # Aktualisiere die Anzeige der Bot-Scores ohne das ausgewählte Haus
+        # Aktualisiert die Anzeige der Bot-Scores ohne das ausgewählte Haus
         self.display_bot_scores()
 
         # Lade die erste Frage
@@ -56,11 +56,11 @@ class QuizApp:
         self.quiz_config.user_score_label.pack(side='top', fill='x', pady=10)
 
     def display_bot_scores(self):
-        # Überprüfe, ob bot_scores_frame bereits existiert, bevor es zerstört wird
+        # Überprüft, ob bot_scores_frame bereits existiert, bevor es zerstört wird
         if hasattr(self.quiz_config, 'bot_scores_frame') and self.quiz_config.bot_scores_frame is not None:
             self.quiz_config.bot_scores_frame.destroy()
 
-        # Instanziere bot_scores_frame neu
+        # Instanziert bot_scores_frame neu
         self.quiz_config.bot_scores_frame = tk.Frame(self.master, bg="lightgrey")
         self.quiz_config.bot_scores_frame.pack(side='top', fill='x', pady=10)
 
@@ -68,9 +68,9 @@ class QuizApp:
                                 font=("Harry P", 30))
         header_label.pack()
 
-        # Erstelle einen Container für die Bot-Score-Labels
+        # Erstellt einen Container für die Bot-Score-Labels
         bot_scores_container = tk.Frame(self.quiz_config.bot_scores_frame, bg="lightgrey")
-        bot_scores_container.pack(pady=10)  # Packe den Container in der Mitte
+        bot_scores_container.pack(pady=10)  # Packt den Container in der Mitte
 
         self.bot_config.bot_score_labels = {}
 
@@ -131,7 +131,7 @@ class QuizApp:
             button.configure(bg='red')
             self.quiz_config.result_label.config(text="Falsche Antwort!", fg='red', font=("Harry P", 30))
 
-        # Verzögere das Entfernen des Textes im result_label um 1 Sekunde (1000 Millisekunden)
+        # Verzögert das Entfernen des Textes im result_label um 1 Sekunde (1000 Millisekunden)
         self.master.after(300, lambda: self.quiz_config.result_label.config(text=""))
 
         self.update_bots_and_scores(options, correct_answer)

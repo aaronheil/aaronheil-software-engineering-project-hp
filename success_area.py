@@ -42,14 +42,14 @@ class SuccessArea:
         self.placeholder_image = self.create_placeholder_image(self.target_size)
 
         # Anpassung, um sicherzustellen, dass nur zwei Zeilen erstellt werden
-        for i in range(len(self.image_paths)):  # Nutze die Länge von image_paths, um die Labels zu limitieren
-            row = i // 5  # Berechne die Zeile (0 oder 1)
-            column = i % 5  # Berechne die Spalte (0 bis 4)
+        for i in range(len(self.image_paths)):
+            row = i // 5  # Berechnet die Zeile
+            column = i % 5  # Berechnet die Spalte
             label = tk.Label(self.labels_container, image=self.placeholder_image, borderwidth=5, relief='solid')
             label.grid(row=row, column=column, padx=5, pady=5)
             self.image_labels.append(label)
 
-        # Entsperre die entsprechenden Bilder basierend auf dem Benutzerfortschritt
+        # Entsperrung der entsprechenden Bilder basierend auf dem user_progress
         for i in range(self.unlocked_images):
             self.unlock_image(i)
 
@@ -60,7 +60,7 @@ class SuccessArea:
             resized_image = original_image.resize(self.target_size, Image.Resampling.LANCZOS)
             photo = ImageTk.PhotoImage(resized_image)
 
-            # Aktualisiere oder füge das PhotoImage-Objekt zur images-Liste hinzu
+            # Aktualisierung des PhotoImage-Objekts
             if index < len(self.images):
                 self.images[index] = photo
             else:
@@ -70,7 +70,7 @@ class SuccessArea:
                 self.image_labels[index].config(image=self.images[index])
                 self.image_labels[index].image = self.images[index]
             else:
-                # Erstelle ein neues Label im labels_container, falls nötig.
+                # neues Label im labels_container
                 row = index // 5
                 column = index % 5
                 new_label = tk.Label(self.labels_container, image=photo, borderwidth=5, relief='solid')
@@ -83,7 +83,6 @@ class SuccessArea:
 
     def create_image_label(self, index, image):
         """Erstellt ein neues Label mit einem Bild und platziert es entsprechend seinem Index."""
-        # Berechne die Position basierend auf dem Index
         row = index // 5
         column = index % 5
 

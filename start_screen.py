@@ -9,36 +9,35 @@ from selection_screen import SelectionScreen
 class StartScreen:
 
     def __init__(self, master, app_state):
-        # Speichert das übergeordnete Tkinter-Widget (in der Regel ein Tk-Fenster).
         self.master = master
         self.app_state = app_state
-        # Setzt den Titel des Fensters.
+        # Titel des Fensters.
         self.master.title("Harry Potter Quiz")
-        # Setzt das Fenster in den Vollbildmodus.
+        # Vollbildmodus.
         self.master.attributes("-fullscreen", True)
-        # Setzt die Hintergrundfarbe des Fensters auf dunkelgrau.
+        # Hintergrundfarbe dunkelgrau.
         self.master.configure(bg='#343a40')
-        # Ruft die Methode auf, um die Benutzeroberfläche zu initialisieren.
+        # Benutzeroberfläche zu initialisieren.
         self.init_ui()
 
     # Methode zur Initialisierung der Benutzeroberfläche.
     def init_ui(self):
-        # Ermittelt die Breite und Höhe des Fensters.
+        # Breite und Höhe des Fensters.
         window_width = self.master.winfo_screenwidth()
         window_height = self.master.winfo_screenheight()
 
-        # Lädt das Bild, das als Button verwendet wird.
+        # Bild, das als Button verwendet wird.
         photo = PhotoImage(file=r"C:\Users\aaron\Desktop\HPQ_IU_Material\pictures\prod_mischief.png")
 
-        # Berechnet die Position des Buttons, um ihn zentriert zu platzieren.
+        # Position des Buttons, um ihn zentriert zu platzieren.
         x_position = (window_width - photo.width()) / 2
         y_position = (window_height - photo.height()) / 2
 
-        # Erstellt ein Label mit dem Quiz-Titel und platziert es oberhalb des Buttons.
+        # Label mit dem Quiz-Titel, Platzierung oberhalb des Buttons
         quiz_label = tk.Label(self.master, text="Harry Potter Quiz", font=("Harry P", 150), bg='#343a40', fg='white')
         quiz_label.place(x=window_width / 2, y=y_position - 100, anchor="center")
 
-        # Erstellt den Button mit dem zuvor geladenen Bild und weist ihm eine Funktion zu.
+        # Button mit zuvor geladenem Bild
         photo_button = tk.Button(self.master, image=photo, command=self.open_selection,
                                  borderwidth=3, relief=tk.SOLID, highlightthickness=0)
         photo_button.place(x=x_position, y=y_position)
@@ -59,25 +58,25 @@ class StartScreen:
         self.play_music()
         self.master.destroy()  # Schließt das aktuelle Startfenster
 
-        # Erstellt ein neues Hauptfenster für die Auswahl
+        # Hauptfenster für die Auswahl
         selection_window = tk.Tk()
         selection_window.attributes("-fullscreen", True)
 
-        # Erstellt eine Instanz der SelectionScreen-Klasse mit dem neuen Fenster
+        # Instanz der SelectionScreen-Klasse mit dem neuen Fenster
         selection_app = SelectionScreen(selection_window)
 
-        # Startet die Tkinter-Ereignisschleife für das neue Fenster
+        # Tkinter-Ereignisschleife für das neue Fenster
         selection_window.mainloop()
 
 
 # Hauptfunktion, die beim Starten des Skripts ausgeführt wird.
 
 def main():
-    # Erstellt das Hauptfenster.
+    # Hauptfenster.
     root = tk.Tk()
     root.title("Start-Fenster")
     app_state = AppState()  # AppState Instanz-Erstellung
-    # Erstellt eine Instanz der StartScreen-Klasse.
+    # Instanz der StartScreen-Klasse.
     app = StartScreen(root, app_state)
     # Startet die Tkinter-Ereignisschleife.
     root.mainloop()

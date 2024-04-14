@@ -4,15 +4,14 @@ from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker
 import datetime
 
-
 # Basisklasse für das Datenbankmodell mittels SQLAlchemy's ORM
 Base = declarative_base()
-
 
 #  Benutzer-Datenbankmodell mit einer Tabelle 'users'.
 # Jeder Benutzer hat eine eindeutige ID und einen Benutzernamen.
 
 """ Enthält alle jemals angelegten User(namen) """
+
 
 class User(Base):
     __tablename__ = 'users'  # Name der Tabelle in der Datenbank
@@ -24,8 +23,6 @@ class User(Base):
 engine = create_engine('sqlite:///users.db')
 # Erstellt alle Tabellen, die im Base-Modell definiert sind, in der Datenbank.
 Base.metadata.create_all(engine)
-
-# Konfiguriert und erstellt eine SessionFactory, um mit der Datenbank zu interagieren.
 Session = sessionmaker(bind=engine)
 # Erstellt eine Session, um Operationen in der Datenbank durchzuführen.
 every_username_session = Session()
@@ -61,16 +58,16 @@ class QuizConfig:
         self.quiz_widget_frame = None  # Frame für Quiz-Widgets.
 
 
-
 # Definiert eine Klasse für die Bot-Konfiguration.
 class BotConfig:
     def __init__(self):
-        # Initialisiert die Liste der Häuser.
+        # Liste der Häuser.
         self.houses = ["Gryffindor", "Slytherin", "Hufflepuff", "Ravenclaw"]
-        # Erstellt ein Dictionary von Bots, eines für jedes Haus.
+        # Dictionary von Bots, eines für jedes Haus.
         self.bots = {house: HogwartsBot(house_name=house) for house in self.houses}
-        # Ein Dictionary zur Speicherung der Punktestände der Bots.
+        # Dictionary zur Speicherung der Punktestände der Bots.
         self.bot_score_labels = {}
+
 
 class HomeAreaUI:
     def __init__(self):
@@ -82,9 +79,8 @@ class HomeAreaUI:
         self.active_button = None
         self.home_window = None
 
+
 class UserInteraction:
     def __init__(self):
         self.name_entry = None
         self.dropdown_var = None
-
-

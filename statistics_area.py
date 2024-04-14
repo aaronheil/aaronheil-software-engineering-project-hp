@@ -17,7 +17,6 @@ class LeaderboardView:
 
         style = ttk.Style()
         style.configure('Treeview', font=('Harry P', 20), background='#343a40', fieldbackground='#343a40', foreground='white')
-        # Erhöhe die Zeilenhöhe, um den vertikalen Abstand zwischen den Einträgen zu erhöhen
         style.configure('Treeview', rowheight=50)
         style.configure('Treeview.Heading', font=('Harry P', 30, 'bold'), background='#343a40', foreground='black')
 
@@ -34,9 +33,7 @@ class LeaderboardView:
 
         for entry in leaderboard_data:
             user = session.query(main.User).filter_by(id=entry.user_id).first()
-            # Formatieren des Datums mit 50 Leerzeichen am Anfang
             played_on_formatted = " " * 25 + entry.played_on.strftime('%d. %B %Y, %H:%M Uhr')
-            # Formatieren des Scores ohne "Punkte" und mit 50 Leerzeichen am Anfang
             score_formatted = " " * 30 + (f"{int(entry.score)}" if entry.score.is_integer() else f"{entry.score}")
             # Einfügen der formatierten Werte mit zusätzlichen Leerzeichen am Anfang für Username und Haus
             self.leaderboard_table.insert('', 'end',

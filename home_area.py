@@ -260,7 +260,7 @@ class HomeAreaFrontend:
 
     def set_and_update_username(self):
         # Setzt den Benutzernamen und aktualisiert anschließend das Welcome-Label
-        username = self.ui_manager.get_or_create_username()  # Diese Methode muss den Benutzernamen synchron zurückgeben
+        username = self.ui_manager.get_or_create_username()
         self.app_state.current_username = username  # Aktualisiere den AppState mit dem neuen Benutzernamen
         self.update_welcome_label()  # Aktualisiere das Welcome-Label mit dem neuen Benutzernamen
 
@@ -273,25 +273,23 @@ class HomeAreaFrontend:
         self.home_area_ui.top_frame = tk.Frame(self.home_frame, bg='#343a40')
         self.home_area_ui.top_frame.grid(row=0, column=0, sticky='nsew', padx=20, pady=10)
 
-        # Erhöhen Sie das Gewicht der Spalten auf der linken Seite, um Leerraum zu schaffen
-        for i in range(30):  # Nehmen wir an, Sie haben insgesamt 10 Spalten
-            if i < 27:  # Für die ersten 8 Spalten (mehr Leerraum links)
+        for i in range(30):
+            if i < 27:
                 self.home_area_ui.top_frame.grid_columnconfigure(i, weight=3)
             else:  # Die letzten 2 Spalten haben weniger Gewicht, sind also näher an den Widgets
                 self.home_area_ui.top_frame.grid_columnconfigure(i, weight=1)
 
-        # Positionieren Sie jetzt die Widgets weiter rechts durch Anpassung ihrer Spaltenposition
         self.home_area_ui.welcome_label = tk.Label(self.home_area_ui.top_frame, text="Hallo",
                                                    font=("Harry P", 30), relief=tk.RAISED)
         self.home_area_ui.welcome_label.grid(row=0, column=28, padx=10,
-                                             pady=10)  # Verschieben Sie zu einer höheren Spaltennummer
+                                             pady=10)
 
         self.home_area_ui.actions_button = tk.Menubutton(self.home_area_ui.top_frame, text="Aktionen",
                                                          font=("Harry P", 30), relief=tk.RAISED, width=20)
         self.actions_menu = tk.Menu(self.home_area_ui.actions_button, tearoff=0)
         self.home_area_ui.actions_button["menu"] = self.actions_menu
         self.home_area_ui.actions_button.grid(row=0, column=30, padx=10,
-                                              pady=10)  # Ebenfalls zu einer höheren Spaltennummer verschieben
+                                              pady=10)
 
         # Unterbuttons zum Menubutton hinzufügen
         self.actions_menu.add_command(label="Neuen User anlegen",
@@ -320,7 +318,7 @@ class HomeAreaFrontend:
         self.home_frame.grid_columnconfigure(1, weight=2)  # Hauptinhalt
         self.home_frame.grid_columnconfigure(2, weight=1)  # Leerer Puffer rechts
 
-        # Hausauswahl-Buttons erstellen und im button_frame positionieren mit grid()
+
         self.create_house_button(0, r"C:\Users\aaron\Desktop\HPQ_IU_Material\pictures\gryffindor.png",
                                  'Gryffindor', size=(400, 500))
         self.create_house_button(1, r"C:\Users\aaron\Desktop\HPQ_IU_Material\pictures\slytherin.png",
@@ -332,11 +330,11 @@ class HomeAreaFrontend:
 
     # Funktion zum Erstellen und Platzieren der Buttons
     def create_house_button(self, column, image_path, house_name, size=(100, 125)):  # Size Parameter hinzugefügt
-        image = self.load_and_resize_image(image_path, size)  # Verwenden des neuen Size Parameters
+        image = self.load_and_resize_image(image_path, size)
         button = tk.Button(self.home_area_ui.button_frame, image=image,
                            command=lambda: self.on_house_select(house_name, self.app_state.current_username))
         button.grid(row=0, column=column, sticky='nsew', padx=10, pady=10)
-        button.image = image  # Referenz auf das Bild behalten, um GC zu verhindern
+        button.image = image
 
     # Methode zum Laden und Skalieren der Bilder (sofern noch nicht vorhanden)
     def load_and_resize_image(self, image_path, size=(100, 125)):
