@@ -113,7 +113,7 @@ def load_user_progress(username):
         unlocked_images = user.progress.unlocked_images
     else:
         unlocked_images = 0
-    db_session.close()  # Schließe die Session nach Gebrauch
+    db_session.close()  # Schließe die Session nach dem Gebrauch
     return unlocked_images
 
 
