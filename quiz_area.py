@@ -180,6 +180,32 @@ class QuizApp:
             restart_button.config(command=lambda: self.selection_screen.restart_quiz_from_button())
             restart_button.place(relx=0.5, rely=0.5, anchor='center')
 
+            # Scores von allen Häusern
+            scores = {self.house: self.quiz_config.score}
+            scores.update({house: bot.score for house, bot in self.bot_config.bots.items()})
+
+            # Sortieren der Scores in absteigender Reihenfolge
+            sorted_scores = sorted(scores.items(), key=lambda x: x[1], reverse=True)
+
+            # Erstellung einer formatierten Ausgabe, Feststellung gleicher Scores
+            last_score = None
+            rank = 0
+            skip = 0
+            ranking_outputs = []
+            for house, score in sorted_scores:
+                if score != last_score:
+                    rank += 1 + skip
+                    skip = 0
+                else:
+                    skip += 1
+                ranking_outputs.append(f"{rank}. {house} ({score} Punkte)")
+                last_score = score
+
+            rankings = ', '.join(ranking_outputs)
+            print(f"Rangliste: {rankings}")
+
+
+
         def handle_game_end(message):
             # Zeigt die Spielende-Nachricht
             messagebox.showinfo("Spielende", message)
