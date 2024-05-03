@@ -98,7 +98,7 @@ class QuizApp:
         font_size = 16  # Größere Schriftgröße für die Button-Texte
 
         options_frame = tk.Frame(self.master)
-        options_frame.place(relx=0.5, rely=0.5, anchor='center')
+        options_frame.place(relx=0.5, rely=0.6, anchor='center')
 
         # Anpassung der Frames für jede Zeile
         row_frames = [tk.Frame(options_frame) for _ in range(2)]
