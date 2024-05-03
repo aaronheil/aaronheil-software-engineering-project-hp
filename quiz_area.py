@@ -97,6 +97,7 @@ class QuizApp:
         button_height = 5  # Erhöhte Höhe für größere Buttons
         font_size = 16  # Größere Schriftgröße für die Button-Texte
 
+        # Frame für die Antwortoptionen
         options_frame = tk.Frame(self.master)
         options_frame.place(relx=0.5, rely=0.6, anchor='center')
 
